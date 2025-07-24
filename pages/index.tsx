@@ -1,48 +1,84 @@
-import { useState, useEffect } from "react"
-import { useAccount } from "wagmi"
-import Joystick from "@/components/Joystick"
+// pages/index.tsx
+import { useEffect, useState } from "react"
+import { useAccount, useWriteContract } from "wagmi"
 import Chog from "@/components/Chog"
 import PunchingBag from "@/components/PunchingBag"
+import Joystick from "@/components/Joystick"
+import chogPunchABI from "@/lib/chogPunchABI.json"
 
 export default function Home() {
   const { address, isConnected } = useAccount()
-  const [stage, setStage] = useState<"home"|"play">("home")
+  const { writeContractAsync } = useWriteContract()
+  const [farcasterUser, setFarcasterUser] = useState<{
+    fid: number
+    username?: string
+    displayName?: string
+    pfpUrl?: string
+  } | null>(null)
+
+  const [stage, setStage] = useState<"home" | "play">("home")
   const [hits, setHits] = useState(0)
-  const [anim, setAnim] = useState<"idle"|"kick"|"punch"|"push">("idle")
+  const [anim, setAnim] = useState<"idle" | "kick" | "punch" | "push">("idle")
   const [claimed, setClaimed] = useState(false)
 
-  // Idle sway before play
+  // 1) Load Farcaster user context on mount
   useEffect(() => {
-    setAnim("idle")
+    ;(async () => {
+      try {
+        const { sdk } = await import("@farcaster/miniapp-sdk")
+        const ctx = await sdk.context
+        if (ctx?.user) setFarcasterUser(ctx.user)
+      } catch (e) {
+        console.error("Farcaster context error:", e)
+      }
+    })()
+  }, [])
+
+  // 2) reset anim when stage changes
+  useEffect(() => {
+    if (stage === "home") setAnim("idle")
   }, [stage])
 
-  const handleDirection = (dir: "kick"|"punch"|"push") => {
+  const handleDirection = (dir: "kick" | "punch" | "push") => {
     setAnim(dir)
-    setHits(h => Math.min(h+1, 20))
+    setHits(h => Math.min(h + 1, 20))
   }
 
   const handleClaim = async () => {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/claim`, {
-      method: "POST",
-      headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({ address }),
-    })
-    if (res.ok) setClaimed(true)
+    if (!address) return
+    try {
+      await writeContractAsync({
+        abi: chogPunchABI,
+        address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS!,
+        functionName: "submitScore",
+        args: [20],
+      })
+      // backend picks up UserEligible event and sends 1 MON
+      setClaimed(true)
+    } catch (e) {
+      console.error("Claim tx failed:", e)
+    }
   }
 
+  // If Farcaster context not loaded yet, show nothing (Farcaster will hide splash for us)
+  if (farcasterUser === null) return null
+
   return (
-    <div className="min-h-screen bg-cover bg-center" style={{ backgroundImage: "url('/gym-bg.png')" }}>
-      {/* Back button */}
-      {stage==="play" && (
+    <div
+      className="min-h-screen bg-cover bg-center relative"
+      style={{ backgroundImage: "url('/gym-bg.png')" }}
+    >
+      {/* Top-left back */}
+      {stage === "play" && (
         <button
-          className="absolute top-4 left-4 bg-white/50 text-black px-3 py-1 rounded"
+          className="absolute top-4 left-4 bg-white/60 text-black px-2 py-1 rounded"
           onClick={() => setStage("home")}
         >
           ← Back
         </button>
       )}
 
-      {/* Home Screen */}
+      {/* Home screen */}
       {stage === "home" && (
         <>
           <button
@@ -52,12 +88,20 @@ export default function Home() {
             Play
           </button>
           <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-xs text-white">
-            built by <a href="https://farcaster.xyz/doteth" className="underline">@doteth</a>
+            built by{" "}
+            <a
+              href="https://farcaster.xyz/doteth"
+              target="_blank"
+              rel="noreferrer"
+              className="underline"
+            >
+              @doteth
+            </a>
           </div>
         </>
       )}
 
-      {/* Play Screen */}
+      {/* Play screen */}
       {stage === "play" && (
         <>
           <Chog anim={anim} />
