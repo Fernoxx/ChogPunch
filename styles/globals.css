@@ -2,10 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  background-color: #F3E8FF;
-}
-
 /* Custom animations for CHOG GYM */
 @keyframes breathing {
   0%, 100% { transform: scale(1); }

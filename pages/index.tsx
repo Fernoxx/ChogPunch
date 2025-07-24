@@ -29,7 +29,6 @@ export default function Page() {
 function ChogGym() {
   const { address, isConnected } = useAccount()
   const { connect, connectors, isPending } = useConnect()
-  const { disconnect } = useDisconnect()
   
   const [gameState, setGameState] = useState<'home' | 'playing'>('home')
   const [hitCount, setHitCount] = useState(0)
@@ -49,7 +48,6 @@ function ChogGym() {
     if (gameState === 'playing') {
       const interval = setInterval(() => {
         if (chogAnimation === 'idle') {
-          setChogAnimation('idle')
           setBagAnimation('swing')
           setTimeout(() => setBagAnimation('idle'), 500)
         }
@@ -70,12 +68,10 @@ function ChogGym() {
     setBagAnimation('swing')
     setHitCount(prev => prev + 1)
     
-    // Clear previous timeout
     if (animationTimeoutRef.current) {
       clearTimeout(animationTimeoutRef.current)
     }
     
-    // Reset animations after delay
     animationTimeoutRef.current = setTimeout(() => {
       setChogAnimation('idle')
       setBagAnimation('idle')
@@ -98,7 +94,6 @@ function ChogGym() {
         const deltaX = clientX - centerX
         const deltaY = clientY - centerY
         
-        // Limit movement within joystick bounds
         const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY)
         const maxDistance = 30
         
@@ -107,7 +102,6 @@ function ChogGym() {
         
         setJoystickPosition({ x: limitedX, y: limitedY })
         
-        // Determine action based on position (only trigger once per movement)
         if (Math.abs(limitedY) > Math.abs(limitedX)) {
           if (limitedY < -15 && actionText !== 'KICK') {
             setActionText('KICK')
@@ -135,17 +129,13 @@ function ChogGym() {
       document.removeEventListener('touchend', handleEnd)
     }
     
-    // Initial position
     handleMove(e as any)
     
-    // Add event listeners
     document.addEventListener('mousemove', handleMove)
     document.addEventListener('mouseup', handleEnd)
     document.addEventListener('touchmove', handleMove, { passive: false })
     document.addEventListener('touchend', handleEnd)
   }
-
-
 
   const handleClaim = async () => {
     if (!address) return
@@ -171,6 +161,7 @@ function ChogGym() {
     }
   }
 
+  // Connection screen
   if (!isConnected) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-purple-900 via-purple-800 to-purple-900 flex flex-col items-center justify-center p-4">
@@ -195,27 +186,31 @@ function ChogGym() {
     )
   }
 
+  // Home screen
   if (gameState === 'home') {
     return (
       <div className="min-h-screen bg-gradient-to-b from-purple-900 via-purple-800 to-purple-900 relative overflow-hidden">
         {/* Brick wall pattern */}
         <div className="absolute inset-0 opacity-20">
-          <div className="w-full h-full" style={{
-            backgroundImage: `repeating-linear-gradient(
-              0deg,
-              transparent,
-              transparent 20px,
-              rgba(0,0,0,0.1) 20px,
-              rgba(0,0,0,0.1) 22px
-            ),
-            repeating-linear-gradient(
-              90deg,
-              transparent,
-              transparent 40px,
-              rgba(0,0,0,0.1) 40px,
-              rgba(0,0,0,0.1) 42px
-            )`
-          }} />
+          <div 
+            className="w-full h-full" 
+            style={{
+              backgroundImage: `repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 20px,
+                rgba(0,0,0,0.1) 20px,
+                rgba(0,0,0,0.1) 22px
+              ),
+              repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 40px,
+                rgba(0,0,0,0.1) 40px,
+                rgba(0,0,0,0.1) 42px
+              )`
+            }} 
+          />
         </div>
 
         {/* CHOG GYM Title */}
@@ -228,33 +223,31 @@ function ChogGym() {
         {/* Main character and punching bag */}
         <div className="flex items-center justify-center h-screen relative">
           {/* CHOG Character */}
-          <div className={`relative transition-transform duration-300 ${
-            chogAnimation === 'punch' ? 'animate-pulse scale-110' : 
-            chogAnimation === 'kick' ? 'animate-bounce' : 
-            chogAnimation === 'push' ? 'translate-x-2' : ''
-          }`}>
+          <div className="relative">
             {/* Character body */}
             <div className="relative w-32 h-40">
-              {/* Hair */}
-              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-20 h-16 bg-purple-600 rounded-t-full" 
-                   style={{clipPath: 'polygon(20% 0%, 80% 0%, 100% 60%, 70% 100%, 30% 100%, 0% 60%)'}} />
+              {/* Hair - spiky purple */}
+              <div 
+                className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-20 h-16 bg-purple-600 rounded-t-full" 
+                style={{clipPath: 'polygon(20% 0%, 80% 0%, 100% 60%, 70% 100%, 30% 100%, 0% 60%)'}} 
+              />
               
               {/* Face */}
               <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-16 h-16 bg-yellow-100 rounded-full border-2 border-black">
                 {/* Eyes */}
                 <div className="absolute top-4 left-3 w-3 h-3 bg-black rounded-full" />
                 <div className="absolute top-4 right-3 w-3 h-3 bg-black rounded-full" />
-                {/* Eyebrows */}
+                {/* Angry eyebrows */}
                 <div className="absolute top-2 left-2 w-4 h-1 bg-black transform -rotate-12" />
                 <div className="absolute top-2 right-2 w-4 h-1 bg-black transform rotate-12" />
-                {/* Mouth */}
+                {/* Small mouth */}
                 <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-2 h-1 bg-red-500 rounded-full" />
                 {/* Blush */}
                 <div className="absolute top-6 left-1 w-2 h-2 bg-red-300 rounded-full opacity-60" />
                 <div className="absolute top-6 right-1 w-2 h-2 bg-red-300 rounded-full opacity-60" />
               </div>
 
-              {/* Body */}
+              {/* Body - Orange gym shirt */}
               <div className="absolute top-12 left-1/2 transform -translate-x-1/2 w-20 h-16 bg-orange-500 rounded-lg">
                 <div className="text-center text-white font-bold text-xs pt-2">
                   CHOG<br/>GYM
@@ -265,38 +258,39 @@ function ChogGym() {
               <div className="absolute top-14 -left-2 w-6 h-12 bg-yellow-100 rounded-full border-2 border-black" />
               <div className="absolute top-14 -right-2 w-6 h-12 bg-yellow-100 rounded-full border-2 border-black" />
               
-              {/* Boxing gloves */}
+              {/* Boxing gloves - red */}
               <div className="absolute top-12 -left-4 w-8 h-8 bg-red-500 rounded-full border-2 border-black" />
               <div className="absolute top-12 -right-4 w-8 h-8 bg-red-500 rounded-full border-2 border-black" />
 
-              {/* Shorts */}
+              {/* Shorts - black */}
               <div className="absolute top-24 left-1/2 transform -translate-x-1/2 w-16 h-8 bg-black rounded-lg" />
 
-                             {/* Legs */}
-               <div className="absolute left-2 w-5 h-12 bg-yellow-100 rounded-full border-2 border-black" style={{top: '120px'}} />
-               <div className="absolute right-2 w-5 h-12 bg-yellow-100 rounded-full border-2 border-black" style={{top: '120px'}} />
+              {/* Legs */}
+              <div className="absolute left-2 w-5 h-12 bg-yellow-100 rounded-full border-2 border-black" style={{top: '120px'}} />
+              <div className="absolute right-2 w-5 h-12 bg-yellow-100 rounded-full border-2 border-black" style={{top: '120px'}} />
 
-              {/* Shoes */}
+              {/* Shoes - red */}
               <div className="absolute bottom-0 left-1 w-8 h-4 bg-red-500 rounded-full border-2 border-black" />
               <div className="absolute bottom-0 right-1 w-8 h-4 bg-red-500 rounded-full border-2 border-black" />
             </div>
           </div>
 
           {/* Punching Bag */}
-          <div className={`ml-16 relative transition-transform duration-300 ${
-            bagAnimation === 'swing' ? 'animate-swing' : ''
-          }`}>
+          <div className="ml-16 relative">
             {/* Chain */}
             <div className="absolute -top-20 left-1/2 transform -translate-x-1/2">
               <div className="w-1 h-20 bg-gray-600 relative">
                 {[...Array(10)].map((_, i) => (
-                  <div key={i} className="absolute w-3 h-2 bg-gray-500 border border-gray-700 rounded-sm" 
-                       style={{top: `${i * 2}px`, left: '-1px'}} />
+                  <div 
+                    key={i} 
+                    className="absolute w-3 h-2 bg-gray-500 border border-gray-700 rounded-sm" 
+                    style={{top: `${i * 2}px`, left: '-1px'}} 
+                  />
                 ))}
               </div>
             </div>
             
-            {/* Bag */}
+            {/* Bag - red */}
             <div className="w-24 h-32 bg-red-500 rounded-lg border-4 border-red-600 relative shadow-lg">
               <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-16 h-2 bg-red-600 rounded" />
               <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-16 h-2 bg-red-600 rounded" />
@@ -336,22 +330,25 @@ function ChogGym() {
     <div className="min-h-screen bg-gradient-to-b from-purple-900 via-purple-800 to-purple-900 relative overflow-hidden">
       {/* Brick wall pattern */}
       <div className="absolute inset-0 opacity-20">
-        <div className="w-full h-full" style={{
-          backgroundImage: `repeating-linear-gradient(
-            0deg,
-            transparent,
-            transparent 20px,
-            rgba(0,0,0,0.1) 20px,
-            rgba(0,0,0,0.1) 22px
-          ),
-          repeating-linear-gradient(
-            90deg,
-            transparent,
-            transparent 40px,
-            rgba(0,0,0,0.1) 40px,
-            rgba(0,0,0,0.1) 42px
-          )`
-        }} />
+        <div 
+          className="w-full h-full" 
+          style={{
+            backgroundImage: `repeating-linear-gradient(
+              0deg,
+              transparent,
+              transparent 20px,
+              rgba(0,0,0,0.1) 20px,
+              rgba(0,0,0,0.1) 22px
+            ),
+            repeating-linear-gradient(
+              90deg,
+              transparent,
+              transparent 40px,
+              rgba(0,0,0,0.1) 40px,
+              rgba(0,0,0,0.1) 42px
+            )`
+          }} 
+        />
       </div>
 
       {/* Back button */}
@@ -376,22 +373,24 @@ function ChogGym() {
 
       {/* Main character and punching bag */}
       <div className="flex items-center justify-center h-screen relative">
-        {/* CHOG Character - Same as home but with gasping animation */}
+        {/* CHOG Character with animations */}
         <div className={`relative transition-transform duration-300 ${
           chogAnimation === 'punch' ? 'animate-pulse scale-110 translate-x-2' : 
           chogAnimation === 'kick' ? 'animate-bounce -translate-y-2' : 
           chogAnimation === 'push' ? 'translate-x-4 scale-105' : 
           'animate-breathing'
         }`}>
-          {/* Same character structure as home */}
+          {/* Same character structure as home but with dynamic expressions */}
           <div className="relative w-32 h-40">
             {/* Hair */}
-            <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-20 h-16 bg-purple-600 rounded-t-full" 
-                 style={{clipPath: 'polygon(20% 0%, 80% 0%, 100% 60%, 70% 100%, 30% 100%, 0% 60%)'}} />
+            <div 
+              className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-20 h-16 bg-purple-600 rounded-t-full" 
+              style={{clipPath: 'polygon(20% 0%, 80% 0%, 100% 60%, 70% 100%, 30% 100%, 0% 60%)'}} 
+            />
             
-            {/* Face with expressions */}
+            {/* Face with dynamic expressions */}
             <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-16 h-16 bg-yellow-100 rounded-full border-2 border-black">
-              {/* Eyes - change based on action */}
+              {/* Eyes - squint when fighting */}
               <div className={`absolute top-4 left-3 w-3 h-3 bg-black rounded-full transition-transform ${
                 chogAnimation !== 'idle' ? 'scale-75' : ''
               }`} />
@@ -424,7 +423,7 @@ function ChogGym() {
               </div>
             </div>
 
-            {/* Arms - move based on action */}
+            {/* Arms with action-based movement */}
             <div className={`absolute top-14 w-6 h-12 bg-yellow-100 rounded-full border-2 border-black transition-transform ${
               chogAnimation === 'punch' ? '-left-6 -rotate-45' : 
               chogAnimation === 'push' ? '-left-4 rotate-12' : 
@@ -451,11 +450,11 @@ function ChogGym() {
             {/* Shorts */}
             <div className="absolute top-24 left-1/2 transform -translate-x-1/2 w-16 h-8 bg-black rounded-lg" />
 
-                         {/* Legs - kick animation */}
-             <div className={`absolute left-2 w-5 h-12 bg-yellow-100 rounded-full border-2 border-black transition-transform ${
-               chogAnimation === 'kick' ? 'rotate-45 translate-x-2' : ''
-             }`} style={{top: '120px'}} />
-             <div className="absolute right-2 w-5 h-12 bg-yellow-100 rounded-full border-2 border-black" style={{top: '120px'}} />
+            {/* Legs with kick animation */}
+            <div className={`absolute left-2 w-5 h-12 bg-yellow-100 rounded-full border-2 border-black transition-transform ${
+              chogAnimation === 'kick' ? 'rotate-45 translate-x-2' : ''
+            }`} style={{top: '120px'}} />
+            <div className="absolute right-2 w-5 h-12 bg-yellow-100 rounded-full border-2 border-black" style={{top: '120px'}} />
 
             {/* Shoes */}
             <div className={`absolute bottom-0 left-1 w-8 h-4 bg-red-500 rounded-full border-2 border-black transition-transform ${
@@ -465,7 +464,7 @@ function ChogGym() {
           </div>
         </div>
 
-        {/* Punching Bag with enhanced swing animation */}
+        {/* Punching Bag with swing animation */}
         <div className={`ml-16 relative transition-transform duration-500 ${
           bagAnimation === 'swing' ? 
             chogAnimation === 'punch' ? 'animate-swing-hard rotate-12' :
@@ -478,8 +477,11 @@ function ChogGym() {
           <div className="absolute -top-20 left-1/2 transform -translate-x-1/2">
             <div className="w-1 h-20 bg-gray-600 relative">
               {[...Array(10)].map((_, i) => (
-                <div key={i} className="absolute w-3 h-2 bg-gray-500 border border-gray-700 rounded-sm" 
-                     style={{top: `${i * 2}px`, left: '-1px'}} />
+                <div 
+                  key={i} 
+                  className="absolute w-3 h-2 bg-gray-500 border border-gray-700 rounded-sm" 
+                  style={{top: `${i * 2}px`, left: '-1px'}} 
+                />
               ))}
             </div>
           </div>
@@ -509,14 +511,14 @@ function ChogGym() {
         </div>
       )}
 
-             {/* Joystick Control */}
-       <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2">
-         <div 
-           ref={joystickRef}
-           className="relative w-20 h-20 bg-gray-700 rounded-full border-4 border-gray-600 shadow-lg joystick-container"
-           onMouseDown={handleJoystickStart}
-           onTouchStart={handleJoystickStart}
-         >
+      {/* Joystick Control */}
+      <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2">
+        <div 
+          ref={joystickRef}
+          className="relative w-20 h-20 bg-gray-700 rounded-full border-4 border-gray-600 shadow-lg joystick-container"
+          onMouseDown={handleJoystickStart}
+          onTouchStart={handleJoystickStart}
+        >
           <div 
             className={`absolute w-8 h-8 bg-orange-500 rounded-full border-2 border-orange-600 transition-transform duration-100 ${
               joystickActive ? 'scale-110' : ''
