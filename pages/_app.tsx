@@ -1,35 +1,47 @@
+// pages/_app.tsx
 import "../styles/globals.css"
+import type { AppProps } from "next/app"
+import { useEffect } from "react"
 import { WagmiConfig, createConfig } from "wagmi"
 import { base } from "wagmi/chains"
-import { farcasterMiniApp } from "@farcaster/miniapp-wagmi-connector"
+import { InjectedConnector } from "wagmi/connectors/injected"
 import { createPublicClient, http } from "viem"
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 
-const publicClient = createPublicClient({
-  chain: base,
-  transport: http(process.env.NEXT_PUBLIC_ALCHEMY_URL!),
-})
+export default function App({ Component, pageProps }: AppProps) {
+  useEffect(() => {
+    ;(async () => {
+      try {
+        const { sdk } = await import("@farcaster/miniapp-sdk")
+        await sdk.actions.ready()
+      } catch (e) {
+        console.error("Farcaster SDK ready error:", e)
+      }
+    })()
+  }, [])
 
-const config = createConfig({
-  autoConnect: true,
-  publicClient,
-  connectors: farcasterMiniApp({
-    enableFarcaster: true,
-    enableCoinbase: true,
-    enableInjected: false,
-    enableWalletConnect: false,
-    enableRainbow: false
-  }),
-})
+  const publicClient = createPublicClient({
+    chain: base,
+    transport: http(process.env.NEXT_PUBLIC_ALCHEMY_URL!),
+  })
 
-const queryClient = new QueryClient()
+  const farcasterConnector = new InjectedConnector({
+    chains: [base],
+    options: {
+      name: "Farcaster",
+      getProvider: () =>
+        typeof window !== "undefined" ? (window as any).farcaster : null,
+    },
+  })
 
-export default function App({ Component, pageProps }: any) {
+  const config = createConfig({
+    autoConnect: true,
+    publicClient,
+    connectors: [farcasterConnector],
+  })
+
   return (
     <WagmiConfig config={config}>
-      <QueryClientProvider client={queryClient}>
-        <Component {...pageProps} />
-      </QueryClientProvider>
+      <Component {...pageProps} />
     </WagmiConfig>
   )
 }
