@@ -1,5 +1,4 @@
-# Write pages/index.tsx
-index_tsx = """import { useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { useAccount } from "wagmi"
 import { ConnectButton } from "@rainbow-me/rainbowkit"
 import ChogFighter from "@/components/ChogFighter"
@@ -49,7 +48,4 @@ export default function Home() {
         </button>
       )}
     </div>
-) }"""
-
-with open("/mnt/data/chogpunch-frontend/pages/index.tsx", "w") as f:
-    f.write(index_tsx)
+) }
