@@ -2,4 +2,38 @@
 @tailwind components;
 @tailwind utilities;
 
-/* no extra overrides needed – animations live in tailwind.config.js */
+/* Animations */
+@layer utilities {
+  .animate-sway {
+    animation: sway 2s ease-in-out infinite;
+  }
+  .animate-kick {
+    animation: kick 0.5s ease-in-out;
+  }
+  .animate-punch {
+    animation: punch 0.5s ease-in-out;
+  }
+  .animate-push {
+    animation: push 0.5s ease-in-out;
+  }
+
+  @keyframes sway {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+  @keyframes kick {
+    0%   { transform: rotate(0deg); }
+    50%  { transform: rotate(-20deg) scale(1.1); }
+    100% { transform: rotate(0deg); }
+  }
+  @keyframes punch {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.2) translateX(10px); }
+    100% { transform: scale(1); }
+  }
+  @keyframes push {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.1) translateX(-10px); }
+    100% { transform: scale(1); }
+  }
+}

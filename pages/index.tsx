@@ -1,120 +1,77 @@
 // pages/index.tsx
-import { useEffect, useState } from "react"
-import { useAccount, useWriteContract } from "wagmi"
-import { base } from "wagmi/chains"
-import Chog from "@/components/Chog"
-import PunchingBag from "@/components/PunchingBag"
-import Joystick from "@/components/Joystick"
-import chogPunchABI from "@/lib/chogPunchABI.json"
+import { useState } from "react"
 
 export default function Home() {
-  const { address, isConnected } = useAccount()
-  const { writeContractAsync } = useWriteContract()
-  const [farcasterUser, setFarcasterUser] = useState<{
-    fid: number
-    username?: string
-    displayName?: string
-    pfpUrl?: string
-  } | null>(null)
-
   const [stage, setStage] = useState<"home" | "play">("home")
   const [hits, setHits] = useState(0)
-  const [anim, setAnim] = useState<"idle" | "kick" | "punch" | "push">("idle")
-  const [claimed, setClaimed] = useState(false)
-
-  // 1) Load Farcaster user context on mount
-  useEffect(() => {
-    ;(async () => {
-      try {
-        const { sdk } = await import("@farcaster/miniapp-sdk")
-        const ctx = await sdk.context
-        if (ctx?.user) setFarcasterUser(ctx.user)
-      } catch (e) {
-        console.error("Farcaster context error:", e)
-      }
-    })()
-  }, [])
-
-  // 2) reset anim when stage changes
-  useEffect(() => {
-    if (stage === "home") setAnim("idle")
-  }, [stage])
-
-  const handleDirection = (dir: "kick" | "punch" | "push") => {
-    setAnim(dir)
-    setHits(h => Math.min(h + 1, 20))
-  }
 
   const handleClaim = async () => {
-    if (!address) return
-    try {
-      await writeContractAsync({
-        abi: chogPunchABI,
-        address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS! as `0x${string}`,
-        chain: base,
-        account: address,
-        functionName: "submitScore",
-        args: [20],
-      })
-      // backend picks up UserEligible event and sends 1 MON
-      setClaimed(true)
-    } catch (e) {
-      console.error("Claim tx failed:", e)
-    }
+    console.log("Claiming reward...")
+    alert("Claimed 1 MON!")
   }
-
-  // If Farcaster context not loaded yet, show nothing (Farcaster will hide splash for us)
-  if (farcasterUser === null) return null
 
   return (
     <div
-      className="min-h-screen bg-cover bg-center relative"
-      style={{ backgroundImage: "url('/gym-bg.png')" }}
+      className="relative w-screen h-screen overflow-hidden"
+      style={{
+        background: `url('/gym-bg.png') center/cover no-repeat`,
+      }}
     >
-      {/* Top-left back */}
-      {stage === "play" && (
-        <button
-          className="absolute top-4 left-4 bg-white/60 text-black px-2 py-1 rounded"
-          onClick={() => setStage("home")}
-        >
-          ← Back
-        </button>
-      )}
-
-      {/* Home screen */}
+      {/* Home Screen */}
       {stage === "home" && (
         <>
           <button
-            className="absolute inset-0 m-auto w-32 h-12 bg-white text-black font-bold rounded"
             onClick={() => setStage("play")}
+            className="absolute inset-0 m-auto w-32 h-12 bg-white text-black font-bold rounded text-lg flex items-center justify-center"
           >
             Play
           </button>
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-xs text-white">
-            built by{" "}
-            <a
-              href="https://farcaster.xyz/doteth"
-              target="_blank"
-              rel="noreferrer"
-              className="underline"
-            >
-              @doteth
-            </a>
-          </div>
+
+          <a
+            href="https://farcaster.xyz/doteth"
+            target="_blank"
+            rel="noreferrer"
+            className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-xs text-white underline"
+          >
+            built by @doteth
+          </a>
         </>
       )}
 
-      {/* Play screen */}
+      {/* Play Screen */}
       {stage === "play" && (
         <>
-          <Chog anim={anim} />
-          <PunchingBag anim={anim} />
-          <Joystick onDirection={handleDirection} />
+          {/* Back button */}
+          <button
+            onClick={() => setStage("home")}
+            className="absolute top-4 left-4 bg-black/60 text-white px-3 py-1 rounded"
+          >
+            ← Back
+          </button>
 
-          {hits >= 20 && !claimed && (
+          {/* Simple character */}
+          <div className="absolute left-12 bottom-12 w-48 h-48 bg-blue-500 rounded-full flex items-center justify-center text-white text-6xl">
+            🥊
+          </div>
+
+          {/* Simple punching bag */}
+          <div className="absolute right-12 top-20 w-32 h-64 bg-red-500 rounded-lg flex items-center justify-center text-white text-4xl">
+            🥊
+          </div>
+
+          {/* Punch button */}
+          <button
+            onClick={() => setHits(h => Math.min(h + 1, 20))}
+            className="absolute bottom-16 right-16 w-32 h-32 bg-yellow-500 rounded-full text-black font-bold text-lg"
+          >
+            PUNCH<br/>({hits}/20)
+          </button>
+
+          {/* Claim button */}
+          {hits >= 20 && (
             <button
-              className="absolute inset-0 m-auto w-40 h-12 bg-green-600 text-white font-bold rounded"
               onClick={handleClaim}
+              className="absolute inset-0 m-auto w-40 h-12 bg-green-600 text-white font-bold rounded text-lg flex items-center justify-center"
             >
               Claim 1 MON
             </button>

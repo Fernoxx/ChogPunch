@@ -1,33 +1,41 @@
-import { useState } from "react"
+// components/Joystick.tsx
+import React, { useState } from "react"
 
-export default function Joystick({ onDirection }: { onDirection: (dir: "kick" | "punch" | "push") => void }) {
+interface Props {
+  onDirection: (dir: "kick" | "punch" | "push") => void
+}
+
+export default function Joystick({ onDirection }: Props) {
   const [pos, setPos] = useState({ x: 0, y: 0 })
 
   const handleMove = (e: React.TouchEvent) => {
+    const rc = e.currentTarget.getBoundingClientRect()
     const touch = e.touches[0]
-    const bounds = e.currentTarget.getBoundingClientRect()
-    const x = touch.clientX - bounds.left - 40
-    const y = touch.clientY - bounds.top - 40
+    const x = touch.clientX - rc.left - rc.width / 2
+    const y = touch.clientY - rc.top - rc.height / 2
     setPos({ x, y })
 
-    const dx = x - 40
-    const dy = y - 40
-    const angle = Math.atan2(dy, dx) * 180 / Math.PI
-
-    if (angle >= -135 && angle <= -45) onDirection("kick") // Up = kick
-    else if (angle >= -180 && angle <= -135 || angle >= 135) onDirection("push") // Left = push
-    else if (angle >= -45 && angle <= 45) onDirection("punch") // Right = punch
+    const angle = (Math.atan2(y, x) * 180) / Math.PI
+    if (angle >= -135 && angle <= -45) {
+      onDirection("kick")
+    } else if (angle <= -135 || angle >= 135) {
+      onDirection("push")
+    } else if (angle >= -45 && angle <= 45) {
+      onDirection("punch")
+    }
   }
 
-  const reset = () => setPos({ x: 0, y: 0 })
+  const handleEnd = () => setPos({ x: 0, y: 0 })
 
   return (
-    <div className="absolute bottom-20 right-12 w-40 h-40 rounded-full bg-white/20">
+    <div className="absolute bottom-16 right-16 w-32 h-32 bg-black/20 rounded-full">
       <div
-        className="w-20 h-20 bg-white rounded-full absolute"
-        style={{ transform: `translate(${pos.x}px, ${pos.y}px)` }}
         onTouchMove={handleMove}
-        onTouchEnd={reset}
+        onTouchEnd={handleEnd}
+        className="w-16 h-16 bg-white rounded-full absolute"
+        style={{
+          transform: `translate(${pos.x}px, ${pos.y}px)`,
+        }}
       />
     </div>
   )

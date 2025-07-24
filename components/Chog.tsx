@@ -1,5 +1,5 @@
-import Image from "next/image"
-import { useEffect, useState } from "react"
+// components/Chog.tsx
+import React from "react"
 
 export type ChogAnim = "idle" | "kick" | "punch" | "push"
 
@@ -8,23 +8,20 @@ interface Props {
 }
 
 export default function Chog({ anim }: Props) {
-  // you could swap images per anim if you have separate frames
+  const cls =
+    anim === "idle"
+      ? "animate-sway"
+      : anim === "kick"
+      ? "animate-kick"
+      : anim === "punch"
+      ? "animate-punch"
+      : "animate-push"
+
   return (
-    <div className="absolute left-12 bottom-12 w-48 h-48">
-      <div className={
-        anim === "idle"  ? "animate-sway" :
-        anim === "kick"  ? "animate-kick" :
-        anim === "punch" ? "animate-punch" :
-        "animate-push"
-      }>
-        <Image
-          src="/chog.png"
-          alt="Chog"
-          width={192}
-          height={192}
-          priority
-        />
-      </div>
-    </div>
+    <img
+      src="/chog.png"
+      alt="Chog Fighter"
+      className={`absolute left-12 bottom-12 w-48 h-48 ${cls}`}
+    />
   )
 }

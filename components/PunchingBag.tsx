@@ -1,27 +1,22 @@
-import Image from "next/image"
-import { ChogAnim } from "./Chog"
+// components/PunchingBag.tsx
+import React from "react"
 import clsx from "clsx"
+import { ChogAnim } from "./Chog"
 
 interface Props {
   anim: ChogAnim
 }
 
 export default function PunchingBag({ anim }: Props) {
-  return (
-    <div className="absolute right-12 top-20 w-32 h-64">
-      <div className={clsx(
-        anim === "idle"   && "animate-sway",
-        anim === "punch"  && "animate-punch",
-        anim === "kick"   && "animate-kick",
-        anim === "push"   && "animate-push"
-      )}>
-        <Image
-          src="/punching-bag.png"
-          alt="Punching Bag"
-          width={128}
-          height={256}
-        />
-      </div>
-    </div>
+  const cls = clsx(
+    "absolute right-12 top-20 w-32 h-64",
+    {
+      "animate-sway": anim === "idle",
+      "animate-punch": anim === "punch",
+      "animate-kick": anim === "kick",
+      "animate-push": anim === "push",
+    }
   )
+
+  return <img src="/punching-bag.png" alt="Bag" className={cls} />
 }
