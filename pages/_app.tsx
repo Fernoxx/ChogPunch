@@ -1,13 +1,16 @@
 import '@/styles/globals.css'
 import type { AppProps } from 'next/app'
-import { WagmiProvider, createConfig } from 'wagmi'
+import { WagmiProvider, createConfig, http } from 'wagmi'
 import { base } from 'wagmi/chains'
 import { farcasterMiniApp } from '@farcaster/miniapp-wagmi-connector'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 const config = createConfig({
   chains: [base],
-  connectors: farcasterMiniApp(),
+  connectors: [farcasterMiniApp()],
+  transports: {
+    [base.id]: http(),
+  },
   ssr: true
 })
 
