@@ -2,10 +2,12 @@
 import "../styles/globals.css"
 import type { AppProps } from "next/app"
 import { useEffect } from "react"
-import { WagmiConfig, createConfig } from "wagmi"
+import { WagmiProvider, createConfig, http } from "wagmi"
 import { base } from "wagmi/chains"
-import { InjectedConnector } from "wagmi/connectors/injected"
-import { createPublicClient, http } from "viem"
+import { injected } from "wagmi/connectors"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+
+const queryClient = new QueryClient()
 
 export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
@@ -19,29 +21,19 @@ export default function App({ Component, pageProps }: AppProps) {
     })()
   }, [])
 
-  const publicClient = createPublicClient({
-    chain: base,
-    transport: http(process.env.NEXT_PUBLIC_ALCHEMY_URL!),
-  })
-
-  const farcasterConnector = new InjectedConnector({
+  const config = createConfig({
     chains: [base],
-    options: {
-      name: "Farcaster",
-      getProvider: () =>
-        typeof window !== "undefined" ? (window as any).farcaster : null,
+    connectors: [injected()],
+    transports: {
+      [base.id]: http(process.env.NEXT_PUBLIC_ALCHEMY_URL),
     },
   })
 
-  const config = createConfig({
-    autoConnect: true,
-    publicClient,
-    connectors: [farcasterConnector],
-  })
-
   return (
-    <WagmiConfig config={config}>
-      <Component {...pageProps} />
-    </WagmiConfig>
+    <WagmiProvider config={config}>
+      <QueryClientProvider client={queryClient}>
+        <Component {...pageProps} />
+      </QueryClientProvider>
+    </WagmiProvider>
   )
 }

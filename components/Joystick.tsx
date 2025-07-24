@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-export default function Joystick({ onDirection }: { onDirection: () => void }) {
+export default function Joystick({ onDirection }: { onDirection: (dir: "kick" | "punch" | "push") => void }) {
   const [pos, setPos] = useState({ x: 0, y: 0 })
 
   const handleMove = (e: React.TouchEvent) => {
@@ -14,9 +14,9 @@ export default function Joystick({ onDirection }: { onDirection: () => void }) {
     const dy = y - 40
     const angle = Math.atan2(dy, dx) * 180 / Math.PI
 
-    if (angle >= -135 && angle <= -45) onDirection() // Up = kick
-    else if (angle >= -180 && angle <= -135 || angle >= 135) onDirection() // Left = push
-    else if (angle >= -45 && angle <= 45) onDirection() // Right = punch
+    if (angle >= -135 && angle <= -45) onDirection("kick") // Up = kick
+    else if (angle >= -180 && angle <= -135 || angle >= 135) onDirection("push") // Left = push
+    else if (angle >= -45 && angle <= 45) onDirection("punch") // Right = punch
   }
 
   const reset = () => setPos({ x: 0, y: 0 })

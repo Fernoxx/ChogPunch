@@ -1,6 +1,7 @@
 // pages/index.tsx
 import { useEffect, useState } from "react"
 import { useAccount, useWriteContract } from "wagmi"
+import { base } from "wagmi/chains"
 import Chog from "@/components/Chog"
 import PunchingBag from "@/components/PunchingBag"
 import Joystick from "@/components/Joystick"
@@ -49,7 +50,9 @@ export default function Home() {
     try {
       await writeContractAsync({
         abi: chogPunchABI,
-        address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS!,
+        address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS! as `0x${string}`,
+        chain: base,
+        account: address,
         functionName: "submitScore",
         args: [20],
       })
