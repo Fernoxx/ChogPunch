@@ -2,9 +2,10 @@
 import "../styles/globals.css"
 import type { AppProps } from "next/app"
 import { useEffect, useState } from "react"
-import { WagmiProvider } from "wagmi"
+import { WagmiProvider, createConfig, http } from "wagmi"
+import { base } from "wagmi/chains"
+import { injected, metaMask, coinbaseWallet } from "wagmi/connectors"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { createWagmiConfig } from "../utils/wagmiConfig"
 import WalletConflictHandler from "../components/WalletConflictHandler"
 import WalletErrorBoundary from "../components/ErrorBoundary"
 
@@ -23,92 +24,76 @@ const queryClient = new QueryClient({
   },
 });
 
+// Create wagmi config outside component to avoid recreation
+const createWagmiConfig = () => {
+  const connectors = [
+    injected(),
+    metaMask(),
+    coinbaseWallet({
+      appName: "ChogPunch MiniApp",
+    }),
+  ];
+
+  return createConfig({
+    chains: [base],
+    connectors,
+    transports: {
+      [base.id]: http(process.env.NEXT_PUBLIC_ALCHEMY_URL || 'https://mainnet.base.org'),
+    },
+  });
+};
+
 export default function App({ Component, pageProps }: AppProps) {
-  const [wagmiConfig, setWagmiConfig] = useState<ReturnType<typeof createWagmiConfig> | null>(null);
-  const [isClient, setIsClient] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [wagmiConfig] = useState(() => createWagmiConfig());
 
   useEffect(() => {
-    // Ensure we're on the client side before initializing wagmi
-    setIsClient(true);
-    
-    // Small delay to let wallet extensions settle
-    const timer = setTimeout(() => {
-      try {
-        const config = createWagmiConfig();
-        setWagmiConfig(config);
-      } catch (error) {
-        console.error('Error creating wagmi config:', error);
-        // Create a fallback config
-        setWagmiConfig(createWagmiConfig());
-      }
-    }, 100);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    if (!isClient) return;
+    // Set mounted to true after component mounts
+    setMounted(true);
 
     // Initialize Farcaster SDK
     const initFarcaster = async () => {
       try {
         const { sdk } = await import("@farcaster/miniapp-sdk");
         await sdk.actions.ready();
+        console.log('Farcaster SDK initialized');
       } catch (e) {
-        console.error("Farcaster SDK ready error:", e);
+        console.warn("Farcaster SDK ready error:", e);
       }
     };
 
     initFarcaster();
 
     // Add wallet conflict detection
-    const detectWalletConflicts = () => {
-      if (typeof window === 'undefined') return;
-
-      const errors = [];
-      
-      // Check for common wallet conflict errors
-      window.addEventListener('error', (event) => {
-        if (event.message?.includes('Cannot redefine property: ethereum') ||
-            event.message?.includes('Cannot set property ethereum') ||
-            event.message?.includes('ethereum provider')) {
-          errors.push(event.message);
-          
-          // Prevent the error from propagating
-          event.preventDefault();
-          event.stopPropagation();
-          
-          console.warn('Wallet provider conflict detected:', event.message);
-          console.info('This is likely due to multiple wallet extensions being installed. The app should still function normally.');
-        }
-      });
-
-      // Check for unhandled promise rejections related to wallets
-      window.addEventListener('unhandledrejection', (event) => {
-        if (event.reason?.message?.includes('ethereum') ||
-            event.reason?.message?.includes('wallet')) {
-          console.warn('Wallet-related promise rejection:', event.reason);
-          // Don't prevent default for promise rejections, just log them
-        }
-      });
+    const handleError = (event: ErrorEvent) => {
+      if (event.message?.includes('Cannot redefine property: ethereum') ||
+          event.message?.includes('Cannot set property ethereum') ||
+          event.message?.includes('ethereum provider')) {
+        event.preventDefault();
+        event.stopPropagation();
+        console.info('ℹ️ Wallet provider conflict detected - this is normal when multiple wallet extensions are installed');
+      }
     };
 
-    detectWalletConflicts();
-  }, [isClient]);
+    const handleRejection = (event: PromiseRejectionEvent) => {
+      if (event.reason?.message?.includes('ethereum') ||
+          event.reason?.message?.includes('wallet')) {
+        console.info('ℹ️ Wallet-related promise rejection handled');
+      }
+    };
 
-  // Show loading state while wagmi config is being created
-  if (!isClient || !wagmiConfig) {
-    return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '100vh',
-        fontFamily: 'system-ui, sans-serif'
-      }}>
-        <div>Loading...</div>
-      </div>
-    );
+    window.addEventListener('error', handleError);
+    window.addEventListener('unhandledrejection', handleRejection);
+
+    return () => {
+      window.removeEventListener('error', handleError);
+      window.removeEventListener('unhandledrejection', handleRejection);
+    };
+  }, []);
+
+  // Don't render anything until mounted to avoid hydration issues
+  if (!mounted) {
+    return null;
   }
 
   return (
