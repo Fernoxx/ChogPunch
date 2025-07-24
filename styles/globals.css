@@ -2,6 +2,4 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  background-color: #F3E8FF;
-}
+/* no extra overrides needed – animations live in tailwind.config.js */
