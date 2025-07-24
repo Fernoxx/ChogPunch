@@ -1,125 +1,55 @@
-import { useEffect, useState } from "react"
-import { useAccount, useConnect, useDisconnect } from "wagmi"
-import { farcasterMiniApp } from "@farcaster/miniapp-wagmi-connector"
-import { createConfig, WagmiProvider, http } from "wagmi"
-import { base } from "wagmi/chains"
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import Image from "next/image"
+# Write pages/index.tsx
+index_tsx = """import { useEffect, useState } from "react"
+import { useAccount } from "wagmi"
+import { ConnectButton } from "@rainbow-me/rainbowkit"
+import ChogFighter from "@/components/ChogFighter"
+import Joystick from "@/components/Joystick"
 
-const queryClient = new QueryClient()
-
-const config = createConfig({
-  chains: [base],
-  connectors: [farcasterMiniApp()],
-  transports: {
-    [base.id]: http(),
-  },
-  ssr: true,
-})
-
-export default function Page() {
-  return (
-    <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>
-        <Main />
-      </QueryClientProvider>
-    </WagmiProvider>
-  )
-}
-
-function Main() {
+export default function Home() {
   const { address, isConnected } = useAccount()
-  const { connect, connectors, isPending } = useConnect()
-  const { disconnect } = useDisconnect()
-
-  const [eligible, setEligible] = useState(false)
+  const [hits, setHits] = useState(0)
+  const [showJoystick, setShowJoystick] = useState(false)
   const [claimed, setClaimed] = useState(false)
 
-  useEffect(() => {
-    const checkEligibility = async () => {
-      if (!address) return
-
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/health`)
-      const data = await res.json()
-
-      // simulate: use real endpoint to check if wallet is eligible
-      const check = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/check-claim?address=${address}`)
-      const result = await check.json()
-
-      if (result?.eligible && !result?.alreadyClaimed) {
-        setEligible(true)
-      } else {
-        setEligible(false)
-        setClaimed(result?.alreadyClaimed)
-      }
-    }
-
-    checkEligibility()
-  }, [address])
+  const handleHit = () => setHits(h => Math.min(h + 1, 20))
 
   const handleClaim = async () => {
     const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/claim`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ address }),
+      headers: { "Content-Type": "application/json" }
     })
-
-    const data = await res.json()
-    if (data?.success) {
-      setClaimed(true)
-      alert("✅ MON sent to your wallet!")
-    } else {
-      alert("❌ Claim failed. Try again.")
-    }
+    if (res.ok) setClaimed(true)
   }
 
   return (
-    <div className="min-h-screen bg-[#f3e8ff] text-black flex flex-col items-center justify-center p-4 space-y-6">
-      <h1 className="text-3xl font-bold">🥊 ChogPunch Miniapp</h1>
-
-      {!isConnected && (
-        <div className="space-y-3">
-          {connectors.map((connector) => (
-            <button
-              key={connector.id}
-              onClick={() => connect({ connector })}
-              disabled={isPending}
-              className="px-4 py-2 bg-purple-600 text-white rounded"
-            >
-              Connect with {connector.name}
-            </button>
-          ))}
-        </div>
+    <div className="min-h-screen bg-cover bg-center relative" style={{ backgroundImage: "url('/gym-bg.png')" }}>
+      {!showJoystick && (
+        <button
+          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white text-black font-bold px-6 py-3 rounded"
+          onClick={() => setShowJoystick(true)}
+        >
+          Play
+        </button>
       )}
-
-      {isConnected && (
-        <>
-          <p>Connected as {address}</p>
-          <button
-            onClick={() => disconnect()}
-            className="px-4 py-2 bg-red-500 text-white rounded"
-          >
-            Disconnect
-          </button>
-
-          <div className="w-[180px] mt-6">
-            <Image src="/chog.png" alt="Chog" width={180} height={180} />
-          </div>
-
-          {claimed ? (
-            <p className="text-green-700 font-semibold">✅ MON Already Claimed</p>
-          ) : eligible ? (
-            <button
-              onClick={handleClaim}
-              className="mt-4 px-6 py-3 bg-green-500 text-white rounded hover:bg-green-600"
-            >
-              Claim 1 MON
-            </button>
-          ) : (
-            <p className="text-gray-700">Punch the bag 20 times to be eligible</p>
-          )}
-        </>
+      <div className="absolute bottom-2 right-4">
+        <ConnectButton />
+      </div>
+      <div className="absolute bottom-2 left-4 text-xs text-white">
+        <a href="https://farcaster.xyz/doteth" target="_blank">built by @doteth</a>
+      </div>
+      <ChogFighter hits={hits} />
+      {showJoystick && <Joystick onDirection={handleHit} />}
+      {hits >= 20 && !claimed && (
+        <button
+          onClick={handleClaim}
+          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-green-600 text-white px-6 py-3 rounded"
+        >
+          Claim 1 MON
+        </button>
       )}
     </div>
-  )
-}
+) }"""
+
+with open("/mnt/data/chogpunch-frontend/pages/index.tsx", "w") as f:
+    f.write(index_tsx)
