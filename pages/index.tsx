@@ -36,12 +36,22 @@ export default function HomePage() {
 
       const anim = dir === "up" ? "kick" : dir === "left" ? "push" : "punch"
 
+      // Remove all animation classes
       chog.classList.remove("animate-kick", "animate-push", "animate-punch")
       bag.classList.remove("animate-sway")
 
-      void chog.offsetWidth // reset animation
+      // Force reflow to ensure classes are removed
+      void chog.offsetWidth
+      
+      // Add new animation classes
       chog.classList.add(`animate-${anim}`)
       bag.classList.add("animate-sway")
+
+      // Clear animations after they complete
+      setTimeout(() => {
+        chog.classList.remove("animate-kick", "animate-push", "animate-punch")
+        bag.classList.remove("animate-sway")
+      }, 600)
     }
   }
 
@@ -113,14 +123,19 @@ export default function HomePage() {
         </>
       )}
 
-      {mode === "play" && (
-        <>
-          <button
-            className="absolute top-4 left-4 text-white bg-black bg-opacity-50 px-3 py-1 rounded"
-            onClick={() => setMode("home")}
-          >
-            ← Back
-          </button>
+             {mode === "play" && (
+         <>
+           <button
+             className="absolute top-4 left-4 text-white bg-black bg-opacity-50 px-3 py-1 rounded"
+             onClick={() => setMode("home")}
+           >
+             ← Back
+           </button>
+
+           {/* Hit Counter */}
+           <div className="absolute top-4 right-4 text-white text-xl font-bold z-10">
+             Hits: {punchCount}/20
+           </div>
 
           <div className="absolute left-12 bottom-20">
             <div className="w-28 h-28 bg-gray-600 rounded-full relative">
