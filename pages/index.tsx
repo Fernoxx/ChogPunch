@@ -88,8 +88,6 @@ export default function Home() {
       )}
 
       {/* Play screen */}
-          <PunchingBag anim={anim} />
-          <Joystick onDirection={handleDirection} />
 
           {hits >= 20 && !claimed && (
             <button
