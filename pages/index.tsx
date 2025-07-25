@@ -11,6 +11,7 @@ export default function Home() {
     displayName?: string
     pfpUrl?: string
   } | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
 
   const [stage, setStage] = useState<"home" | "play">("home")
   const [hits, setHits] = useState(0)
@@ -20,15 +21,32 @@ export default function Home() {
 
   // Load Farcaster user context on mount
   useEffect(() => {
-    ;(async () => {
+    const loadFarcasterContext = async () => {
       try {
-        const { sdk } = await import("@farcaster/miniapp-sdk")
-        const ctx = await sdk.context
-        if (ctx?.user) setFarcasterUser(ctx.user)
+        // Only try to load Farcaster SDK if we're in a Farcaster frame
+        if (typeof window !== 'undefined' && window.location.href.includes('farcaster')) {
+          const { sdk } = await import("@farcaster/miniapp-sdk")
+          const ctx = await sdk.context
+          if (ctx?.user) {
+            setFarcasterUser(ctx.user)
+          } else {
+            // If no user context, create a mock user for testing
+            setFarcasterUser({ fid: 12345, username: "testuser", displayName: "Test User" })
+          }
+        } else {
+          // For regular browsers, create a mock user
+          setFarcasterUser({ fid: 12345, username: "testuser", displayName: "Test User" })
+        }
       } catch (e) {
         console.error("Farcaster context error:", e)
+        // Fallback: create a mock user so the app still works
+        setFarcasterUser({ fid: 12345, username: "testuser", displayName: "Test User" })
+      } finally {
+        setIsLoading(false)
       }
-    })()
+    }
+
+    loadFarcasterContext()
   }, [])
 
   // Reset animation when stage changes
@@ -71,8 +89,23 @@ export default function Home() {
     }
   }
 
-  // If Farcaster context not loaded yet, show nothing
-  if (farcasterUser === null) return null
+  // Show loading screen while initializing
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-purple-800 via-purple-900 to-purple-950 flex items-center justify-center">
+        <div className="text-white text-xl">Loading CHOG GYM...</div>
+      </div>
+    )
+  }
+
+  // Show error screen if user context failed
+  if (!farcasterUser) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-purple-800 via-purple-900 to-purple-950 flex items-center justify-center">
+        <div className="text-white text-xl">Failed to load. Please refresh the page.</div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen relative overflow-hidden">

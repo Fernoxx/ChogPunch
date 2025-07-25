@@ -1,6 +1,7 @@
 // pages/_app.tsx
 import "../styles/globals.css"
 import type { AppProps } from "next/app"
+import Head from "next/head"
 import { useEffect } from "react"
 
 export default function App({ Component, pageProps }: AppProps) {
@@ -15,5 +16,15 @@ export default function App({ Component, pageProps }: AppProps) {
     })()
   }, [])
 
-  return <Component {...pageProps} />
+  return (
+    <>
+      <Head>
+        <title>CHOG GYM - Train & Earn</title>
+        <meta name="description" content="CHOG GYM - Train your fighter and earn MON tokens!" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/favicon.svg" />
+      </Head>
+      <Component {...pageProps} />
+    </>
+  )
 }
