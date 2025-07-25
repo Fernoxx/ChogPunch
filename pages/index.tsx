@@ -88,9 +88,6 @@ export default function Home() {
       )}
 
       {/* Play screen */}
-      {stage === "play" && (
-        <>
-          <Chog anim={anim} />
           <PunchingBag anim={anim} />
           <Joystick onDirection={handleDirection} />
 
