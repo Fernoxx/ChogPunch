@@ -52,8 +52,6 @@ export default function Home() {
       })
       // backend picks up UserEligible event and sends 1 MON
       setClaimed(true)
-    } catch (e) {
-      console.error("Claim tx failed:", e)
     }
   }
 
