@@ -74,16 +74,6 @@ export default function Home() {
       )}
 
       {/* Home screen */}
-      {stage === "home" && (
-        <>
-          <button
-            className="absolute inset-0 m-auto w-32 h-12 bg-white text-black font-bold rounded"
-            onClick={() => setStage("play")}
-            >
-              @doteth
-            </a>
-        </>
-      )}
 
       {/* Play screen */}
 
