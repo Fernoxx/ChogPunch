@@ -51,7 +51,6 @@ export default function Home() {
         abi: chogPunchABI,
         address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS!,
         functionName: "submitScore",
-        args: [20],
       })
       // backend picks up UserEligible event and sends 1 MON
       setClaimed(true)
