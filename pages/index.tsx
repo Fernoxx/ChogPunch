@@ -1,14 +1,10 @@
 // pages/index.tsx
 import { useEffect, useState } from "react"
-import { useAccount, useWriteContract } from "wagmi"
 import Chog from "@/components/Chog"
 import PunchingBag from "@/components/PunchingBag"
 import Joystick from "@/components/Joystick"
-import chogPunchABI from "@/lib/chogPunchABI.json"
 
 export default function Home() {
-  const { address, isConnected } = useAccount()
-  const { writeContractAsync } = useWriteContract()
   const [farcasterUser, setFarcasterUser] = useState<{
     fid: number
     username?: string
@@ -18,8 +14,9 @@ export default function Home() {
 
   const [stage, setStage] = useState<"home" | "play">("home")
   const [hits, setHits] = useState(0)
-  const [anim, setAnim] = useState<"idle" | "kick" | "punch" | "push">("idle")
-  const [claimed, setClaimed] = useState(false)
+  const [anim, setAnim] = useState<"idle" | "kick" | "punch" | "push" | "gasping" | "homeAnimation">("idle")
+  const [showClaimButton, setShowClaimButton] = useState(false)
+  const [isClaimingInProgress, setIsClaimingInProgress] = useState(false)
 
   // Load Farcaster user context on mount
   useEffect(() => {
@@ -40,25 +37,37 @@ export default function Home() {
     if (stage === "play") setAnim("gasping") // Set gasping animation on play screen
   }, [stage])
 
+  // Show claim button when hits reach 20
+  useEffect(() => {
+    if (hits >= 20 && !showClaimButton) {
+      setShowClaimButton(true)
+    }
+  }, [hits, showClaimButton])
+
   const handleDirection = (dir: "kick" | "punch" | "push") => {
     setAnim(dir)
-    setHits(h => Math.min(h + 1, 20))
+    setHits(h => h + 1) // Remove the limit, just count hits
     // Reset to gasping after animation
     setTimeout(() => setAnim("gasping"), 500)
   }
 
   const handleClaim = async () => {
-    if (!address) return
+    if (isClaimingInProgress) return
+    
+    setIsClaimingInProgress(true)
     try {
-      await writeContractAsync({
-        abi: chogPunchABI,
-        address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS!,
-        functionName: "submitScore",
-        args: [20],
-      })
-      setClaimed(true)
+      // Simulate contract interaction
+      await new Promise(resolve => setTimeout(resolve, 2000))
+      // Hide claim button after successful transaction
+      setShowClaimButton(false)
+      // Reset hits counter
+      setHits(0)
+      alert("Successfully claimed 1 MON! (Contract integration pending)")
     } catch (e) {
       console.error("Claim tx failed:", e)
+      alert("Claim failed! Please try again.")
+    } finally {
+      setIsClaimingInProgress(false)
     }
   }
 
@@ -157,12 +166,14 @@ export default function Home() {
           <PunchingBag anim={anim} />
           <Joystick onDirection={handleDirection} />
 
-          {hits >= 20 && !claimed && (
+          {/* Claim button - appears after 20 hits */}
+          {showClaimButton && (
             <button
-              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gradient-to-b from-teal-400 to-teal-600 hover:from-teal-300 hover:to-teal-500 text-white text-xl font-bold px-8 py-4 rounded-2xl shadow-2xl transition-all duration-200 hover:scale-105 border-2 border-teal-300 z-50"
+              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gradient-to-b from-teal-400 to-teal-600 hover:from-teal-300 hover:to-teal-500 disabled:from-gray-400 disabled:to-gray-600 text-white text-xl font-bold px-8 py-4 rounded-2xl shadow-2xl transition-all duration-200 hover:scale-105 border-2 border-teal-300 z-50 disabled:cursor-not-allowed disabled:scale-100"
               onClick={handleClaim}
+              disabled={isClaimingInProgress}
             >
-              Claim 1 MON
+              {isClaimingInProgress ? "Claiming..." : "Claim 1 MON"}
             </button>
           )}
         </>
