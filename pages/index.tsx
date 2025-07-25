@@ -4,6 +4,7 @@ import { useAccount, useWriteContract } from "wagmi"
 import Chog from "@/components/Chog"
 import PunchingBag from "@/components/PunchingBag"
 import Joystick from "@/components/Joystick"
+import chogPunchABI from "@/lib/chogPunchABI.json"
 
 export default function Home() {
   const { address, isConnected } = useAccount()
@@ -18,6 +19,7 @@ export default function Home() {
   const [stage, setStage] = useState<"home" | "play">("home")
   const [hits, setHits] = useState(0)
   const [anim, setAnim] = useState<"idle" | "kick" | "punch" | "push">("idle")
+  const [claimed, setClaimed] = useState(false)
 
   // 1) Load Farcaster user context on mount
   useEffect(() => {
@@ -49,9 +51,12 @@ export default function Home() {
         abi: chogPunchABI,
         address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS!,
         functionName: "submitScore",
+        args: [20],
       })
       // backend picks up UserEligible event and sends 1 MON
       setClaimed(true)
+    } catch (e) {
+      console.error("Claim tx failed:", e)
     }
   }
 
@@ -74,8 +79,34 @@ export default function Home() {
       )}
 
       {/* Home screen */}
+      {stage === "home" && (
+        <>
+          <button
+            className="absolute inset-0 m-auto w-32 h-12 bg-white text-black font-bold rounded"
+            onClick={() => setStage("play")}
+          >
+            Play
+          </button>
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-xs text-white">
+            built by{" "}
+            <a
+              href="https://farcaster.xyz/doteth"
+              target="_blank"
+              rel="noreferrer"
+              className="underline"
+            >
+              @doteth
+            </a>
+          </div>
+        </>
+      )}
 
       {/* Play screen */}
+      {stage === "play" && (
+        <>
+          <Chog anim={anim} />
+          <PunchingBag anim={anim} />
+          <Joystick onDirection={handleDirection} />
 
           {hits >= 20 && !claimed && (
             <button
