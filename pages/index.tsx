@@ -82,16 +82,6 @@ export default function Home() {
           <button
             className="absolute inset-0 m-auto w-32 h-12 bg-white text-black font-bold rounded"
             onClick={() => setStage("play")}
-          >
-            Play
-          </button>
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-xs text-white">
-            built by{" "}
-            <a
-              href="https://farcaster.xyz/doteth"
-              target="_blank"
-              rel="noreferrer"
-              className="underline"
             >
               @doteth
             </a>
