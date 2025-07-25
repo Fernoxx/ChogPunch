@@ -1,34 +1,43 @@
 import { useState } from "react"
 
-export default function Joystick({ onDirection }: { onDirection: () => void }) {
-  const [pos, setPos] = useState({ x: 0, y: 0 })
+interface JoystickProps {
+  onMove: (action: string) => void
+  hits?: number
+}
 
-  const handleMove = (e: React.TouchEvent) => {
-    const touch = e.touches[0]
-    const bounds = e.currentTarget.getBoundingClientRect()
-    const x = touch.clientX - bounds.left - 40
-    const y = touch.clientY - bounds.top - 40
-    setPos({ x, y })
-
-    const dx = x - 40
-    const dy = y - 40
-    const angle = Math.atan2(dy, dx) * 180 / Math.PI
-
-    if (angle >= -135 && angle <= -45) onDirection() // Up = kick
-    else if (angle >= -180 && angle <= -135 || angle >= 135) onDirection() // Left = push
-    else if (angle >= -45 && angle <= 45) onDirection() // Right = punch
+export default function Joystick({ onMove, hits = 0 }: JoystickProps) {
+  const handleAction = (action: string) => {
+    onMove(action)
   }
 
-  const reset = () => setPos({ x: 0, y: 0 })
-
   return (
-    <div className="absolute bottom-20 right-12 w-40 h-40 rounded-full bg-white/20">
-      <div
-        className="w-20 h-20 bg-white rounded-full absolute"
-        style={{ transform: `translate(${pos.x}px, ${pos.y}px)` }}
-        onTouchMove={handleMove}
-        onTouchEnd={reset}
-      />
+    <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20">
+      {/* Hit counter */}
+      <div className="text-center text-white text-lg font-bold mb-4">
+        Hits: {hits}/20
+      </div>
+      
+      {/* Control buttons */}
+      <div className="flex space-x-4">
+        <button
+          onClick={() => handleAction("kick")}
+          className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-colors"
+        >
+          KICK
+        </button>
+        <button
+          onClick={() => handleAction("push")}
+          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-colors"
+        >
+          PUSH
+        </button>
+        <button
+          onClick={() => handleAction("punch")}
+          className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-colors"
+        >
+          PUNCH
+        </button>
+      </div>
     </div>
   )
 }
