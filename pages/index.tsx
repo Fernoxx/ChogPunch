@@ -21,7 +21,7 @@ export default function Home() {
   const [anim, setAnim] = useState<"idle" | "kick" | "punch" | "push">("idle")
   const [claimed, setClaimed] = useState(false)
 
-  // 1) Load Farcaster user context on mount
+  // Load Farcaster user context on mount
   useEffect(() => {
     ;(async () => {
       try {
@@ -34,14 +34,17 @@ export default function Home() {
     })()
   }, [])
 
-  // 2) reset anim when stage changes
+  // Reset animation when stage changes
   useEffect(() => {
     if (stage === "home") setAnim("idle")
+    if (stage === "play") setAnim("gasping") // Set gasping animation on play screen
   }, [stage])
 
   const handleDirection = (dir: "kick" | "punch" | "push") => {
     setAnim(dir)
     setHits(h => Math.min(h + 1, 20))
+    // Reset to gasping after animation
+    setTimeout(() => setAnim("gasping"), 500)
   }
 
   const handleClaim = async () => {
@@ -53,25 +56,64 @@ export default function Home() {
         functionName: "submitScore",
         args: [20],
       })
-      // backend picks up UserEligible event and sends 1 MON
       setClaimed(true)
     } catch (e) {
       console.error("Claim tx failed:", e)
     }
   }
 
-  // If Farcaster context not loaded yet, show nothing (Farcaster will hide splash for us)
+  // If Farcaster context not loaded yet, show nothing
   if (farcasterUser === null) return null
 
   return (
-    <div
-      className="min-h-screen bg-cover bg-center relative"
-      style={{ backgroundImage: "url('/gym-bg.png')" }}
-    >
-      {/* Top-left back */}
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Purple brick background */}
+      <div 
+        className="absolute inset-0 bg-gradient-to-b from-purple-800 via-purple-900 to-purple-950"
+        style={{
+          backgroundImage: `
+            repeating-linear-gradient(
+              0deg,
+              rgba(0,0,0,0.2) 0px,
+              rgba(0,0,0,0.2) 1px,
+              transparent 1px,
+              transparent 40px
+            ),
+            repeating-linear-gradient(
+              90deg,
+              rgba(0,0,0,0.2) 0px,
+              rgba(0,0,0,0.2) 1px,
+              transparent 1px,
+              transparent 120px
+            )
+          `
+        }}
+      />
+
+      {/* Chain decoration in top right for play screen */}
+      {stage === "play" && (
+        <div className="absolute top-0 right-10 w-8 h-40 opacity-60">
+          <div className="w-full h-full bg-gradient-to-b from-gray-600 to-gray-800 rounded-full shadow-lg"
+               style={{
+                 background: "repeating-linear-gradient(0deg, #666 0px, #666 8px, #444 8px, #444 16px)"
+               }}
+          />
+        </div>
+      )}
+
+      {/* CHOG GYM Title - Only on home screen */}
+      {stage === "home" && (
+        <div className="absolute top-16 left-1/2 transform -translate-x-1/2">
+          <h1 className="text-6xl font-black text-yellow-500 tracking-wider drop-shadow-2xl">
+            CHOG GYM
+          </h1>
+        </div>
+      )}
+
+      {/* Top-left back button for play screen */}
       {stage === "play" && (
         <button
-          className="absolute top-4 left-4 bg-white/60 text-black px-2 py-1 rounded"
+          className="absolute top-6 left-6 bg-gray-800/80 hover:bg-gray-700/80 text-white px-4 py-2 rounded-lg font-semibold transition-colors border border-gray-600"
           onClick={() => setStage("home")}
         >
           ← Back
@@ -81,19 +123,26 @@ export default function Home() {
       {/* Home screen */}
       {stage === "home" && (
         <>
+          {/* Character and punching bag for home screen */}
+          <Chog anim="homeAnimation" />
+          <PunchingBag anim="homeAnimation" />
+          
+          {/* Play button in exact center */}
           <button
-            className="absolute inset-0 m-auto w-32 h-12 bg-white text-black font-bold rounded"
+            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gradient-to-b from-green-400 to-green-600 hover:from-green-300 hover:to-green-500 text-white text-xl font-bold px-12 py-4 rounded-2xl shadow-2xl transition-all duration-200 hover:scale-105 border-2 border-green-300"
             onClick={() => setStage("play")}
           >
-            Play
+            PLAY
           </button>
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-xs text-white">
+          
+          {/* Built by @doteth at bottom */}
+          <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 text-sm text-gray-300">
             built by{" "}
             <a
               href="https://farcaster.xyz/doteth"
               target="_blank"
               rel="noreferrer"
-              className="underline"
+              className="text-yellow-400 hover:text-yellow-300 underline transition-colors"
             >
               @doteth
             </a>
@@ -110,7 +159,7 @@ export default function Home() {
 
           {hits >= 20 && !claimed && (
             <button
-              className="absolute inset-0 m-auto w-40 h-12 bg-green-600 text-white font-bold rounded"
+              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gradient-to-b from-teal-400 to-teal-600 hover:from-teal-300 hover:to-teal-500 text-white text-xl font-bold px-8 py-4 rounded-2xl shadow-2xl transition-all duration-200 hover:scale-105 border-2 border-teal-300 z-50"
               onClick={handleClaim}
             >
               Claim 1 MON
