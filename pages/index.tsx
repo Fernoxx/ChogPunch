@@ -1,11 +1,15 @@
 // pages/index.tsx
 import { useEffect, useState } from "react"
-import { useAccount, useWriteContract } from "wagmi"
+import { useAccount, useContractWrite } from "wagmi"
 import chogPunchABI from "@/lib/chogPunchABI.json"
 
 export default function Home() {
   const { address, isConnected } = useAccount()
-  const { writeContractAsync } = useWriteContract()
+  const { writeAsync } = useContractWrite({
+    address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as `0x${string}`,
+    abi: chogPunchABI,
+    functionName: "submitScore",
+  })
   const [farcasterUser, setFarcasterUser] = useState<{
     fid: number
     username?: string
@@ -44,10 +48,7 @@ export default function Home() {
   const handleClaim = async () => {
     if (!address) return
     try {
-      await writeContractAsync({
-        abi: chogPunchABI,
-        address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS!,
-        functionName: "submitScore",
+      await writeAsync({
         args: [20],
       })
       // backend picks up UserEligible event and sends 1 MON
