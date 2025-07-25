@@ -17,11 +17,6 @@ export default function App({ Component, pageProps }: AppProps) {
     })()
   }, [])
 
-  const publicClient = createPublicClient({
-    chain: base,
-    transport: http(process.env.NEXT_PUBLIC_ALCHEMY_URL!),
-  })
-
   const farcasterConnector = new InjectedConnector({
     chains: [base],
     options: {
