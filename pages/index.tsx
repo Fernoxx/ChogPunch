@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react"
+import Image from "next/image"
 import { useAccount, useWriteContract } from "wagmi"
 import chogPunchABI from "../lib/chogPunchABI.json"
 
@@ -15,8 +16,6 @@ export default function HomePage() {
   const [actionText, setActionText] = useState("")
 
   const joystickRef = useRef<HTMLDivElement>(null)
-  const chogRef = useRef<HTMLDivElement>(null)
-  const bagRef = useRef<HTMLDivElement>(null)
 
   // Home page idle animations
   useEffect(() => {
@@ -146,28 +145,52 @@ export default function HomePage() {
   }
 
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-gradient-to-b from-purple-900 via-purple-800 to-purple-900 text-white">
-      {/* Background brick pattern */}
-      <div className="absolute inset-0 opacity-20">
-        <div 
-          className="w-full h-full" 
-          style={{
-            backgroundImage: `repeating-linear-gradient(
-              0deg,
-              transparent,
-              transparent 20px,
-              rgba(0,0,0,0.1) 20px,
-              rgba(0,0,0,0.1) 22px
-            ),
-            repeating-linear-gradient(
-              90deg,
-              transparent,
-              transparent 40px,
-              rgba(0,0,0,0.1) 40px,
-              rgba(0,0,0,0.1) 42px
-            )`
-          }} 
-        />
+    <div className="relative w-full h-screen overflow-hidden">
+      {/* Gym Background */}
+      <div className="absolute inset-0 bg-gradient-to-b from-purple-900 via-purple-800 to-purple-900">
+        {/* Gym floor */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gray-800 opacity-80"></div>
+        
+        {/* Brick wall pattern */}
+        <div className="absolute inset-0 opacity-20">
+          <div 
+            className="w-full h-full" 
+            style={{
+              backgroundImage: `repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 20px,
+                rgba(0,0,0,0.1) 20px,
+                rgba(0,0,0,0.1) 22px
+              ),
+              repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 40px,
+                rgba(0,0,0,0.1) 40px,
+                rgba(0,0,0,0.1) 42px
+              )`
+            }} 
+          />
+        </div>
+
+        {/* Gym Equipment in Background */}
+        <div className="absolute inset-0 opacity-30">
+          {/* Weight rack on left */}
+          <div className="absolute left-8 top-1/3 w-16 h-32 bg-gray-700 rounded"></div>
+          <div className="absolute left-10 top-1/4 w-12 h-4 bg-gray-600 rounded-full"></div>
+          <div className="absolute left-10 top-1/3 w-12 h-4 bg-gray-600 rounded-full"></div>
+          <div className="absolute left-10 top-2/5 w-12 h-4 bg-gray-600 rounded-full"></div>
+
+          {/* Bench on right */}
+          <div className="absolute right-8 top-1/2 w-20 h-6 bg-gray-700 rounded"></div>
+          <div className="absolute right-12 top-1/2 w-3 h-12 bg-gray-600"></div>
+          <div className="absolute right-16 top-1/2 w-3 h-12 bg-gray-600"></div>
+
+          {/* Dumbbells scattered */}
+          <div className="absolute left-1/4 bottom-20 w-8 h-3 bg-gray-600 rounded-full"></div>
+          <div className="absolute right-1/4 bottom-24 w-8 h-3 bg-gray-600 rounded-full"></div>
+        </div>
       </div>
 
       {/* CHOG GYM Title */}
@@ -180,10 +203,9 @@ export default function HomePage() {
       {mode === "home" && (
         <>
           {/* Main fighting scene */}
-          <div className="flex items-center justify-center h-screen relative px-8">
-            {/* CHOG Character */}
+          <div className="flex items-end justify-center h-screen relative px-8 pb-32">
+            {/* CHOG Character using actual image */}
             <div 
-              ref={chogRef}
               className={`relative transition-all duration-300 ${
                 chogAnimation === "punch" ? "animate-punch" : 
                 chogAnimation === "kick" ? "animate-kick" : 
@@ -191,114 +213,32 @@ export default function HomePage() {
                 "animate-pulse"
               }`}
             >
-              <div className="relative w-40 h-48">
-                {/* Hair - spiky purple */}
-                <div 
-                  className="absolute -top-6 left-1/2 transform -translate-x-1/2 w-24 h-20 bg-purple-600 rounded-t-full border-2 border-purple-700" 
-                  style={{clipPath: 'polygon(15% 0%, 85% 0%, 100% 50%, 90% 80%, 70% 100%, 30% 100%, 10% 80%, 0% 50%)'}} 
+              <div className="relative w-48 h-48">
+                <Image
+                  src="/chog.png"
+                  alt="CHOG Fighter"
+                  width={192}
+                  height={192}
+                  className="object-contain"
+                  priority
                 />
-                
-                {/* Face */}
-                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-20 h-20 bg-yellow-100 rounded-full border-3 border-black shadow-lg">
-                  {/* Eyes - dynamic based on action */}
-                  <div className={`absolute top-5 left-4 w-4 h-4 bg-black rounded-full transition-all ${
-                    chogAnimation !== "idle" ? "scale-75 -translate-y-1" : ""
-                  }`}>
-                    <div className="absolute top-1 left-1 w-1 h-1 bg-white rounded-full"></div>
-                  </div>
-                  <div className={`absolute top-5 right-4 w-4 h-4 bg-black rounded-full transition-all ${
-                    chogAnimation !== "idle" ? "scale-75 -translate-y-1" : ""
-                  }`}>
-                    <div className="absolute top-1 left-1 w-1 h-1 bg-white rounded-full"></div>
-                  </div>
-                  
-                  {/* Eyebrows - angry when fighting */}
-                  <div className={`absolute top-2 left-3 w-5 h-1 bg-black transition-all ${
-                    chogAnimation !== "idle" ? "-rotate-45 scale-110" : "-rotate-12"
-                  }`} />
-                  <div className={`absolute top-2 right-3 w-5 h-1 bg-black transition-all ${
-                    chogAnimation !== "idle" ? "rotate-45 scale-110" : "rotate-12"
-                  }`} />
-                  
-                  {/* Nose */}
-                  <div className="absolute top-8 left-1/2 transform -translate-x-1/2 w-1 h-2 bg-gray-300 rounded"></div>
-                  
-                  {/* Mouth - opens when fighting */}
-                  <div className={`absolute bottom-5 left-1/2 transform -translate-x-1/2 bg-red-500 rounded-full transition-all ${
-                    chogAnimation !== "idle" ? "w-4 h-3" : "w-3 h-2"
-                  }`} />
-                  
-                  {/* Blush */}
-                  <div className="absolute top-8 left-2 w-3 h-3 bg-red-300 rounded-full opacity-60" />
-                  <div className="absolute top-8 right-2 w-3 h-3 bg-red-300 rounded-full opacity-60" />
-                  
-                  {/* Sweat drops when fighting */}
-                  {chogAnimation !== "idle" && (
-                    <>
-                      <div className="absolute top-3 left-1 w-1 h-2 bg-blue-200 rounded-full opacity-80"></div>
-                      <div className="absolute top-4 right-1 w-1 h-2 bg-blue-200 rounded-full opacity-80"></div>
-                    </>
-                  )}
-                </div>
-
-                {/* Body - orange gym shirt */}
-                <div className="absolute top-16 left-1/2 transform -translate-x-1/2 w-24 h-20 bg-orange-500 rounded-lg border-2 border-orange-600 shadow-md">
-                  <div className="text-center text-white font-bold text-sm pt-3">
-                    CHOG<br/>GYM
-                  </div>
-                </div>
-
-                {/* Arms - move based on action */}
-                <div className={`absolute top-18 w-7 h-16 bg-yellow-100 rounded-full border-2 border-black transition-all ${
-                  chogAnimation === "punch" ? "-left-8 -rotate-45 scale-110" : 
-                  chogAnimation === "push" ? "-left-6 rotate-12 scale-105" : 
-                  chogAnimation === "kick" ? "-left-4 -rotate-12" :
-                  "-left-3"
-                }`} />
-                <div className={`absolute top-18 w-7 h-16 bg-yellow-100 rounded-full border-2 border-black transition-all ${
-                  chogAnimation === "punch" ? "-right-8 rotate-45 scale-110" : 
-                  chogAnimation === "push" ? "-right-6 -rotate-12 scale-105" : 
-                  chogAnimation === "kick" ? "-right-4 rotate-12" :
-                  "-right-3"
-                }`} />
-                
-                {/* Boxing gloves - red with impact effect */}
-                <div className={`absolute top-16 w-10 h-10 bg-red-500 rounded-full border-3 border-red-700 shadow-lg transition-all ${
-                  chogAnimation === "punch" ? "-left-12 scale-125 shadow-xl" : 
-                  chogAnimation === "push" ? "-left-8 scale-110" : 
-                  "-left-6"
-                }`}>
-                  <div className="absolute top-1 left-1 w-2 h-2 bg-red-400 rounded-full opacity-70"></div>
-                </div>
-                <div className={`absolute top-16 w-10 h-10 bg-red-500 rounded-full border-3 border-red-700 shadow-lg transition-all ${
-                  chogAnimation === "punch" ? "-right-12 scale-125 shadow-xl" : 
-                  chogAnimation === "push" ? "-right-8 scale-110" : 
-                  "-right-6"
-                }`}>
-                  <div className="absolute top-1 left-1 w-2 h-2 bg-red-400 rounded-full opacity-70"></div>
-                </div>
-
-                {/* Shorts - black */}
-                <div className="absolute top-32 left-1/2 transform -translate-x-1/2 w-20 h-10 bg-black rounded-lg border-2 border-gray-800 shadow-md" />
-
-                {/* Legs - kick animation */}
-                <div className={`absolute left-3 w-6 h-16 bg-yellow-100 rounded-full border-2 border-black transition-all ${
-                  chogAnimation === "kick" ? "rotate-45 translate-x-3 -translate-y-3 scale-110" : ""
-                }`} style={{top: '152px'}} />
-                <div className="absolute right-3 w-6 h-16 bg-yellow-100 rounded-full border-2 border-black" style={{top: '152px'}} />
-
-                {/* Shoes - red with kick effect */}
-                <div className={`absolute bottom-0 left-2 w-10 h-6 bg-red-500 rounded-full border-2 border-red-700 shadow-md transition-all ${
-                  chogAnimation === "kick" ? "translate-x-6 -translate-y-4 scale-125 shadow-xl" : ""
-                }`} />
-                <div className="absolute bottom-0 right-2 w-10 h-6 bg-red-500 rounded-full border-2 border-red-700 shadow-md" />
+                {/* Animation overlay effects */}
+                {chogAnimation !== "idle" && (
+                  <>
+                    {/* Sweat drops */}
+                    <div className="absolute top-4 left-4 w-2 h-3 bg-blue-200 rounded-full opacity-80 animate-pulse"></div>
+                    <div className="absolute top-6 right-4 w-2 h-3 bg-blue-200 rounded-full opacity-80 animate-pulse"></div>
+                    
+                    {/* Action intensity glow */}
+                    <div className="absolute inset-0 bg-yellow-300 rounded-full opacity-20 animate-ping"></div>
+                  </>
+                )}
               </div>
             </div>
 
-            {/* Punching Bag */}
+            {/* Punching Bag - Realistic Heavy Bag */}
             <div 
-              ref={bagRef}
-              className={`ml-20 relative transition-all duration-500 ${
+              className={`ml-24 relative transition-all duration-500 ${
                 bagAnimation === "sway" ? 
                   chogAnimation === "punch" ? "animate-sway rotate-12 scale-105" :
                   chogAnimation === "kick" ? "animate-sway rotate-8 -translate-y-2" :
@@ -307,38 +247,50 @@ export default function HomePage() {
                 "hover:rotate-1"
               }`}
             >
-              {/* Chain */}
-              <div className="absolute -top-24 left-1/2 transform -translate-x-1/2">
-                <div className="w-2 h-24 bg-gray-600 relative shadow-md">
-                  {[...Array(12)].map((_, i) => (
+              {/* Heavy Chain */}
+              <div className="absolute -top-32 left-1/2 transform -translate-x-1/2">
+                <div className="w-3 h-32 bg-gray-600 relative shadow-lg">
+                  {[...Array(16)].map((_, i) => (
                     <div 
                       key={i} 
-                      className="absolute w-4 h-3 bg-gray-500 border border-gray-700 rounded-sm shadow-sm" 
+                      className="absolute w-5 h-3 bg-gray-500 border border-gray-700 rounded-sm shadow-sm" 
                       style={{top: `${i * 2}px`, left: '-1px'}} 
                     />
                   ))}
                 </div>
               </div>
               
-              {/* Bag - realistic red leather */}
-              <div className="w-28 h-40 bg-gradient-to-b from-red-500 to-red-700 rounded-lg border-4 border-red-800 relative shadow-2xl">
-                <div className="absolute top-3 left-1/2 transform -translate-x-1/2 w-20 h-3 bg-red-600 rounded-full" />
-                <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 w-20 h-3 bg-red-600 rounded-full" />
+              {/* Heavy Punching Bag - Exact design */}
+              <div className="w-32 h-48 bg-gradient-to-b from-red-500 to-red-800 rounded-lg border-4 border-red-900 relative shadow-2xl">
+                {/* Top cap */}
+                <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-20 h-4 bg-red-600 rounded-full border-2 border-red-800" />
                 
-                {/* Leather texture lines */}
-                <div className="absolute top-8 left-2 right-2 h-px bg-red-400 opacity-50" />
-                <div className="absolute top-16 left-2 right-2 h-px bg-red-400 opacity-50" />
-                <div className="absolute top-24 left-2 right-2 h-px bg-red-400 opacity-50" />
-                <div className="absolute top-32 left-2 right-2 h-px bg-red-400 opacity-50" />
+                {/* Bottom cap */}
+                <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-20 h-4 bg-red-600 rounded-full border-2 border-red-800" />
+                
+                {/* Leather stitching lines */}
+                <div className="absolute top-8 left-2 right-2 h-px bg-red-300 opacity-60" />
+                <div className="absolute top-16 left-2 right-2 h-px bg-red-300 opacity-60" />
+                <div className="absolute top-24 left-2 right-2 h-px bg-red-300 opacity-60" />
+                <div className="absolute top-32 left-2 right-2 h-px bg-red-300 opacity-60" />
+                <div className="absolute top-40 left-2 right-2 h-px bg-red-300 opacity-60" />
+                
+                {/* Vertical stitching */}
+                <div className="absolute top-4 bottom-4 left-4 w-px bg-red-300 opacity-40" />
+                <div className="absolute top-4 bottom-4 right-4 w-px bg-red-300 opacity-40" />
                 
                 {/* Shine effect */}
-                <div className="absolute top-6 left-3 w-6 h-12 bg-gradient-to-b from-red-300 to-transparent rounded-full opacity-60" />
+                <div className="absolute top-8 left-4 w-8 h-16 bg-gradient-to-b from-red-300 to-transparent rounded-full opacity-50" />
+                
+                {/* Wear marks */}
+                <div className="absolute top-20 left-6 w-16 h-8 bg-red-400 opacity-40 rounded-full" />
                 
                 {/* Impact effect */}
                 {bagAnimation === "sway" && (
-                  <div className="absolute -left-3 top-1/2 transform -translate-y-1/2">
-                    <div className="w-6 h-6 bg-yellow-400 rounded-full animate-ping opacity-75" />
-                    <div className="w-3 h-3 bg-white rounded-full animate-pulse absolute top-1.5 left-1.5" />
+                  <div className="absolute -left-4 top-1/2 transform -translate-y-1/2">
+                    <div className="w-8 h-8 bg-yellow-400 rounded-full animate-ping opacity-75" />
+                    <div className="w-4 h-4 bg-white rounded-full animate-pulse absolute top-2 left-2" />
+                    <div className="w-2 h-2 bg-orange-400 rounded-full animate-bounce absolute top-3 left-3" />
                   </div>
                 )}
               </div>
@@ -385,10 +337,9 @@ export default function HomePage() {
           </div>
 
           {/* Main fighting scene - same as home but with gasping */}
-          <div className="flex items-center justify-center h-screen relative px-8">
-            {/* CHOG Character - gasping */}
+          <div className="flex items-end justify-center h-screen relative px-8 pb-32">
+            {/* CHOG Character - gasping with actual image */}
             <div 
-              ref={chogRef}
               className={`relative transition-all duration-300 ${
                 chogAnimation === "punch" ? "animate-punch" : 
                 chogAnimation === "kick" ? "animate-kick" : 
@@ -396,91 +347,32 @@ export default function HomePage() {
                 "animate-pulse"
               }`}
             >
-              <div className="relative w-40 h-48">
-                {/* Same character as home but with gasping animation */}
-                <div 
-                  className="absolute -top-6 left-1/2 transform -translate-x-1/2 w-24 h-20 bg-purple-600 rounded-t-full border-2 border-purple-700" 
-                  style={{clipPath: 'polygon(15% 0%, 85% 0%, 100% 50%, 90% 80%, 70% 100%, 30% 100%, 10% 80%, 0% 50%)'}} 
+              <div className="relative w-48 h-48">
+                <Image
+                  src="/chog.png"
+                  alt="CHOG Fighter"
+                  width={192}
+                  height={192}
+                  className="object-contain"
+                  priority
                 />
+                {/* Gasping overlay effects */}
+                <div className="absolute top-4 left-4 w-2 h-3 bg-blue-200 rounded-full opacity-80 animate-pulse"></div>
+                <div className="absolute top-6 right-4 w-2 h-3 bg-blue-200 rounded-full opacity-80 animate-pulse"></div>
                 
-                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-20 h-20 bg-yellow-100 rounded-full border-3 border-black shadow-lg">
-                  {/* Eyes - tired look */}
-                  <div className="absolute top-5 left-4 w-4 h-4 bg-black rounded-full">
-                    <div className="absolute top-1 left-1 w-1 h-1 bg-white rounded-full"></div>
-                  </div>
-                  <div className="absolute top-5 right-4 w-4 h-4 bg-black rounded-full">
-                    <div className="absolute top-1 left-1 w-1 h-1 bg-white rounded-full"></div>
-                  </div>
-                  
-                  {/* Eyebrows - focused */}
-                  <div className="absolute top-2 left-3 w-5 h-1 bg-black -rotate-12" />
-                  <div className="absolute top-2 right-3 w-5 h-1 bg-black rotate-12" />
-                  
-                  <div className="absolute top-8 left-1/2 transform -translate-x-1/2 w-1 h-2 bg-gray-300 rounded"></div>
-                  
-                  {/* Mouth - gasping */}
-                  <div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-red-500 rounded-full animate-pulse" />
-                  
-                  <div className="absolute top-8 left-2 w-3 h-3 bg-red-300 rounded-full opacity-60" />
-                  <div className="absolute top-8 right-2 w-3 h-3 bg-red-300 rounded-full opacity-60" />
-                  
-                  {/* Sweat drops - always visible */}
-                  <div className="absolute top-3 left-1 w-1 h-2 bg-blue-200 rounded-full opacity-80 animate-pulse"></div>
-                  <div className="absolute top-4 right-1 w-1 h-2 bg-blue-200 rounded-full opacity-80 animate-pulse"></div>
-                </div>
-
-                <div className="absolute top-16 left-1/2 transform -translate-x-1/2 w-24 h-20 bg-orange-500 rounded-lg border-2 border-orange-600 shadow-md">
-                  <div className="text-center text-white font-bold text-sm pt-3">
-                    CHOG<br/>GYM
-                  </div>
-                </div>
-
-                <div className={`absolute top-18 w-7 h-16 bg-yellow-100 rounded-full border-2 border-black transition-all ${
-                  chogAnimation === "punch" ? "-left-8 -rotate-45 scale-110" : 
-                  chogAnimation === "push" ? "-left-6 rotate-12 scale-105" : 
-                  chogAnimation === "kick" ? "-left-4 -rotate-12" :
-                  "-left-3"
-                }`} />
-                <div className={`absolute top-18 w-7 h-16 bg-yellow-100 rounded-full border-2 border-black transition-all ${
-                  chogAnimation === "punch" ? "-right-8 rotate-45 scale-110" : 
-                  chogAnimation === "push" ? "-right-6 -rotate-12 scale-105" : 
-                  chogAnimation === "kick" ? "-right-4 rotate-12" :
-                  "-right-3"
-                }`} />
+                {/* Breathing glow */}
+                <div className="absolute inset-0 bg-blue-300 rounded-full opacity-10 animate-pulse"></div>
                 
-                <div className={`absolute top-16 w-10 h-10 bg-red-500 rounded-full border-3 border-red-700 shadow-lg transition-all ${
-                  chogAnimation === "punch" ? "-left-12 scale-125 shadow-xl" : 
-                  chogAnimation === "push" ? "-left-8 scale-110" : 
-                  "-left-6"
-                }`}>
-                  <div className="absolute top-1 left-1 w-2 h-2 bg-red-400 rounded-full opacity-70"></div>
-                </div>
-                <div className={`absolute top-16 w-10 h-10 bg-red-500 rounded-full border-3 border-red-700 shadow-lg transition-all ${
-                  chogAnimation === "punch" ? "-right-12 scale-125 shadow-xl" : 
-                  chogAnimation === "push" ? "-right-8 scale-110" : 
-                  "-right-6"
-                }`}>
-                  <div className="absolute top-1 left-1 w-2 h-2 bg-red-400 rounded-full opacity-70"></div>
-                </div>
-
-                <div className="absolute top-32 left-1/2 transform -translate-x-1/2 w-20 h-10 bg-black rounded-lg border-2 border-gray-800 shadow-md" />
-
-                <div className={`absolute left-3 w-6 h-16 bg-yellow-100 rounded-full border-2 border-black transition-all ${
-                  chogAnimation === "kick" ? "rotate-45 translate-x-3 -translate-y-3 scale-110" : ""
-                }`} style={{top: '152px'}} />
-                <div className="absolute right-3 w-6 h-16 bg-yellow-100 rounded-full border-2 border-black" style={{top: '152px'}} />
-
-                <div className={`absolute bottom-0 left-2 w-10 h-6 bg-red-500 rounded-full border-2 border-red-700 shadow-md transition-all ${
-                  chogAnimation === "kick" ? "translate-x-6 -translate-y-4 scale-125 shadow-xl" : ""
-                }`} />
-                <div className="absolute bottom-0 right-2 w-10 h-6 bg-red-500 rounded-full border-2 border-red-700 shadow-md" />
+                {/* Action intensity effects */}
+                {chogAnimation !== "idle" && (
+                  <div className="absolute inset-0 bg-orange-300 rounded-full opacity-20 animate-ping"></div>
+                )}
               </div>
             </div>
 
             {/* Punching Bag - same as home */}
             <div 
-              ref={bagRef}
-              className={`ml-20 relative transition-all duration-500 ${
+              className={`ml-24 relative transition-all duration-500 ${
                 bagAnimation === "sway" ? 
                   chogAnimation === "punch" ? "animate-sway rotate-12 scale-105" :
                   chogAnimation === "kick" ? "animate-sway rotate-8 -translate-y-2" :
@@ -489,33 +381,39 @@ export default function HomePage() {
                 "animate-pulse"
               }`}
             >
-              <div className="absolute -top-24 left-1/2 transform -translate-x-1/2">
-                <div className="w-2 h-24 bg-gray-600 relative shadow-md">
-                  {[...Array(12)].map((_, i) => (
+              <div className="absolute -top-32 left-1/2 transform -translate-x-1/2">
+                <div className="w-3 h-32 bg-gray-600 relative shadow-lg">
+                  {[...Array(16)].map((_, i) => (
                     <div 
                       key={i} 
-                      className="absolute w-4 h-3 bg-gray-500 border border-gray-700 rounded-sm shadow-sm" 
+                      className="absolute w-5 h-3 bg-gray-500 border border-gray-700 rounded-sm shadow-sm" 
                       style={{top: `${i * 2}px`, left: '-1px'}} 
                     />
                   ))}
                 </div>
               </div>
               
-              <div className="w-28 h-40 bg-gradient-to-b from-red-500 to-red-700 rounded-lg border-4 border-red-800 relative shadow-2xl">
-                <div className="absolute top-3 left-1/2 transform -translate-x-1/2 w-20 h-3 bg-red-600 rounded-full" />
-                <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 w-20 h-3 bg-red-600 rounded-full" />
+              <div className="w-32 h-48 bg-gradient-to-b from-red-500 to-red-800 rounded-lg border-4 border-red-900 relative shadow-2xl">
+                <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-20 h-4 bg-red-600 rounded-full border-2 border-red-800" />
+                <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-20 h-4 bg-red-600 rounded-full border-2 border-red-800" />
                 
-                <div className="absolute top-8 left-2 right-2 h-px bg-red-400 opacity-50" />
-                <div className="absolute top-16 left-2 right-2 h-px bg-red-400 opacity-50" />
-                <div className="absolute top-24 left-2 right-2 h-px bg-red-400 opacity-50" />
-                <div className="absolute top-32 left-2 right-2 h-px bg-red-400 opacity-50" />
+                <div className="absolute top-8 left-2 right-2 h-px bg-red-300 opacity-60" />
+                <div className="absolute top-16 left-2 right-2 h-px bg-red-300 opacity-60" />
+                <div className="absolute top-24 left-2 right-2 h-px bg-red-300 opacity-60" />
+                <div className="absolute top-32 left-2 right-2 h-px bg-red-300 opacity-60" />
+                <div className="absolute top-40 left-2 right-2 h-px bg-red-300 opacity-60" />
                 
-                <div className="absolute top-6 left-3 w-6 h-12 bg-gradient-to-b from-red-300 to-transparent rounded-full opacity-60" />
+                <div className="absolute top-4 bottom-4 left-4 w-px bg-red-300 opacity-40" />
+                <div className="absolute top-4 bottom-4 right-4 w-px bg-red-300 opacity-40" />
+                
+                <div className="absolute top-8 left-4 w-8 h-16 bg-gradient-to-b from-red-300 to-transparent rounded-full opacity-50" />
+                <div className="absolute top-20 left-6 w-16 h-8 bg-red-400 opacity-40 rounded-full" />
                 
                 {bagAnimation === "sway" && (
-                  <div className="absolute -left-3 top-1/2 transform -translate-y-1/2">
-                    <div className="w-6 h-6 bg-yellow-400 rounded-full animate-ping opacity-75" />
-                    <div className="w-3 h-3 bg-white rounded-full animate-pulse absolute top-1.5 left-1.5" />
+                  <div className="absolute -left-4 top-1/2 transform -translate-y-1/2">
+                    <div className="w-8 h-8 bg-yellow-400 rounded-full animate-ping opacity-75" />
+                    <div className="w-4 h-4 bg-white rounded-full animate-pulse absolute top-2 left-2" />
+                    <div className="w-2 h-2 bg-orange-400 rounded-full animate-bounce absolute top-3 left-3" />
                   </div>
                 )}
               </div>
