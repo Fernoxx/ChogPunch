@@ -1,11 +1,8 @@
 // pages/_app.tsx
 import "../styles/globals.css"
 import type { AppProps } from "next/app"
+import Head from "next/head"
 import { useEffect } from "react"
-import { WagmiConfig, createConfig } from "wagmi"
-import { base } from "wagmi/chains"
-import { InjectedConnector } from "wagmi/connectors/injected"
-import { createPublicClient, http } from "viem"
 
 export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
@@ -19,29 +16,15 @@ export default function App({ Component, pageProps }: AppProps) {
     })()
   }, [])
 
-  const publicClient = createPublicClient({
-    chain: base,
-    transport: http(process.env.NEXT_PUBLIC_ALCHEMY_URL!),
-  })
-
-  const farcasterConnector = new InjectedConnector({
-    chains: [base],
-    options: {
-      name: "Farcaster",
-      getProvider: () =>
-        typeof window !== "undefined" ? (window as any).farcaster : null,
-    },
-  })
-
-  const config = createConfig({
-    autoConnect: true,
-    publicClient,
-    connectors: [farcasterConnector],
-  })
-
   return (
-    <WagmiConfig config={config}>
+    <>
+      <Head>
+        <title>CHOG GYM - Train & Earn</title>
+        <meta name="description" content="CHOG GYM - Train your fighter and earn MON tokens!" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/favicon.svg" />
+      </Head>
       <Component {...pageProps} />
-    </WagmiConfig>
+    </>
   )
 }
