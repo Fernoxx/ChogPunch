@@ -14,7 +14,6 @@ export default function Home() {
     username?: string
     displayName?: string
     pfpUrl?: string
-  } | null>(null)
 
   const [stage, setStage] = useState<"home" | "play">("home")
   const [hits, setHits] = useState(0)
