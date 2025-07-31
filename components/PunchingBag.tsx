@@ -11,7 +11,3 @@ export default function PunchingBag({ anim }: Props) {
     <div className="absolute right-12 top-20 w-32 h-64">
       <div className={clsx(
         />
-      </div>
-    </div>
-  )
-}
