@@ -44,9 +44,6 @@ export default function Home() {
   const handleClaim = async () => {
     if (!address) return
     try {
-      await writeContractAsync({
-        abi: chogPunchABI,
-        address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS!,
 
   // If Farcaster context not loaded yet, show nothing (Farcaster will hide splash for us)
   if (farcasterUser === null) return null
