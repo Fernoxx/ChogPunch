@@ -12,11 +12,6 @@ export default function PunchingBag({ anim }: Props) {
       <div className={clsx(
         anim === "idle"   && "animate-sway",
         anim === "punch"  && "animate-punch",
-        anim === "kick"   && "animate-kick",
-        anim === "push"   && "animate-push
-          alt="Punching Bag"
-          width={128}
-          height={256}
         />
       </div>
     </div>
