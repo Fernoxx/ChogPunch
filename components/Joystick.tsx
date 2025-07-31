@@ -12,7 +12,6 @@ export default function Joystick({ onDirection }: { onDirection: () => void }) {
 
     const dx = x - 40
     const dy = y - 40
-    const angle = Math.atan2(dy, dx) * 180 / Math.PI
 
     if (angle >= -135 && angle <= -45) onDirection() // Up = kick
     else if (angle >= -180 && angle <= -135 || angle >= 135) onDirection() // Left = push
