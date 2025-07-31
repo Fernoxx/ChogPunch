@@ -87,7 +87,6 @@ export default function Home() {
           <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-xs text-white">
             built by{" "}
             <a
-              href="https://farcaster.xyz/doteth"
               target="_blank"
               rel="noreferrer"
               className="underline"
