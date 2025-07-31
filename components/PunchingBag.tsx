@@ -10,8 +10,6 @@ export default function PunchingBag({ anim }: Props) {
   return (
     <div className="absolute right-12 top-20 w-32 h-64">
       <div className={clsx(
-        anim === "idle"   && "animate-sway",
-        anim === "punch"  && "animate-punch",
         />
       </div>
     </div>
