@@ -8,7 +8,6 @@ interface Props {
 }
 
 export default function Chog({ anim }: Props) {
-  // you could swap images per anim if you have separate frames
   return (
       <div className={
       }>
