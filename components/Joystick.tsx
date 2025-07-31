@@ -1,7 +1,6 @@
 import { useState } from "react"
 
 export default function Joystick({ onDirection }: { onDirection: () => void }) {
-  const [pos, setPos] = useState({ x: 0, y: 0 })
 
   const handleMove = (e: React.TouchEvent) => {
     const touch = e.touches[0]
