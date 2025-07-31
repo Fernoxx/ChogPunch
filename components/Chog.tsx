@@ -6,10 +6,4 @@ export type ChogAnim = "idle" | "kick" | "punch" | "push"
 interface Props {
   anim: ChogAnim
 }
-
-export default function Chog({ anim }: Props) {
-  return (
-      <div className={
-      }>
-  )
 }
