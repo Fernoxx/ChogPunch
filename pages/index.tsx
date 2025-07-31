@@ -72,11 +72,6 @@ export default function Home() {
               rel="noreferrer"
               className="underline"
             >
-              @doteth
-            </a>
-          </div>
-        </>
-      )}
 
       {/* Play screen */}
       {stage === "play" && (
