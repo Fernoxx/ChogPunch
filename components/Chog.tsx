@@ -19,8 +19,6 @@ export default function Chog({ anim }: Props) {
           src="/chog.png"
           alt="Chog"
           width={192}
-          height={192}
-          priority
         />
       </div>
     </div>
