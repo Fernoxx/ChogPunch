@@ -14,8 +14,6 @@ export default function Chog({ anim }: Props) {
       <div className={
         anim === "idle"  ? "animate-sway" :
         anim === "kick"  ? "animate-kick" :
-        anim === "punch" ? "animate-punch" :
-        "animate-push"
       }>
         <Image
           src="/chog.png"
