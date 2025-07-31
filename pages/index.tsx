@@ -104,8 +104,6 @@ export default function Home() {
 
           {hits >= 20 && !claimed && (
             <button
-              className="absolute inset-0 m-auto w-40 h-12 bg-green-600 text-white font-bold rounded"
-              onClick={handleClaim}
             >
               Claim 1 MON
             </button>
