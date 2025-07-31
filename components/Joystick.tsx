@@ -16,8 +16,6 @@ export default function Joystick({ onDirection }: { onDirection: () => void }) {
     else if (angle >= -45 && angle <= 45) onDirection() // Right = punch
   }
 
-  const reset = () => setPos({ x: 0, y: 0 })
-
   return (
     <div className="absolute bottom-20 right-12 w-40 h-40 rounded-full bg-white/20">
       <div
