@@ -5,9 +5,7 @@ export default function Joystick({ onDirection }: { onDirection: () => void }) {
 
   const handleMove = (e: React.TouchEvent) => {
     const touch = e.touches[0]
-    const bounds = e.currentTarget.getBoundingClientRect()
-    const x = touch.clientX - bounds.left - 40
-    const y = touch.clientY - bounds.top - 40
+    const bounds = e.currentTarget.getBoundingClientRect(
     setPos({ x, y })
 
     const dx = x - 40
