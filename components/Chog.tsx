@@ -12,7 +12,6 @@ export default function Chog({ anim }: Props) {
   return (
     <div className="absolute left-12 bottom-12 w-48 h-48">
       <div className={
-        anim === "idle"  ? "animate-sway" :
       }>
         <Image
           src="/chog.png"
