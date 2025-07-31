@@ -19,7 +19,6 @@ export default function Home() {
   const [stage, setStage] = useState<"home" | "play">("home")
   const [hits, setHits] = useState(0)
   const [anim, setAnim] = useState<"idle" | "kick" | "punch" | "push">("idle")
-  const [claimed, setClaimed] = useState(false)
 
   // 1) Load Farcaster user context on mount
   useEffect(() => {
