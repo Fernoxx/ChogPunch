@@ -26,7 +26,6 @@ export default function Joystick({ onDirection }: { onDirection: () => void }) {
       <div
         className="w-20 h-20 bg-white rounded-full absolute"
         style={{ transform: `translate(${pos.x}px, ${pos.y}px)` }}
-        onTouchMove={handleMove}
         onTouchEnd={reset}
       />
     </div>
