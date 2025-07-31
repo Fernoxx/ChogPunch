@@ -11,8 +11,5 @@ export default function Chog({ anim }: Props) {
   return (
       <div className={
       }>
-        />
-      </div>
-    </div>
   )
 }
