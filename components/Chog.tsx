@@ -13,7 +13,6 @@ export default function Chog({ anim }: Props) {
     <div className="absolute left-12 bottom-12 w-48 h-48">
       <div className={
         anim === "idle"  ? "animate-sway" :
-        anim === "kick"  ? "animate-kick" :
       }>
         <Image
           src="/chog.png"
