@@ -47,9 +47,7 @@ export default function Home() {
       await writeContractAsync({
         abi: chogPunchABI,
         address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS!,
-        functionName: "submitScore",
-        args: [20],
-      })
+      
       // backend picks up UserEligible event and sends 1 MON
       setClaimed(true)
     } catch (e) {
