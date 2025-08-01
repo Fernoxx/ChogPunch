@@ -8,7 +8,6 @@ module.exports = {
     extend: {
       keyframes: {
         sway: {
-          "0%, 100%": { transform: "translateY(0)" },
         },
         kick: {
         },
