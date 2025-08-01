@@ -14,7 +14,6 @@ module.exports = {
         punch: {
         },
         push: {
-          "0%":   { transform: "scale(1)" },
         }
       },
       animation: {
