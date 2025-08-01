@@ -7,9 +7,6 @@ import { base } from "wagmi/chains"
 import { InjectedConnector } from "wagmi/connectors/injected"
         const { sdk } = await import("@farcaster/miniapp-sdk")
         await sdk.actions.ready()
-      } catch (e) {
-        console.error("Farcaster SDK ready error:", e)
-      }
     })()
   }, [])
 
