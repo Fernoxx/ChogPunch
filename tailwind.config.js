@@ -11,7 +11,6 @@ module.exports = {
           "0%, 100%": { transform: "translateY(0)" },
         },
         kick: {
-          "0%":   { transform: "rotate(0deg)" },
         },
         punch: {
           "0%":   { transform: "scale(1)" },
