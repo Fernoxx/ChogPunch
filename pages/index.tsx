@@ -75,8 +75,6 @@ export default function Home() {
             <a
               href="https://farcaster.xyz/doteth"
               target="_blank"
-              rel="noreferrer"
-              className="underline"
             >
               @doteth
             </a>
