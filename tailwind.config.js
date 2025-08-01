@@ -17,8 +17,6 @@ module.exports = {
         }
       },
       animation: {
-        sway:  "sway 2s ease-in-out infinite",
-      }
     },
   },
 }
