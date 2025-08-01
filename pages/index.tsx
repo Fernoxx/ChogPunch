@@ -12,8 +12,6 @@ export default function Home() {
 
   // 2) reset anim when stage changes
   useEffect(() => {
-    if (stage === "home") setAnim("idle")
-    setHits(h => Math.min(h + 1, 20))
   }
 
   const handleClaim = async () => {
