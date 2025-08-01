@@ -10,11 +10,6 @@ import { InjectedConnector } from "wagmi/connectors/injected"
     })()
   }, [])
 
-  const farcasterConnector = new InjectedConnector({
-    chains: [base],
-    options: {
-      name: "Farcaster",
-      getProvider: () =>
         typeof window !== "undefined" ? (window as any).farcaster : null,
     },
   })
