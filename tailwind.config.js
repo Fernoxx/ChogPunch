@@ -18,8 +18,6 @@ module.exports = {
         },
         punch: {
           "0%":   { transform: "scale(1)" },
-          "50%":  { transform: "scale(1.2) translateX(10px)" },
-          "100%": { transform: "scale(1)" }
         },
         push: {
           "0%":   { transform: "scale(1)" },
