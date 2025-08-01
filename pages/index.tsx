@@ -61,11 +61,7 @@ export default function Home() {
             <a
               target="_blank"
             >
-              @doteth
-            </a>
-          </div>
-        </>
-      )}
+
 
       {/* Play screen */}
       {stage === "play" && (
