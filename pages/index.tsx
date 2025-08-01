@@ -46,13 +46,6 @@ export default function Home() {
         <>
           <button
           >
-
-
-      {/* Play screen */}
-            <button
-            >
-              Claim 1 MON
-            </button>
           )}
         </>
       )}
