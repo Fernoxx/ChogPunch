@@ -10,11 +10,7 @@ import { InjectedConnector } from "wagmi/connectors/injected"
     })()
   }, [])
 
-        typeof window !== "undefined" ? (window as any).farcaster : null,
-    },
-  })
-
-  const config = createConfig({
+  = createConfig({
     autoConnect: true,
     publicClient,
     connectors: [farcasterConnector],
