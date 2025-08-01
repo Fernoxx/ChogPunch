@@ -6,8 +6,6 @@ import { WagmiConfig, createConfig } from "wagmi"
 import { base } from "wagmi/chains"
 import { InjectedConnector } from "wagmi/connectors/injected"
 import { createPublicClient, http } from "viem"
-
-export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
     ;(async () => {
       try {
@@ -17,8 +15,14 @@ export default function App({ Component, pageProps }: AppProps) {
         console.error("Farcaster SDK ready error:", e)
       }
     })()
+  }, [])
+
+  const publicClient = createPublicClient({
+    chain: base,
+    transport: http(process.env.NEXT_PUBLIC_ALCHEMY_URL!),
   })
 
+  const farcasterConnector = new InjectedConnector({
     chains: [base],
     options: {
       name: "Farcaster",
@@ -28,6 +32,10 @@ export default function App({ Component, pageProps }: AppProps) {
   })
 
   const config = createConfig({
+    autoConnect: true,
+    publicClient,
+    connectors: [farcasterConnector],
+  })
 
   return (
     <WagmiConfig config={config}>
