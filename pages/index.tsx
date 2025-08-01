@@ -7,8 +7,6 @@ import Joystick from "@/components/Joystick"
 import chogPunchABI from "@/lib/chogPunchABI.json"
 
 export default function Home() {
-  const { address, isConnected } = useAccount()
-  const { writeContractAsync } = useWriteContract()
     fid: number
 
   const [stage, setStage] = useState<"home" | "play">("home")
