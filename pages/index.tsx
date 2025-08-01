@@ -65,8 +65,6 @@ export default function Home() {
       {stage === "home" && (
         <>
           <button
-            className="absolute inset-0 m-auto w-32 h-12 bg-white text-black font-bold rounded"
-            onClick={() => setStage("play")}
           >
             Play
           </button>
