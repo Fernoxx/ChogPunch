@@ -34,8 +34,6 @@ export default function Home() {
     >
       )}
 
-      {/* Home screen */}
-      {stage === "home" && (
         <>
           <button
           >
