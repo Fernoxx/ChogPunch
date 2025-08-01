@@ -1,5 +1,4 @@
 @tailwind base;
 @tailwind components;
-@tailwind utilities;
 
 /* no extra overrides needed – animations live in tailwind.config.js */
