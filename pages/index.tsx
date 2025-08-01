@@ -17,14 +17,6 @@ export default function Home() {
   const [claimed, setClaimed] = useState(false)
 
   // 1) Load Farcaster user context on mount
-  useEffect(() => {
-    ;(async () => {
-      try {
-        const { sdk } = await import("@farcaster/miniapp-sdk")
-        const ctx = await sdk.context
-        if (ctx?.user) setFarcasterUser(ctx.user)
-      } catch (e) {
-        console.error("Farcaster context error:", e)
       }
     })()
   }, [])
