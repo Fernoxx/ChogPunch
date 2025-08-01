@@ -19,9 +19,6 @@ export default function Home() {
   const handleClaim = async () => {
     if (!address) return
     try {
-      await writeContractAsync({
-        abi: chogPunchABI,
-        address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS!,
         functionName: "submitScore",
         args: [20],
       })
