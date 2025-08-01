@@ -38,11 +38,6 @@ export default function Home() {
       })
       // backend picks up UserEligible event and sends 1 MON
       setClaimed(true)
-    } catch (e) {
-      console.error("Claim tx failed:", e)
-    }
-  }
-
   // If Farcaster context not loaded yet, show nothing (Farcaster will hide splash for us)
   if (farcasterUser === null) return null
 
