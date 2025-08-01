@@ -13,10 +13,6 @@ export default function Home() {
   // 2) reset anim when stage changes
   useEffect(() => {
     if (stage === "home") setAnim("idle")
-  }, [stage])
-
-  const handleDirection = (dir: "kick" | "punch" | "push") => {
-    setAnim(dir)
     setHits(h => Math.min(h + 1, 20))
   }
 
