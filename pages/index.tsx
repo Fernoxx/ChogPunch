@@ -2,8 +2,6 @@
 import { useEffect, useState } from "react"
 import { useAccount, useWriteContract } from "wagmi"
 import Chog from "@/components/Chog"
-import PunchingBag from "@/components/PunchingBag"
-import Joystick from "@/components/Joystick"
 export default function Home() {
     fid: number
 
