@@ -49,12 +49,6 @@ export default function Home() {
 
 
       {/* Play screen */}
-      {stage === "play" && (
-        <>
-          <Chog anim={anim} />
-          <PunchingBag anim={anim} />
-
-          {hits >= 20 && !claimed && (
             <button
             >
               Claim 1 MON
