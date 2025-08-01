@@ -36,7 +36,6 @@ export default function App({ Component, pageProps }: AppProps) {
   const config = createConfig({
     autoConnect: true,
     publicClient,
-    connectors: [farcasterConnector],
   })
 
   return (
