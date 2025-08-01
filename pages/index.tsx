@@ -75,7 +75,6 @@ export default function Home() {
         <>
           <Chog anim={anim} />
           <PunchingBag anim={anim} />
-          <Joystick onDirection={handleDirection} />
 
           {hits >= 20 && !claimed && (
             <button
