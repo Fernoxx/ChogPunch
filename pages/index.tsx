@@ -36,10 +36,6 @@ export default function Home() {
       style={{ backgroundImage: "url('/gym-bg.png')" }}
     >
       {/* Top-left back */}
-      {stage === "play" && (
-        <button
-          className="absolute top-4 left-4 bg-white/60 text-black px-2 py-1 rounded"
-          onClick={() => setStage("home")}
         >
           ← Back
         </button>
