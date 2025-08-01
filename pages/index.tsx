@@ -35,10 +35,6 @@ export default function Home() {
       className="min-h-screen bg-cover bg-center relative"
       style={{ backgroundImage: "url('/gym-bg.png')" }}
     >
-      {/* Top-left back */}
-        >
-          ← Back
-        </button>
       )}
 
       {/* Home screen */}
