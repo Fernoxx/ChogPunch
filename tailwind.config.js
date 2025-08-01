@@ -18,7 +18,6 @@ module.exports = {
       },
       animation: {
         sway:  "sway 2s ease-in-out infinite",
-        kick:  "kick 0.5s ease-in-out
       }
     },
   },
