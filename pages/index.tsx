@@ -9,7 +9,6 @@ import chogPunchABI from "@/lib/chogPunchABI.json"
 export default function Home() {
   const { address, isConnected } = useAccount()
   const { writeContractAsync } = useWriteContract()
-  const [farcasterUser, setFarcasterUser] = useState<{
     fid: number
     username?: string
     displayName?: string
