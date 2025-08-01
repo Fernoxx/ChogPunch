@@ -4,8 +4,6 @@ import { useAccount, useWriteContract } from "wagmi"
 import Chog from "@/components/Chog"
 import PunchingBag from "@/components/PunchingBag"
 import Joystick from "@/components/Joystick"
-import chogPunchABI from "@/lib/chogPunchABI.json"
-
 export default function Home() {
     fid: number
 
