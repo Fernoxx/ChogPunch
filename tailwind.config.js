@@ -10,7 +10,6 @@ module.exports = {
         },
         kick: {
         },
-        punch: {
         },
       },
     },
