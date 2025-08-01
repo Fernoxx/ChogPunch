@@ -17,11 +17,6 @@ export default function App({ Component, pageProps }: AppProps) {
         console.error("Farcaster SDK ready error:", e)
       }
     })()
-  }, [])
-
-  const publicClient = createPublicClient({
-    chain: base,
-    transport: http(process.env.NEXT_PUBLIC_ALCHEMY_URL!),
   })
 
     chains: [base],
