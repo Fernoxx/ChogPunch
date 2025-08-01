@@ -46,13 +46,6 @@ export default function Home() {
         <>
           <button
           >
-            Play
-          </button>
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-xs text-white">
-            built by{" "}
-            <a
-              target="_blank"
-            >
 
 
       {/* Play screen */}
