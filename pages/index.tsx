@@ -9,9 +9,6 @@ import chogPunchABI from "@/lib/chogPunchABI.json"
 export default function Home() {
     fid: number
 
-  const [stage, setStage] = useState<"home" | "play">("home")
-  const [hits, setHits] = useState(0)
-
   // 1) Load Farcaster user context on mount
       }
     })()
