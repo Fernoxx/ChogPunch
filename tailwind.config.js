@@ -12,7 +12,6 @@ module.exports = {
         kick: {
         },
         punch: {
-          "0%":   { transform: "scale(1)" },
         },
         push: {
           "0%":   { transform: "scale(1)" },
