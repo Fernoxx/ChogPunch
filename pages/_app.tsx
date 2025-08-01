@@ -5,9 +5,7 @@ import { useEffect } from "react"
 import { WagmiConfig, createConfig } from "wagmi"
 import { base } from "wagmi/chains"
 import { InjectedConnector } from "wagmi/connectors/injected"
-        const { sdk } = await import("@farcaster/miniapp-sdk")
-
-  = createConfig({
+    
     autoConnect: true,
     publicClient,
     connectors: [farcasterConnector],
