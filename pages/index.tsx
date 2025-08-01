@@ -10,8 +10,6 @@ export default function Home() {
   const { address, isConnected } = useAccount()
   const { writeContractAsync } = useWriteContract()
     fid: number
-    username?: string
-    displayName?: string
 
   const [stage, setStage] = useState<"home" | "play">("home")
   const [hits, setHits] = useState(0)
