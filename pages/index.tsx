@@ -211,9 +211,15 @@ export default function Home() {
       soundManager.play('roundhouse')
     }
 
-    // Check hit
-    const fighter = physicsEngineRef.current.getBody('fighter')
+    // Check hit and apply physics
+    const fighter = physicsEngineRef.current.getBody('fighter-torso')
     if (fighter && bagRef.current) {
+      // Apply punch/kick physics
+      if (move.includes('punch')) {
+        physicsEngineRef.current.applyPunch(fighter.body, 'right', data.damage / 10)
+      } else if (move.includes('kick')) {
+        physicsEngineRef.current.applyKick(fighter.body, 'right', data.damage / 10)
+      }
       const hit = checkBagHit(
         physicsEngineRef.current,
         fighter.body.position,
@@ -254,22 +260,15 @@ export default function Home() {
   }, [])
 
   const handleMove = useCallback((direction: 'left' | 'right') => {
-    if (!physicsEngineRef.current) return
-    const fighter = physicsEngineRef.current.getBody('fighter')
-    if (fighter) {
-      const force = direction === 'right' ? 0.005 : -0.005
-      Matter.Body.applyForce(fighter.body, fighter.body.position, { x: force, y: 0 })
-    }
-  }, [])
+    if (!physicsEngineRef.current || stage !== 'play') return
+    physicsEngineRef.current.moveFighter(direction)
+  }, [stage])
 
   const handleJump = useCallback(() => {
-    if (!physicsEngineRef.current || playerEnergy < 20) return
-    const fighter = physicsEngineRef.current.getBody('fighter')
-    if (fighter) {
-      Matter.Body.applyForce(fighter.body, fighter.body.position, { x: 0, y: -0.1 })
-      setPlayerEnergy(prev => prev - 20)
-    }
-  }, [playerEnergy])
+    if (!physicsEngineRef.current || playerEnergy < 20 || stage !== 'play') return
+    physicsEngineRef.current.moveFighter('jump')
+    setPlayerEnergy(prev => prev - 20)
+  }, [playerEnergy, stage])
 
   const handleClaim = async () => {
     if (!address || claimed || !writeContractAsync) return

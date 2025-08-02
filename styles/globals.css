@@ -34,6 +34,37 @@ body {
   75% { transform: translateX(10px); }
 }
 
+/* Combat animations */
+@keyframes punch-motion {
+  0% { transform: translateX(0) scale(1); }
+  50% { transform: translateX(30px) scale(1.1); }
+  100% { transform: translateX(0) scale(1); }
+}
+
+@keyframes kick-motion {
+  0% { transform: translateX(0) rotate(0deg); }
+  50% { transform: translateX(40px) rotate(20deg); }
+  100% { transform: translateX(0) rotate(0deg); }
+}
+
+.animate-punch {
+  animation: punch-motion 0.3s ease-out;
+}
+
+.animate-kick {
+  animation: kick-motion 0.4s ease-out;
+}
+
+.animate-jump {
+  animation: jump-motion 0.5s ease-out;
+}
+
+@keyframes jump-motion {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-50px); }
+  100% { transform: translateY(0); }
+}
+
 /* Visual effects */
 .glow-effect {
   filter: drop-shadow(0 0 20px rgba(255, 100, 0, 0.8));

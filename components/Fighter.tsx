@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { PhysicsEngine } from '@/lib/physics/PhysicsEngine';
 import { AnimationController, AnimationState } from '@/lib/animation/AnimationController';
 import Image from 'next/image';
@@ -11,207 +11,150 @@ interface FighterProps {
   y: number;
 }
 
-interface BodyPart {
-  name: string;
-  x: number;
-  y: number;
-  rotation: number;
-  width: number;
-  height: number;
-  zIndex: number;
-  imageCrop?: {
-    sx: number;
-    sy: number;
-    sw: number;
-    sh: number;
-  };
-}
-
-export const Fighter: React.FC<FighterProps> = ({ physicsEngine, animationController, x, y }) => {
-  const [bodyParts, setBodyParts] = useState<BodyPart[]>([]);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const characterImage = useRef<HTMLImageElement | null>(null);
+export const Fighter: React.FC<FighterProps> = ({ physicsEngine, animationController }) => {
+  const [position, setPosition] = useState({ x: 200, y: 400 });
+  const [rotation, setRotation] = useState(0);
+  const [currentAnimation, setCurrentAnimation] = useState<AnimationState>('idle');
+  const [facingRight, setFacingRight] = useState(true);
 
   useEffect(() => {
-    // Load character image
-    const img = new window.Image();
-    img.src = '/chog.png';
-    img.onload = () => {
-      characterImage.current = img;
-    };
-  }, []);
-
-  useEffect(() => {
-    const updateBodyParts = () => {
+    const updatePosition = () => {
       const bodies = physicsEngine.getAllBodies();
-      const parts: BodyPart[] = [];
-
-      // Define body part mappings with image crops
-      const partMappings: Record<string, { 
-        crop?: { sx: number; sy: number; sw: number; sh: number };
-        zIndex: number;
-        scale?: { w: number; h: number };
-      }> = {
-        'fighter': { 
-          crop: { sx: 50, sy: 80, sw: 100, sh: 120 }, // Torso
-          zIndex: 5,
-          scale: { w: 60, h: 80 }
-        },
-        'fighter-head': { 
-          crop: { sx: 60, sy: 0, sw: 80, sh: 80 }, // Head
-          zIndex: 6,
-          scale: { w: 50, h: 50 }
-        },
-        'fighter-leftUpperArm': { 
-          crop: { sx: 20, sy: 90, sw: 30, sh: 60 }, // Left upper arm
-          zIndex: 4,
-          scale: { w: 20, h: 40 }
-        },
-        'fighter-leftLowerArm': { 
-          crop: { sx: 10, sy: 140, sw: 25, sh: 50 }, // Left lower arm
-          zIndex: 3,
-          scale: { w: 18, h: 35 }
-        },
-        'fighter-rightUpperArm': { 
-          crop: { sx: 150, sy: 90, sw: 30, sh: 60 }, // Right upper arm
-          zIndex: 7,
-          scale: { w: 20, h: 40 }
-        },
-        'fighter-rightLowerArm': { 
-          crop: { sx: 165, sy: 140, sw: 25, sh: 50 }, // Right lower arm
-          zIndex: 8,
-          scale: { w: 18, h: 35 }
-        },
-        'fighter-leftUpperLeg': { 
-          crop: { sx: 40, sy: 180, sw: 35, sh: 70 }, // Left upper leg
-          zIndex: 4,
-          scale: { w: 25, h: 50 }
-        },
-        'fighter-leftLowerLeg': { 
-          crop: { sx: 35, sy: 240, sw: 30, sh: 60 }, // Left lower leg
-          zIndex: 3,
-          scale: { w: 20, h: 45 }
-        },
-        'fighter-rightUpperLeg': { 
-          crop: { sx: 125, sy: 180, sw: 35, sh: 70 }, // Right upper leg
-          zIndex: 2,
-          scale: { w: 25, h: 50 }
-        },
-        'fighter-rightLowerLeg': { 
-          crop: { sx: 130, sy: 240, sw: 30, sh: 60 }, // Right lower leg
-          zIndex: 1,
-          scale: { w: 20, h: 45 }
-        }
-      };
-
-      bodies.forEach((physicsBody, key) => {
-        const mapping = partMappings[key];
-        if (mapping && physicsBody.body) {
-          const body = physicsBody.body;
-          parts.push({
-            name: key,
-            x: body.position.x,
-            y: body.position.y,
-            rotation: body.angle,
-            width: mapping.scale?.w || 40,
-            height: mapping.scale?.h || 40,
-            zIndex: mapping.zIndex,
-            imageCrop: mapping.crop
-          });
-        }
-      });
-
-      // Sort by z-index
-      parts.sort((a, b) => a.zIndex - b.zIndex);
-      setBodyParts(parts);
-    };
-
-    const interval = setInterval(updateBodyParts, 16); // 60 FPS
-    return () => clearInterval(interval);
-  }, [physicsEngine]);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas || !characterImage.current) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const render = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Enable image smoothing for better quality
-      ctx.imageSmoothingEnabled = true;
-      ctx.imageSmoothingQuality = 'high';
-
-      bodyParts.forEach(part => {
-        ctx.save();
+      const torso = bodies.get('fighter-torso');
+      
+      if (torso && torso.body) {
+        setPosition({
+          x: torso.body.position.x,
+          y: torso.body.position.y
+        });
+        setRotation(torso.body.angle);
         
-        // Translate to body part position
-        ctx.translate(part.x, part.y);
-        ctx.rotate(part.rotation);
-
-        if (part.imageCrop && characterImage.current) {
-          // Draw cropped section of character image
-          try {
-            ctx.drawImage(
-              characterImage.current,
-              part.imageCrop.sx,
-              part.imageCrop.sy,
-              part.imageCrop.sw,
-              part.imageCrop.sh,
-              -part.width / 2,
-              -part.height / 2,
-              part.width,
-              part.height
-            );
-          } catch (e) {
-            // Fallback to colored rectangles if image cropping fails
-            ctx.fillStyle = part.name.includes('head') ? '#FFB6C1' : 
-                           part.name.includes('arm') ? '#FF69B4' : 
-                           part.name.includes('leg') ? '#8B4513' : '#FFA500';
-            ctx.fillRect(-part.width / 2, -part.height / 2, part.width, part.height);
-          }
+        // Update facing direction based on velocity
+        if (torso.body.velocity.x > 0.5) {
+          setFacingRight(true);
+        } else if (torso.body.velocity.x < -0.5) {
+          setFacingRight(false);
         }
-
-        ctx.restore();
-      });
-
-      requestAnimationFrame(render);
+      }
+      
+      // Get current animation
+      const state = animationController.getCurrentState();
+      setCurrentAnimation(state);
     };
 
-    render();
-  }, [bodyParts]);
+    const interval = setInterval(updatePosition, 16);
+    return () => clearInterval(interval);
+  }, [physicsEngine, animationController]);
+
+  // Animation variants for different states
+  const getAnimationVariant = () => {
+    switch (currentAnimation) {
+      case 'punch1':
+      case 'punch2':
+      case 'punch3':
+        return { scale: 1.1, transition: { duration: 0.1 } };
+      case 'kick1':
+      case 'kick2':
+        return { scale: 1.15, rotate: facingRight ? 10 : -10, transition: { duration: 0.15 } };
+      case 'jump':
+        return { y: -30, scale: 1.05, transition: { duration: 0.3 } };
+      case 'hit':
+        return { scale: 0.95, opacity: 0.8, transition: { duration: 0.1 } };
+      default:
+        return {};
+    }
+  };
 
   return (
-    <div className="absolute inset-0 pointer-events-none">
-      <canvas
-        ref={canvasRef}
-        width={window.innerWidth}
-        height={window.innerHeight}
-        className="absolute inset-0"
-        style={{ zIndex: 10 }}
-      />
-      
-      {/* Shadow effect */}
+    <>
+      {/* Fighter Character */}
       <motion.div
-        className="absolute bg-black/30 rounded-full blur-xl"
+        className="absolute"
         style={{
-          left: x - 40,
-          bottom: 50,
-          width: 80,
-          height: 20,
+          left: position.x - 75,
+          top: position.y - 100,
+          width: 150,
+          height: 200,
+          zIndex: 20,
+          transform: `scaleX(${facingRight ? 1 : -1})`
         }}
         animate={{
-          scaleX: [1, 1.2, 1],
-          opacity: [0.3, 0.5, 0.3]
+          ...getAnimationVariant(),
+          y: currentAnimation === 'idle' ? [0, -5, 0] : 0
         }}
         transition={{
-          duration: 2,
-          repeat: Infinity,
-          ease: "easeInOut"
+          y: currentAnimation === 'idle' ? {
+            duration: 2,
+            repeat: Infinity,
+            ease: "easeInOut"
+          } : undefined
+        }}
+      >
+        <Image
+          src="/chog.png"
+          alt="CHOG Fighter"
+          fill
+          className="object-contain drop-shadow-2xl"
+          priority
+          style={{
+            filter: currentAnimation === 'hit' ? 'brightness(1.5) hue-rotate(30deg)' : 
+                   (currentAnimation.includes('punch') || currentAnimation.includes('kick')) ? 
+                   'brightness(1.2) contrast(1.2)' : 'none',
+            transform: `rotate(${rotation}rad)`
+          }}
+        />
+        
+        {/* Attack Effects */}
+        {(currentAnimation.includes('punch') || currentAnimation.includes('kick')) && (
+          <motion.div
+            className="absolute"
+            style={{
+              right: facingRight ? -30 : 'auto',
+              left: facingRight ? 'auto' : -30,
+              top: currentAnimation.includes('punch') ? '30%' : '50%',
+              width: 60,
+              height: 60
+            }}
+            initial={{ scale: 0, opacity: 1 }}
+            animate={{ scale: 1.5, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="w-full h-full bg-gradient-radial from-yellow-400 to-orange-500 rounded-full blur-xl" />
+          </motion.div>
+        )}
+      </motion.div>
+      
+      {/* Shadow */}
+      <div
+        className="absolute bg-black/40 rounded-full blur-lg"
+        style={{
+          left: position.x - 40,
+          top: position.y + 80,
+          width: 80,
+          height: 20,
+          zIndex: 5,
+          transform: `scaleX(${1 + Math.abs(position.y - 400) / 300})`
         }}
       />
-    </div>
+      
+      {/* Ground Impact Effect */}
+      {currentAnimation === 'jump' && (
+        <motion.div
+          className="absolute"
+          style={{
+            left: position.x - 60,
+            top: position.y + 70,
+            width: 120,
+            height: 40,
+            zIndex: 4
+          }}
+          initial={{ scale: 0.5, opacity: 0.8 }}
+          animate={{ scale: 1.5, opacity: 0 }}
+          transition={{ duration: 0.4 }}
+        >
+          <div className="w-full h-full bg-white/20 rounded-full blur-xl" />
+        </motion.div>
+      )}
+    </>
   );
 };
