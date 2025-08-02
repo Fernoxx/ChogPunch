@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { PhysicsEngine } from '@/lib/physics/PhysicsEngine';
 import { AnimationController, AnimationState } from '@/lib/animation/AnimationController';
-import Image from 'next/image';
 import { motion } from 'framer-motion';
 
 interface FighterProps {
@@ -16,6 +15,15 @@ export const Fighter: React.FC<FighterProps> = ({ physicsEngine, animationContro
   const [rotation, setRotation] = useState(0);
   const [currentAnimation, setCurrentAnimation] = useState<AnimationState>('idle');
   const [facingRight, setFacingRight] = useState(true);
+  
+  // Debug logging
+  useEffect(() => {
+    console.log('Fighter mounted, position:', position);
+  }, []);
+
+  useEffect(() => {
+    console.log('Fighter position updated:', position);
+  }, [position]);
 
   useEffect(() => {
     const updatePosition = () => {
@@ -67,9 +75,21 @@ export const Fighter: React.FC<FighterProps> = ({ physicsEngine, animationContro
 
   return (
     <>
+      {/* Debug red box to ensure component is rendering */}
+      <div
+        className="absolute bg-red-500"
+        style={{
+          left: position.x - 5,
+          top: position.y - 5,
+          width: 10,
+          height: 10,
+          zIndex: 50
+        }}
+      />
+      
       {/* Fighter Character */}
       <motion.div
-        className="absolute"
+        className="absolute border-2 border-yellow-400 bg-black/20"
         style={{
           left: position.x - 75,
           top: position.y - 100,
@@ -89,20 +109,35 @@ export const Fighter: React.FC<FighterProps> = ({ physicsEngine, animationContro
             ease: "easeInOut"
           } : undefined
         }}
-      >
-        <Image
-          src="/chog.png"
-          alt="CHOG Fighter"
-          fill
-          className="object-contain drop-shadow-2xl"
-          priority
-          style={{
-            filter: currentAnimation === 'hit' ? 'brightness(1.5) hue-rotate(30deg)' : 
-                   (currentAnimation.includes('punch') || currentAnimation.includes('kick')) ? 
-                   'brightness(1.2) contrast(1.2)' : 'none',
-            transform: `rotate(${rotation}rad)`
-          }}
-        />
+              >
+          {/* Using regular img tag for better compatibility */}
+          <img
+            src="/chog.png"
+            alt="CHOG Fighter"
+            className="w-full h-full object-contain drop-shadow-2xl"
+            onError={(e) => {
+              console.error('Failed to load chog.png');
+              // Show fallback
+              e.currentTarget.style.display = 'none';
+            }}
+            onLoad={() => {
+              console.log('Successfully loaded chog.png');
+            }}
+            style={{
+              filter: currentAnimation === 'hit' ? 'brightness(1.5) hue-rotate(30deg)' : 
+                     (currentAnimation.includes('punch') || currentAnimation.includes('kick')) ? 
+                     'brightness(1.2) contrast(1.2)' : 'none',
+              transform: `rotate(${rotation}rad)`
+            }}
+          />
+          
+          {/* Fallback colored character */}
+          <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: -1 }}>
+            <div className="w-20 h-32 bg-gradient-to-b from-orange-500 to-red-600 rounded-lg shadow-2xl">
+              <div className="w-12 h-12 bg-yellow-400 rounded-full mx-auto mt-2" />
+              <div className="text-white text-center mt-2 font-bold">CHOG</div>
+            </div>
+          </div>
         
         {/* Attack Effects */}
         {(currentAnimation.includes('punch') || currentAnimation.includes('kick')) && (
