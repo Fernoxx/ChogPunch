@@ -52,6 +52,21 @@ export default function Home() {
   const comboTimeoutRef = useRef<NodeJS.Timeout>()
   const bagRef = useRef<any>(null)
 
+  // Define handleGameEnd early to avoid hoisting issues
+  const handleGameEnd = useCallback(() => {
+    const victory = score >= 1000
+    setStage(victory ? "victory" : "defeat")
+    soundManager.play(victory ? 'victory' : 'defeat')
+    
+    if (victory) {
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+      })
+    }
+  }, [score])
+
   // Load Farcaster user context
   useEffect(() => {
     ;(async () => {
@@ -255,20 +270,6 @@ export default function Home() {
       setPlayerEnergy(prev => prev - 20)
     }
   }, [playerEnergy])
-
-  const handleGameEnd = useCallback(() => {
-    const victory = score >= 1000
-    setStage(victory ? "victory" : "defeat")
-    soundManager.play(victory ? 'victory' : 'defeat')
-    
-    if (victory) {
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 }
-      })
-    }
-  }, [score])
 
   const handleClaim = async () => {
     if (!address || claimed || !writeContractAsync) return
