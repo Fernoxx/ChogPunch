@@ -2,10 +2,10 @@
 import "../styles/globals.css"
 import type { AppProps } from "next/app"
 import { useEffect } from "react"
-import { WagmiConfig, createConfig } from "wagmi"
+import { WagmiConfig, createConfig, configureChains } from "wagmi"
 import { base } from "wagmi/chains"
 import { InjectedConnector } from "wagmi/connectors/injected"
-import { createPublicClient, http } from "viem"
+import { publicProvider } from "wagmi/providers/public"
 
 export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
@@ -19,13 +19,13 @@ export default function App({ Component, pageProps }: AppProps) {
     })()
   }, [])
 
-  const publicClient = createPublicClient({
-    chain: base,
-    transport: http(process.env.NEXT_PUBLIC_ALCHEMY_URL!),
-  })
+  const { chains, publicClient, webSocketPublicClient } = configureChains(
+    [base],
+    [publicProvider()]
+  )
 
   const farcasterConnector = new InjectedConnector({
-    chains: [base],
+    chains,
     options: {
       name: "Farcaster",
       getProvider: () =>
@@ -36,6 +36,7 @@ export default function App({ Component, pageProps }: AppProps) {
   const config = createConfig({
     autoConnect: true,
     publicClient,
+    webSocketPublicClient,
     connectors: [farcasterConnector],
   })
 
