@@ -299,10 +299,8 @@ export default function Home() {
     setClaimed(false)
   }
 
-  if (farcasterUser === null) return null
-
   return (
-    <div className="min-h-screen relative overflow-hidden">
+    <div className="min-h-screen relative overflow-hidden bg-black">
       {/* Background */}
       <div className="absolute inset-0">
         <Image
@@ -315,6 +313,24 @@ export default function Home() {
         <div className="absolute inset-0 bg-black/30" />
       </div>
 
+      {/* Loading Screen */}
+      {farcasterUser === null && (
+        <div className="absolute inset-0 flex items-center justify-center z-50 bg-black">
+          <div className="text-center">
+            <Image
+              src="/chog.png"
+              alt="CHOG Fighter"
+              width={200}
+              height={200}
+              className="mx-auto mb-8 glow-effect"
+              style={{ animation: 'pulse-glow 2s ease-in-out infinite' }}
+            />
+            <h2 className="text-4xl font-bold text-white neon-glow mb-4">Loading Fighter...</h2>
+            <p className="text-white/60">Preparing the gym</p>
+          </div>
+        </div>
+      )}
+
       {/* Home Screen */}
       <AnimatePresence>
         {stage === "home" && (
@@ -326,14 +342,28 @@ export default function Home() {
           >
             <div className="text-center">
               <motion.h1
-                className="text-6xl md:text-8xl font-bold text-white mb-8"
-                initial={{ y: -50 }}
-                animate={{ y: 0 }}
+                className="text-6xl md:text-8xl font-bold text-white mb-8 neon-glow"
+                initial={{ y: -50, scale: 0.8 }}
+                animate={{ y: 0, scale: 1 }}
                 transition={{ type: "spring", stiffness: 100 }}
-                style={{ textShadow: '4px 4px 8px rgba(0,0,0,0.8)' }}
               >
                 CHOG FIGHTER
               </motion.h1>
+              
+              <motion.div
+                className="mb-8"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+              >
+                <Image
+                  src="/chog.png"
+                  alt="CHOG Fighter"
+                  width={150}
+                  height={150}
+                  className="mx-auto glow-effect game-shadow"
+                />
+              </motion.div>
               
               <motion.button
                 className="bg-gradient-to-r from-orange-500 to-red-500 text-white text-2xl font-bold px-12 py-6 rounded-lg shadow-2xl hover:scale-105 transition-transform"
