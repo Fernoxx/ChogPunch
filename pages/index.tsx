@@ -1,6 +1,6 @@
 // pages/index.tsx
 import { useEffect, useState, useRef, useCallback } from "react"
-import { useAccount, useWriteContract } from "wagmi"
+import { useAccount, useContractWrite, usePrepareContractWrite } from "wagmi"
 import { PhysicsEngine } from "@/lib/physics/PhysicsEngine"
 import { AnimationController } from "@/lib/animation/AnimationController"
 import { soundManager } from "@/lib/audio/SoundManager"
@@ -16,7 +16,6 @@ import Matter from "matter-js"
 
 export default function Home() {
   const { address, isConnected } = useAccount()
-  const { writeContractAsync } = useWriteContract()
   const [farcasterUser, setFarcasterUser] = useState<{
     fid: number
     username?: string
@@ -33,6 +32,17 @@ export default function Home() {
   const [timeLeft, setTimeLeft] = useState(120) // 2 minutes
   const [specialMovesReady, setSpecialMovesReady] = useState<string[]>([])
   const [claimed, setClaimed] = useState(false)
+
+  // Prepare contract write
+  const { config: contractWriteConfig } = usePrepareContractWrite({
+    address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as `0x${string}`,
+    abi: chogPunchABI,
+    functionName: "submitScore",
+    args: [score],
+    enabled: !claimed && score >= 1000 && !!address,
+  })
+
+  const { writeAsync: writeContractAsync } = useContractWrite(contractWriteConfig)
 
   // Physics and animation refs
   const physicsEngineRef = useRef<PhysicsEngine | null>(null)
@@ -261,14 +271,9 @@ export default function Home() {
   }, [score])
 
   const handleClaim = async () => {
-    if (!address || claimed) return
+    if (!address || claimed || !writeContractAsync) return
     try {
-      await writeContractAsync({
-        abi: chogPunchABI,
-        address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS!,
-        functionName: "submitScore",
-        args: [score],
-      })
+      await writeContractAsync()
       setClaimed(true)
       
       confetti({
