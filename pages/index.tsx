@@ -88,8 +88,8 @@ export default function Home() {
       physicsEngineRef.current = physicsEngine
 
       // Create fighter and punching bag
-      physicsEngine.createFighter(200, 400)
-      physicsEngine.createPunchingBag(window.innerWidth - 200, 300)
+      physicsEngine.createFighter(200, 450)
+      physicsEngine.createPunchingBag(window.innerWidth - 200, 350)
       physicsEngine.start()
 
       // Create animation controller

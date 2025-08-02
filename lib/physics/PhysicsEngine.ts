@@ -20,6 +20,28 @@ export class PhysicsEngine {
     this.world = this.engine.world;
     this.runner = Matter.Runner.create();
 
+    // Create ground - positioned at bottom of typical screen
+    const ground = Matter.Bodies.rectangle(960, 540, 2000, 60, { 
+      isStatic: true,
+      label: 'ground',
+      render: {
+        fillStyle: '#2a2a2a'
+      }
+    });
+    
+    // Create walls to keep fighter in bounds
+    const leftWall = Matter.Bodies.rectangle(-30, 300, 60, 800, { 
+      isStatic: true,
+      label: 'leftWall'
+    });
+    
+    const rightWall = Matter.Bodies.rectangle(1950, 300, 60, 800, { 
+      isStatic: true,
+      label: 'rightWall'
+    });
+    
+    Matter.World.add(this.world, [ground, leftWall, rightWall]);
+
     if (canvas) {
       this.render = Matter.Render.create({
         canvas,

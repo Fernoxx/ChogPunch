@@ -11,7 +11,7 @@ interface FighterProps {
 }
 
 export const Fighter: React.FC<FighterProps> = ({ physicsEngine, animationController }) => {
-  const [position, setPosition] = useState({ x: 200, y: 400 });
+  const [position, setPosition] = useState({ x: 200, y: 450 });
   const [rotation, setRotation] = useState(0);
   const [currentAnimation, setCurrentAnimation] = useState<AnimationState>('idle');
   const [facingRight, setFacingRight] = useState(true);
@@ -75,27 +75,15 @@ export const Fighter: React.FC<FighterProps> = ({ physicsEngine, animationContro
 
   return (
     <>
-      {/* Debug red box to ensure component is rendering */}
-      <div
-        className="absolute bg-red-500"
-        style={{
-          left: position.x - 5,
-          top: position.y - 5,
-          width: 10,
-          height: 10,
-          zIndex: 50
-        }}
-      />
-      
       {/* Fighter Character */}
       <motion.div
-        className="absolute border-2 border-yellow-400 bg-black/20"
+        className="absolute"
         style={{
           left: position.x - 75,
           top: position.y - 100,
           width: 150,
           height: 200,
-          zIndex: 20,
+          zIndex: 30,
           transform: `scaleX(${facingRight ? 1 : -1})`
         }}
         animate={{
