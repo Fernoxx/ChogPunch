@@ -7,7 +7,7 @@
     "start": "next start"
   },
   "dependencies": {
-    "@farcaster/miniapp-sdk": "^0.2.0",
+    "@farcaster/miniapp-sdk": "^0.1.8",
     "@react-spring/web": "^10.0.1",
     "@types/howler": "^2.2.12",
     "@types/matter-js": "^0.19.8",
