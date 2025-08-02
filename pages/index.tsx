@@ -118,7 +118,7 @@ export default function Home() {
       }, 1000)
       return () => clearTimeout(timer)
     }
-  }, [stage, timeLeft])
+  }, [stage, timeLeft, handleGameEnd])
 
   // Energy regeneration
   useEffect(() => {
@@ -246,7 +246,7 @@ export default function Home() {
     }
   }, [playerEnergy])
 
-  const handleGameEnd = () => {
+  const handleGameEnd = useCallback(() => {
     const victory = score >= 1000
     setStage(victory ? "victory" : "defeat")
     soundManager.play(victory ? 'victory' : 'defeat')
@@ -258,7 +258,7 @@ export default function Home() {
         origin: { y: 0.6 }
       })
     }
-  }
+  }, [score])
 
   const handleClaim = async () => {
     if (!address || claimed) return
