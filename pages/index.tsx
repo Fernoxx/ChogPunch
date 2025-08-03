@@ -127,9 +127,7 @@ export default function Home() {
     const moves: string[] = []
     if (playerEnergy >= 30) moves.push('uppercut')
     if (playerEnergy >= 50) moves.push('roundhouse')
-    if (playerEnergy >= 80 && combo >= 5) moves.push('special')
-    setSpecialMovesReady(moves)
-  }, [playerEnergy, combo])
+    if (playerEnergy >= 80 && combo >= 5) moves.push('special'))
 
   // Low health warning
   useEffect(() => {
