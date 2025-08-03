@@ -7,9 +7,7 @@ module.exports = {
   theme: {
     extend: {
         }
-      },
-      animation:
-        push:  "push 0.5s ease-in-out"
+      }
       }
     },
   },
