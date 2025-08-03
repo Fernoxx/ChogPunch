@@ -6,4 +6,4 @@ import { WagmiConfig, createConfig } from "wagmi"
   return (
     <WagmiConfig config={config}>
       <Component {...pageProps} />
-  )
+
