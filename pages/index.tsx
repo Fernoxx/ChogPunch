@@ -90,8 +90,6 @@ export default function Home() {
           if (prev <= 1) {
             handleGameEnd()
             return 0
-          }
-          return prev - 1
 
   // Energy regeneration
   useEffect(() => {
