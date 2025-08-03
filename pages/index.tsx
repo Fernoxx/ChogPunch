@@ -148,8 +148,6 @@ export default function Home() {
     } else if (move === 'uppercut') {
       soundManager.play('uppercut')
     } else if (move === 'roundhouse') {
-      soundManager.play('roundhouse')
-    }
 
     // Check hit
     const fighter = physicsEngineRef.current.getBody('fighter')
