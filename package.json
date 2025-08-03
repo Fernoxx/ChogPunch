@@ -7,4 +7,3 @@
     "start": "next start"
   },
   "dependencies": 
-    "framer-motion": "^12.23.12",
