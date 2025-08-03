@@ -82,8 +82,6 @@ export default function Home() {
 
         animationFrameRef.current = requestAnimationFrame(gameLoop)
       }
-      animationFrameRef.current = requestAnimationFrame(gameLoop)
-    }
 
     return () => {
       if (animationFrameRef.current) {
