@@ -292,8 +292,6 @@ export default function Home() {
               <motion.div
                 className="mt-12 text-white/60"
                 initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
               >
                 <p className="text-sm">Use touch gestures or keyboard to fight</p>
                 <p className="text-xs mt-2">
