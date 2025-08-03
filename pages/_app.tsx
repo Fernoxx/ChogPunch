@@ -15,7 +15,6 @@ import { InjectedConnector } from "wagmi/connectors/injected"
 
     chains: [base],
     options: {
-      name: "Farcaster",
     },
   })
 
