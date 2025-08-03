@@ -6,9 +6,6 @@ module.exports = {
   ],
   theme: {
     extend: {
-      keyframes: {
-        punch: {
-          "0%":   { transform: "scale(1)" },
         }
       },
       animation:
