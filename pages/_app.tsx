@@ -7,4 +7,3 @@ import { WagmiConfig, createConfig } from "wagmi"
     <WagmiConfig config={config}>
       <Component {...pageProps} />
   )
-}
