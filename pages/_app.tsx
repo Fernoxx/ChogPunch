@@ -12,11 +12,6 @@ import { base } from "wagmi/chains"
       } catch (e) 
   })
 
-    chains: [base],
-    options: {
-    },
-  })
-
   return (
     <WagmiConfig config={config}>
       <Component {...pageProps} />
