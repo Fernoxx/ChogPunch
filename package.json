@@ -1,5 +1,4 @@
 {
   "name": "chogpunch-miniapp",
   "version": "1.0.0",
-  "scripts": {
-    "dev": "next dev",
+  "scripts": {next dev",
