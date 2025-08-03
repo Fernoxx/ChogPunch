@@ -7,10 +7,6 @@ module.exports = {
   theme: {
     extend: {
       keyframes: {
-        sway: {
-        },
-        kick: {
-        },
         punch: {
           "0%":   { transform: "scale(1)" },
           "0%":   { transform: "scale(1)" },
