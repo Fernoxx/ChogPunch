@@ -21,7 +21,6 @@ import { createPublicClient, http } from "viem"
     transport: http(process.env.NEXT_PUBLIC_ALCHEMY_URL!),
   })
 
-  const farcasterConnector = new InjectedConnector({
     chains: [base],
     options: {
       name: "Farcaster",
