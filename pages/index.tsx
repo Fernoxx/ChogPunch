@@ -186,8 +186,6 @@ export default function Home() {
       if (!hit) {
         soundManager.play('whoosh')
       }
-    }
-  }, [combo, maxCombo, playerEnergy])
 
   const handleBlock = useCallback(() => {
     if (!animationControllerRef.current) return
