@@ -372,8 +372,6 @@ export default function Home() {
 
               <div className="bg-black/60 rounded-lg p-8 mb-8">
                 <p className="text-2xl text-white mb-4">Final Score: {score.toLocaleString()}</p>
-                <p className="text-xl text-gray-300 mb-2">Max Combo: x{maxCombo}</p>
-                {stage === "victory" && score >= 1000 && !claimed && isConnected && (
                   <motion.button
                     className="mt-6 bg-gradient-to-r from-green-500 to-emerald-500 text-white font-bold px-8 py-4 rounded-lg"
                     whileHover={{ scale: 1.05 }}
