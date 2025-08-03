@@ -9,7 +9,6 @@ module.exports = {
       keyframes: {
         punch: {
           "0%":   { transform: "scale(1)" },
-          "0%":   { transform: "scale(1)" },
         }
       },
       animation:
