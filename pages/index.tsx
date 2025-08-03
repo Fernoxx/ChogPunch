@@ -201,7 +201,6 @@ export default function Home() {
   }, [])
 
   const handleJump = useCallback(() => {
-    if (!physicsEngineRef.current || playerEnergy < 20) return
     const fighter = physicsEngineRef.current.getBody('fighter')
     if (fighter) {
       Matter.Body.applyForce(fighter.body, fighter.body.position, { x: 0, y: -0.1 })
