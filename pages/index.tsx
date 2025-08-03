@@ -306,10 +306,6 @@ export default function Home() {
       {stage === "play" && physicsEngineRef.current && animationControllerRef.current && (
         <>
           <Fighter
-            physicsEngine={physicsEngineRef.current}
-            animationController={animationControllerRef.current}
-            x={200}
-            y={400}
 
           <CombatController
             onAttack={handleAttack}
