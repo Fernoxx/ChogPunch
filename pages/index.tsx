@@ -181,10 +181,6 @@ export default function Home() {
         }
       )
 
-      if (!hit) {
-        soundManager.play('whoosh')
-      }
-
   const handleBlock = useCallback(() => {
     if (!animationControllerRef.current) return
     animationControllerRef.current.play('block')
