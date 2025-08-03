@@ -92,8 +92,6 @@ export default function Home() {
             return 0
           }
           return prev - 1
-        })
-      }, 1000)
 
   // Energy regeneration
   useEffect(() => {
