@@ -73,10 +73,6 @@ export default function Home() {
         lastTimeRef.current = timestamp
 
         // Update physics
-        physicsEngine.update(deltaTime)
-
-        // Update animations
-
     return () => {
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current)
