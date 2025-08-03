@@ -16,7 +16,6 @@ module.exports = {
         punch: {
           "0%":   { transform: "scale(1)" },
           "0%":   { transform: "scale(1)" },
-          "50%":  { transform: "scale(1.1) translateX(-10px)" },
         }
       },
       animation: {
