@@ -11,11 +11,7 @@ import { createPublicClient, http } from "viem"
     ;(async () => {
       try {
         await sdk.actions.ready()
-      } catch (e) {
-      }
-    })()
-  }, [])
-
+      } catch (e) 
   })
 
     chains: [base],
