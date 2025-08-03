@@ -135,8 +135,6 @@ export default function Home() {
       punch1: { damage: 5, energy: 5, range: 100 },
       punch2: { damage: 8, energy: 8, range: 110 },
       kick1: { damage: 10, energy: 10, range: 120 },
-      kick2: { damage: 12, energy: 12, range: 130 },
-      uppercut: { damage: 15, energy: 30, range: 100 },
 
     const data = moveData[move] || { damage: 5, energy: 5, range: 100 }
 
