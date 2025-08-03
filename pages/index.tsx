@@ -12,7 +12,6 @@ import chogPunchABI from "@/lib/chogPunchABI.json"
 import { motion, AnimatePresence } from "framer-motion"
 import Image from "next/image"
 import confetti from "canvas-confetti"
-import Matter from "matter-js"
 
 export default function Home() {
   const { address, isConnected } = useAccount()
