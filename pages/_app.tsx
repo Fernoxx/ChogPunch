@@ -4,5 +4,4 @@ import { useEffect } from "react"
 import { WagmiConfig, createConfig } from "wagmi"
 
   return (
-    <WagmiConfig config={config}>
 
