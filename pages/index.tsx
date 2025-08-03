@@ -315,8 +315,6 @@ export default function Home() {
               </motion.div>
             </div>
           </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* Game Screen */}
       {stage === "play" && physicsEngineRef.current && animationControllerRef.current && (
