@@ -329,15 +329,6 @@ export default function Home() {
             animationController={animationControllerRef.current}
             x={200}
             y={400}
-          />
-          
-          <PunchingBag
-            ref={bagRef}
-            physicsEngine={physicsEngineRef.current}
-            onHit={(damage) => {
-              // Additional hit logic if needed
-            }}
-          />
 
           <CombatController
             onAttack={handleAttack}
