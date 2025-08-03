@@ -49,8 +49,6 @@ export default function Home() {
       } catch (e) {
         console.error("Farcaster context error:", e)
       }
-    })()
-  }, [])
 
   // Initialize physics and animation
   useEffect(() => {
