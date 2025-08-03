@@ -18,10 +18,6 @@ import { InjectedConnector } from "wagmi/connectors/injected"
     },
   })
 
-  const config = createConfig({
-    autoConnect: true,
-  })
-
   return (
     <WagmiConfig config={config}>
       <Component {...pageProps} />
