@@ -72,7 +72,6 @@ export default function Home() {
         const deltaTime = timestamp - lastTimeRef.current
         lastTimeRef.current = timestamp
 
-        // Update physics
     return () => {
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current)
