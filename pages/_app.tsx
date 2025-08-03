@@ -16,7 +16,6 @@ import { createPublicClient, http } from "viem"
     })()
   }, [])
 
-  const publicClient = createPublicClient({
   })
 
     chains: [base],
