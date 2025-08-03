@@ -7,7 +7,6 @@ import { base } from "wagmi/chains"
 import { InjectedConnector } from "wagmi/connectors/injected"
 import { createPublicClient, http } from "viem"
 
-export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
     ;(async () => {
       try {
