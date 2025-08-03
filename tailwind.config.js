@@ -18,8 +18,7 @@ module.exports = {
           "0%":   { transform: "scale(1)" },
         }
       },
-      animation: {
-        punch: "punch 0.5s ease-in-out",
+      animation:
         push:  "push 0.5s ease-in-out"
       }
     },
