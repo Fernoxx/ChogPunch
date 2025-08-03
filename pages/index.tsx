@@ -71,9 +71,6 @@ export default function Home() {
       const animationController = new AnimationController(physicsEngine)
       animationControllerRef.current = animationController
 
-      // Start ambient sound
-      soundManager.fadeIn('ambient', 2000)
-
       // Start game loop
       const gameLoop = (timestamp: number) => {
         if (!lastTimeRef.current) lastTimeRef.current = timestamp
