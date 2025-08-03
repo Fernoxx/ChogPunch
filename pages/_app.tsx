@@ -22,8 +22,6 @@ import { createPublicClient, http } from "viem"
 
   const config = createConfig({
     autoConnect: true,
-    publicClient,
-    connectors: [farcasterConnector],
   })
 
   return (
