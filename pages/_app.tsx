@@ -10,7 +10,6 @@ import { createPublicClient, http } from "viem"
   useEffect(() => {
     ;(async () => {
       try {
-        const { sdk } = await import("@farcaster/miniapp-sdk")
         await sdk.actions.ready()
       } catch (e) {
       }
