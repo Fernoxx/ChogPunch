@@ -76,10 +76,6 @@ export default function Home() {
         physicsEngine.update(deltaTime)
 
         // Update animations
-        animationController.update(deltaTime)
-
-        animationFrameRef.current = requestAnimationFrame(gameLoop)
-      }
 
     return () => {
       if (animationFrameRef.current) {
