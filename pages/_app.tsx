@@ -25,7 +25,6 @@ import { createPublicClient, http } from "viem"
     chains: [base],
     options: {
       name: "Farcaster",
-      getProvider: () =>
     },
   })
 
