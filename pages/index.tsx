@@ -192,8 +192,6 @@ export default function Home() {
   const handleBlock = useCallback(() => {
     if (!animationControllerRef.current) return
     animationControllerRef.current.play('block')
-    soundManager.play('block')
-  }, [])
 
   const handleMove = useCallback((direction: 'left' | 'right') => {
     if (!physicsEngineRef.current) return
