@@ -42,6 +42,5 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <WagmiConfig config={config}>
       <Component {...pageProps} />
-    </WagmiConfig>
   )
 }
