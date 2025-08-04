@@ -112,7 +112,6 @@ export default function Home() {
     }
   }, [playerHealth])
     // Play animation
-    animationControllerRef.current.play(move as any)
 
     // Get damage and energy cost
     const moveData: Record<string, { damage: number; energy: number; range: number }> = {
