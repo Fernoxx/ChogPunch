@@ -219,15 +219,6 @@ export default function Home() {
                     href="https://farcaster.xyz/doteth"
                     target="_blank"
                     rel="noreferrer"
-                  
-          
-          <PunchingBag
-            ref={bagRef}
-            physicsEngine={physicsEngineRef.current}
-            onHit={(damage) => {
-              // Additional hit logic if needed
-            }}
-          />
 
           <CombatController
             onAttack={handleAttack}
