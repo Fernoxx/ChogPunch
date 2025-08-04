@@ -121,17 +121,6 @@ export default function Home() {
     // Consume energy
     setPlayerEnergy(prev => Math.max(0, prev - data.energy))
 
-    // Play sound
-    if (move.includes('punch')) {
-      soundManager.playRandomPitch(move === 'punch1' ? 'punch_light' : 'punch_heavy')
-    } else if (move.includes('kick')) {
-      soundManager.playRandomPitch(move === 'kick1' ? 'kick_light' : 'kick_heavy')
-    } else if (move === 'uppercut') {
-      soundManager.play('uppercut')
-    } else if (move === 'roundhouse') {
-      soundManager.play('roundhouse')
-    }
-
     // Check hit
     const fighter = physicsEngineRef.current.getBody('fighter')
     if (fighter && bagRef.current) {
