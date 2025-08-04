@@ -316,16 +316,6 @@ export default function Home() {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Game Screen */}
-      {stage === "play" && physicsEngineRef.current && animationControllerRef.current && (
-        <>
-          <Fighter
-            physicsEngine={physicsEngineRef.current}
-            animationController={animationControllerRef.current}
-            x={200}
-            y={400}
-          />
           
           <PunchingBag
             ref={bagRef}
