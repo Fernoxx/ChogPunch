@@ -298,15 +298,7 @@ export default function Home() {
                     target="_blank"
                     rel="noreferrer"
                     className="text-yellow-400 underline"
-                  >
-                    @doteth
-                  </a>
-                </p>
-              </motion.div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                  
           
           <PunchingBag
             ref={bagRef}
