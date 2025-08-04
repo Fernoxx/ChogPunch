@@ -195,13 +195,6 @@ export default function Home() {
               >
                 {stage === "victory" ? "VICTORY!" : "DEFEAT!"}
               </motion.h1>
-
-              <motion.button
-                className="bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold px-8 py-4 rounded-lg"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={resetGame}
-              >
                 Play Again
               </motion.button>
             </div>
