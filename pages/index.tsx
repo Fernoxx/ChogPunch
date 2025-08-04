@@ -57,8 +57,6 @@ export default function Home() {
   useEffect(() => {
     if (stage === "play" && !physicsEngineRef.current) {
       // Create physics engine
-      const physicsEngine = new PhysicsEngine()
-      physicsEngineRef.current = physicsEngine
 
       // Create fighter and punching bag
       physicsEngine.createFighter(200, 400)
