@@ -16,7 +16,6 @@ import confetti from "canvas-confetti"
 export default function Home() {
   const { address, isConnected } = useAccount()
   const { writeContractAsync } = useWriteContract()
-  const [farcasterUser, setFarcasterUser] = useState<{
     fid: number
     username?: string
     displayName?: string
