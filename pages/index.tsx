@@ -80,10 +80,6 @@ export default function Home() {
         cancelAnimationFrame(animationFrameRef.current)
       }
       if (physicsEngineRef.current) {
-        physicsEngineRef.current.destroy()
-        physicsEngineRef.current = null
-      }
-
   // Game timer
   useEffect(() => {
     if (stage === "play" && timeLeft > 0) {
