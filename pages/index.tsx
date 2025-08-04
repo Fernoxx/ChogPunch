@@ -91,7 +91,6 @@ export default function Home() {
           return prev - 1
         })
       }, 1000)
-      return () => clearTimeout(timer)
     }
   }, [stage, timeLeft])
 
