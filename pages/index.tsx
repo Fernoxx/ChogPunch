@@ -65,10 +65,6 @@ export default function Home() {
       physicsEngine.createPunchingBag(window.innerWidth - 200, 300)
       physicsEngine.start()
 
-      // Create animation controller
-      const animationController = new AnimationController(physicsEngine)
-      animationControllerRef.current = animationController
-
       // Start ambient sound
       soundManager.fadeIn('ambient', 2000)
 
