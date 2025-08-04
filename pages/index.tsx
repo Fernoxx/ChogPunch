@@ -61,14 +61,6 @@ export default function Home() {
       soundManager.fadeIn('ambient', 2000)
 
       // Start game loop
-      
-        // Update animations
-        animationController.update(deltaTime)
-
-        animationFrameRef.current = requestAnimationFrame(gameLoop)
-      }
-      animationFrameRef.current = requestAnimationFrame(gameLoop)
-    }
 
     return () => {
       if (animationFrameRef.current) {
