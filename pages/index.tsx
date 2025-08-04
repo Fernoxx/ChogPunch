@@ -174,22 +174,6 @@ export default function Home() {
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setStage("play")}
               >
-                START FIGHT
-              </motion.button>
-
-              <motion.div
-                className="mt-12 text-white/60"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
-              >
-                <p className="text-sm">Use touch gestures or keyboard to fight</p>
-                <p className="text-xs mt-2">
-                  built by{" "}
-                  <a
-                    href="https://farcaster.xyz/doteth"
-                    target="_blank"
-                    rel="noreferrer"
 
           <CombatController
             onAttack={handleAttack}
