@@ -108,8 +108,6 @@ export default function Home() {
         setPlayerEnergy(prev => Math.min(100, prev + 2))
       }, 500)
       return () => clearInterval(interval)
-    }
-  }, [stage])
 
   // Special moves availability
   useEffect(() => {
