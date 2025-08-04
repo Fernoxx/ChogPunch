@@ -173,14 +173,6 @@ export default function Home() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="text-center">
-              <motion.h1
-                className="text-6xl md:text-8xl font-bold text-white mb-8"
-                initial={{ y: -50 }}
-                animate={{ y: 0 }}
-                transition={{ type: "spring", stiffness: 100 }}
-                style={{ textShadow: '4px 4px 8px rgba(0,0,0,0.8)' }}
-              >
              CHOG FIGHTER
               </motion.h1>
               
