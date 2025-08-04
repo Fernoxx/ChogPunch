@@ -121,9 +121,6 @@ export default function Home() {
         fighter.body.position,
         data.range,
         data.damage * (1 + combo * 0.1), // Combo multiplier
-        (x, y, damage) => {
-          bagRef.current.createHitEffect(x, y, damage)
-          soundManager.playImpact(damage)
 
           // Reset combo timeout
 
