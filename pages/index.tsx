@@ -48,9 +48,6 @@ export default function Home() {
         const ctx = await sdk.context
         if (ctx?.user) setFarcasterUser(ctx.user)
       } catch (e) {
-        console.error("Farcaster context error:", e)
-      }
-    })()
   }, [])
 
   // Initialize physics and animation
