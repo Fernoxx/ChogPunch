@@ -88,7 +88,6 @@ export default function Home() {
         physicsEngineRef.current.destroy()
         physicsEngineRef.current = null
       }
-      animationControllerRef.current = null
 
   // Game timer
   useEffect(() => {
