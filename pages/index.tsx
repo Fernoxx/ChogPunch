@@ -29,7 +29,6 @@ export default function Home() {
   const [playerHealth, setPlayerHealth] = useState(100)
   const [playerEnergy, setPlayerEnergy] = useState(100)
   const [timeLeft, setTimeLeft] = useState(120) // 2 minutes
-  const [specialMovesReady, setSpecialMovesReady] = useState<string[]>([])
 
   // Physics and animation refs
   const physicsEngineRef = useRef<PhysicsEngine | null>(null)
