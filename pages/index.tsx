@@ -181,13 +181,6 @@ export default function Home() {
           })
 
           // Reset combo timeout
-          if (comboTimeoutRef.current) clearTimeout(comboTimeoutRef.current)
-          comboTimeoutRef.current = setTimeout(() => {
-            setCombo(0)
-            soundManager.play('combo_break')
-          }, 2000)
-        }
-      )
 
       if (!hit) {
         soundManager.play('whoosh')
