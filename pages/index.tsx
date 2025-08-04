@@ -163,20 +163,7 @@ export default function Home() {
     const victory = score >= 1000
     setStage(victory ? "victory" : "defeat")
     soundManager.play(victory ? 'victory' : 'defeat')
-      
-      confetti({
-        particleCount: 50,
-        spread: 60,
-        origin: { y: 0.7 },
-        colors: ['#4ade80', '#22c55e', '#16a34a']
-      })
-    } catch (e) {
-      console.error("Claim tx failed:", e)
-    }
-  }
-
-
-
+    
       {/* Home Screen */}
       <AnimatePresence>
         {stage === "home" && (
