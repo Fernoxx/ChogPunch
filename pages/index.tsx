@@ -35,7 +35,7 @@ export default function Home() {
   const animationControllerRef = useRef<AnimationController | null>(null)
   const animationFrameRef = useRef<number>()
   const lastTimeRef = useRef<number>(0)
-  const comboTimeoutRef = useRef<NodeJS.Timeout>()
+  const comboTimeoutRef = 
 
   // Load Farcaster user context
   useEffect(() => {
