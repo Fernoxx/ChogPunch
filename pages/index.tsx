@@ -178,15 +178,6 @@ export default function Home() {
     const victory = score >= 1000
     setStage(victory ? "victory" : "defeat")
     soundManager.play(victory ? 'victory' : 'defeat')
-    
-    if (victory) {
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 }
-      })
-    }
-  }
       
       confetti({
         particleCount: 50,
