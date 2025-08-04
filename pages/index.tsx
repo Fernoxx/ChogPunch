@@ -165,12 +165,6 @@ export default function Home() {
     }
   }, [combo, maxCombo, playerEnergy])
 
-  const handleBlock = useCallback(() => {
-    if (!animationControllerRef.current) return
-    animationControllerRef.current.play('block')
-    soundManager.play('block')
-  }, [])
-
   const handleMove = useCallback((direction: 'left' | 'right') => {
     if (!physicsEngineRef.current) return
     const fighter = physicsEngineRef.current.getBody('fighter')
