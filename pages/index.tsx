@@ -343,22 +343,6 @@ export default function Home() {
             comboProgress={animationControllerRef.current.getComboProgress()}
           />
 
-          <GameUI
-            playerHealth={playerHealth}
-            playerMaxHealth={100}
-            playerEnergy={playerEnergy}
-            playerMaxEnergy={100}
-            score={score}
-            combo={combo}
-            maxCombo={maxCombo}
-            timeLeft={timeLeft}
-            playerName={farcasterUser?.username || "Fighter"}
-            playerAvatar={farcasterUser?.pfpUrl}
-            specialMovesReady={specialMovesReady}
-          />
-        </>
-      )}
-
       {/* Victory/Defeat Screen */}
       <AnimatePresence>
         {(stage === "victory" || stage === "defeat") && (
