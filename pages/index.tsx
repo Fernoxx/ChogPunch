@@ -244,7 +244,6 @@ export default function Home() {
                 }`}
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                transition={{ type: "spring", stiffness: 100 }}
               >
                 {stage === "victory" ? "VICTORY!" : "DEFEAT!"}
               </motion.h1>
