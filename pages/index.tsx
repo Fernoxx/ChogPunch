@@ -36,7 +36,6 @@ export default function Home() {
   const animationFrameRef = useRef<number>()
   const lastTimeRef = useRef<number>(0)
   const comboTimeoutRef = useRef<NodeJS.Timeout>()
-  const bagRef = useRef<any>(null)
 
   // Load Farcaster user context
   useEffect(() => {
