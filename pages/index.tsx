@@ -103,15 +103,6 @@ export default function Home() {
       }, 500)
       return () => clearInterval(interval)
 
-  // Special moves availability
-  useEffect(() => {
-    const moves: string[] = []
-    if (playerEnergy >= 30) moves.push('uppercut')
-    if (playerEnergy >= 50) moves.push('roundhouse')
-    if (playerEnergy >= 80 && combo >= 5) moves.push('special')
-    setSpecialMovesReady(moves)
-  }, [playerEnergy, combo])
-
   // Low health warning
   useEffect(() => {
     if (playerHealth < 30 && playerHealth > 0) {
