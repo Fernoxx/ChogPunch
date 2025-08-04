@@ -92,9 +92,6 @@ export default function Home() {
         physicsEngineRef.current = null
       }
       animationControllerRef.current = null
-      soundManager.fadeOut('ambient', 1000)
-    }
-  }, [stage])
 
   // Game timer
   useEffect(() => {
