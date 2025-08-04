@@ -269,7 +269,6 @@ export default function Home() {
                     href="https://farcaster.xyz/doteth"
                     target="_blank"
                     rel="noreferrer"
-                    className="text-yellow-400 underline"
                   
           
           <PunchingBag
