@@ -354,11 +354,7 @@ export default function Home() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={handleClaim}
-                  >
-                    Claim 1 MON Reward
-                  </motion.button>
-                )}
-              </div>
+                ></motion.button>
 
               <motion.button
                 className="bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold px-8 py-4 rounded-lg"
