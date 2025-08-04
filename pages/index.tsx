@@ -111,10 +111,6 @@ export default function Home() {
       soundManager.stop('low_health')
     }
   }, [playerHealth])
-
-  const handleAttack = useCallback((move: string) => {
-    if (!animationControllerRef.current || !physicsEngineRef.current) return
-
     // Play animation
     animationControllerRef.current.play(move as any)
 
