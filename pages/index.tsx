@@ -61,11 +61,7 @@ export default function Home() {
       soundManager.fadeIn('ambient', 2000)
 
       // Start game loop
-      const gameLoop = (timestamp: number) => {
-        if (!lastTimeRef.current) lastTimeRef.current = timestamp
-        const deltaTime = timestamp - lastTimeRef.current
-        lastTimeRef.current = timestamp
-
+      
         // Update animations
         animationController.update(deltaTime)
 
@@ -102,7 +98,7 @@ export default function Home() {
       soundManager.stop('low_health')
     }
   }, [playerHealth])
-    // Play animation
+    // Playanimation
 
     // Get damage and energy cost
     const moveData: Record<string, { damage: number; energy: number; range: number }> = {
