@@ -69,9 +69,6 @@ export default function Home() {
         const deltaTime = timestamp - lastTimeRef.current
         lastTimeRef.current = timestamp
 
-        // Update physics
-        physicsEngine.update(deltaTime)
-
         // Update animations
         animationController.update(deltaTime)
 
