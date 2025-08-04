@@ -172,16 +172,7 @@ export default function Home() {
       const force = direction === 'right' ? 0.005 : -0.005
       Matter.Body.applyForce(fighter.body, fighter.body.position, { x: force, y: 0 })
     }
-  }, [])
-
-  const handleJump = useCallback(() => {
-    if (!physicsEngineRef.current || playerEnergy < 20) return
-    const fighter = physicsEngineRef.current.getBody('fighter')
-    if (fighter) {
-      Matter.Body.applyForce(fighter.body, fighter.body.position, { x: 0, y: -0.1 })
-      setPlayerEnergy(prev => prev - 20)
-    }
-  }, [playerEnergy])
+  }, []
 
   const handleGameEnd = () => {
     const victory = score >= 1000
