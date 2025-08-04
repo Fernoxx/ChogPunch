@@ -95,14 +95,6 @@ export default function Home() {
     }
   }, [stage, timeLeft])
 
-  // Energy regeneration
-  useEffect(() => {
-    if (stage === "play") {
-      const interval = setInterval(() => {
-        setPlayerEnergy(prev => Math.min(100, prev + 2))
-      }, 500)
-      return () => clearInterval(interval)
-
   // Low health warning
   useEffect(() => {
     if (playerHealth < 30 && playerHealth > 0) {
