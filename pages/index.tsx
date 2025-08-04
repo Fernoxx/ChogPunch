@@ -190,18 +190,7 @@ export default function Home() {
     }
   }
 
-  const resetGame = () => {
-    setStage("home")
-    setScore(0)
-    setCombo(0)
-    setMaxCombo(0)
-    setPlayerHealth(100)
-    setPlayerEnergy(100)
-    setTimeLeft(120)
-    setClaimed(false)
-  }
 
-  if (farcasterUser === null) return null
 
       {/* Home Screen */}
       <AnimatePresence>
@@ -220,7 +209,7 @@ export default function Home() {
                 transition={{ type: "spring", stiffness: 100 }}
                 style={{ textShadow: '4px 4px 8px rgba(0,0,0,0.8)' }}
               >
-                CHOG FIGHTER
+             CHOG FIGHTER
               </motion.h1>
               
               <motion.button
