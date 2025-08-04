@@ -1,6 +1,6 @@
 // pages/index.tsx
 import { useEffect, useState, useRef, useCallback } from "react"
-import { useAccount, useWriteContract } from "wagmi"
+import { useAccount, useContractWrite, usePrepareContractWrite } from "wagmi"
 import { PhysicsEngine } from "@/lib/physics/PhysicsEngine"
 import { AnimationController } from "@/lib/animation/AnimationController"
 import { soundManager } from "@/lib/audio/SoundManager"
@@ -16,7 +16,6 @@ import Matter from "matter-js"
 
 export default function Home() {
   const { address, isConnected } = useAccount()
-  const { writeContractAsync } = useWriteContract()
   const [farcasterUser, setFarcasterUser] = useState<{
     fid: number
     username?: string
@@ -34,6 +33,17 @@ export default function Home() {
   const [specialMovesReady, setSpecialMovesReady] = useState<string[]>([])
   const [claimed, setClaimed] = useState(false)
 
+  // Prepare contract write
+  const { config: contractWriteConfig } = usePrepareContractWrite({
+    address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as `0x${string}`,
+    abi: chogPunchABI,
+    functionName: "submitScore",
+    args: [score],
+    enabled: !claimed && score >= 1000 && !!address,
+  })
+
+  const { writeAsync: writeContractAsync } = useContractWrite(contractWriteConfig)
+
   // Physics and animation refs
   const physicsEngineRef = useRef<PhysicsEngine | null>(null)
   const animationControllerRef = useRef<AnimationController | null>(null)
@@ -41,6 +51,21 @@ export default function Home() {
   const lastTimeRef = useRef<number>(0)
   const comboTimeoutRef = useRef<NodeJS.Timeout>()
   const bagRef = useRef<any>(null)
+
+  // Define handleGameEnd early to avoid hoisting issues
+  const handleGameEnd = useCallback(() => {
+    const victory = score >= 1000
+    setStage(victory ? "victory" : "defeat")
+    soundManager.play(victory ? 'victory' : 'defeat')
+    
+    if (victory) {
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+      })
+    }
+  }, [score])
 
   // Load Farcaster user context
   useEffect(() => {
@@ -63,8 +88,8 @@ export default function Home() {
       physicsEngineRef.current = physicsEngine
 
       // Create fighter and punching bag
-      physicsEngine.createFighter(200, 400)
-      physicsEngine.createPunchingBag(window.innerWidth - 200, 300)
+      physicsEngine.createFighter(200, 450)
+      physicsEngine.createPunchingBag(window.innerWidth - 200, 350)
       physicsEngine.start()
 
       // Create animation controller
@@ -118,7 +143,7 @@ export default function Home() {
       }, 1000)
       return () => clearTimeout(timer)
     }
-  }, [stage, timeLeft])
+  }, [stage, timeLeft, handleGameEnd])
 
   // Energy regeneration
   useEffect(() => {
@@ -186,9 +211,15 @@ export default function Home() {
       soundManager.play('roundhouse')
     }
 
-    // Check hit
-    const fighter = physicsEngineRef.current.getBody('fighter')
+    // Check hit and apply physics
+    const fighter = physicsEngineRef.current.getBody('fighter-torso')
     if (fighter && bagRef.current) {
+      // Apply punch/kick physics
+      if (move.includes('punch')) {
+        physicsEngineRef.current.applyPunch(fighter.body, 'right', data.damage / 10)
+      } else if (move.includes('kick')) {
+        physicsEngineRef.current.applyKick(fighter.body, 'right', data.damage / 10)
+      }
       const hit = checkBagHit(
         physicsEngineRef.current,
         fighter.body.position,
@@ -229,46 +260,20 @@ export default function Home() {
   }, [])
 
   const handleMove = useCallback((direction: 'left' | 'right') => {
-    if (!physicsEngineRef.current) return
-    const fighter = physicsEngineRef.current.getBody('fighter')
-    if (fighter) {
-      const force = direction === 'right' ? 0.005 : -0.005
-      Matter.Body.applyForce(fighter.body, fighter.body.position, { x: force, y: 0 })
-    }
-  }, [])
+    if (!physicsEngineRef.current || stage !== 'play') return
+    physicsEngineRef.current.moveFighter(direction)
+  }, [stage])
 
   const handleJump = useCallback(() => {
-    if (!physicsEngineRef.current || playerEnergy < 20) return
-    const fighter = physicsEngineRef.current.getBody('fighter')
-    if (fighter) {
-      Matter.Body.applyForce(fighter.body, fighter.body.position, { x: 0, y: -0.1 })
-      setPlayerEnergy(prev => prev - 20)
-    }
-  }, [playerEnergy])
-
-  const handleGameEnd = () => {
-    const victory = score >= 1000
-    setStage(victory ? "victory" : "defeat")
-    soundManager.play(victory ? 'victory' : 'defeat')
-    
-    if (victory) {
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 }
-      })
-    }
-  }
+    if (!physicsEngineRef.current || playerEnergy < 20 || stage !== 'play') return
+    physicsEngineRef.current.moveFighter('jump')
+    setPlayerEnergy(prev => prev - 20)
+  }, [playerEnergy, stage])
 
   const handleClaim = async () => {
-    if (!address || claimed) return
+    if (!address || claimed || !writeContractAsync) return
     try {
-      await writeContractAsync({
-        abi: chogPunchABI,
-        address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS!,
-        functionName: "submitScore",
-        args: [score],
-      })
+      await writeContractAsync()
       setClaimed(true)
       
       confetti({
@@ -293,10 +298,8 @@ export default function Home() {
     setClaimed(false)
   }
 
-  if (farcasterUser === null) return null
-
   return (
-    <div className="min-h-screen relative overflow-hidden">
+    <div className="min-h-screen relative overflow-hidden bg-black">
       {/* Background */}
       <div className="absolute inset-0">
         <Image
@@ -309,6 +312,24 @@ export default function Home() {
         <div className="absolute inset-0 bg-black/30" />
       </div>
 
+      {/* Loading Screen */}
+      {farcasterUser === null && (
+        <div className="absolute inset-0 flex items-center justify-center z-50 bg-black">
+          <div className="text-center">
+            <Image
+              src="/chog.png"
+              alt="CHOG Fighter"
+              width={200}
+              height={200}
+              className="mx-auto mb-8 glow-effect"
+              style={{ animation: 'pulse-glow 2s ease-in-out infinite' }}
+            />
+            <h2 className="text-4xl font-bold text-white neon-glow mb-4">Loading Fighter...</h2>
+            <p className="text-white/60">Preparing the gym</p>
+          </div>
+        </div>
+      )}
+
       {/* Home Screen */}
       <AnimatePresence>
         {stage === "home" && (
@@ -320,14 +341,28 @@ export default function Home() {
           >
             <div className="text-center">
               <motion.h1
-                className="text-6xl md:text-8xl font-bold text-white mb-8"
-                initial={{ y: -50 }}
-                animate={{ y: 0 }}
+                className="text-6xl md:text-8xl font-bold text-white mb-8 neon-glow"
+                initial={{ y: -50, scale: 0.8 }}
+                animate={{ y: 0, scale: 1 }}
                 transition={{ type: "spring", stiffness: 100 }}
-                style={{ textShadow: '4px 4px 8px rgba(0,0,0,0.8)' }}
               >
                 CHOG FIGHTER
               </motion.h1>
+              
+              <motion.div
+                className="mb-8"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+              >
+                <Image
+                  src="/chog.png"
+                  alt="CHOG Fighter"
+                  width={150}
+                  height={150}
+                  className="mx-auto glow-effect game-shadow"
+                />
+              </motion.div>
               
               <motion.button
                 className="bg-gradient-to-r from-orange-500 to-red-500 text-white text-2xl font-bold px-12 py-6 rounded-lg shadow-2xl hover:scale-105 transition-transform"

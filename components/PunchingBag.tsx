@@ -17,7 +17,7 @@ interface DamageNumber {
   y: number;
 }
 
-export const PunchingBag = React.forwardRef<any, PunchingBagProps>(({ physicsEngine, onHit }, ref) => {
+const PunchingBagComponent = React.forwardRef<any, PunchingBagProps>(({ physicsEngine, onHit }, ref) => {
   const [bagPosition, setBagPosition] = useState({ x: 0, y: 0, rotation: 0 });
   const [isHit, setIsHit] = useState(false);
   const [damageNumbers, setDamageNumbers] = useState<DamageNumber[]>([]);
@@ -258,6 +258,10 @@ export const PunchingBag = React.forwardRef<any, PunchingBagProps>(({ physicsEng
     </>
   );
 });
+
+PunchingBagComponent.displayName = 'PunchingBag';
+
+export const PunchingBag = PunchingBagComponent;
 
 // Export hit detection helper
 export const checkBagHit = (

@@ -72,7 +72,7 @@ export const GameUI: React.FC<GameUIProps> = ({
               {/* Health Bar */}
               <div className="relative h-6 bg-gray-800 rounded-full overflow-hidden border border-gray-600">
                 <motion.div
-                  className="absolute inset-y-0 left-0 bg-gradient-to-r from-red-600 to-red-400"
+                  className="absolute inset-y-0 left-0 health-bar"
                   animate={{ width: `${healthPercentage}%` }}
                   transition={{ type: "spring", stiffness: 100, damping: 20 }}
                 />
@@ -88,7 +88,7 @@ export const GameUI: React.FC<GameUIProps> = ({
               {/* Energy Bar */}
               <div className="relative h-3 bg-gray-800 rounded-full overflow-hidden mt-1 border border-gray-600">
                 <motion.div
-                  className="absolute inset-y-0 left-0 bg-gradient-to-r from-blue-500 to-cyan-400"
+                  className="absolute inset-y-0 left-0 energy-bar"
                   animate={{ width: `${energyPercentage}%` }}
                   transition={{ type: "spring", stiffness: 100, damping: 20 }}
                 />

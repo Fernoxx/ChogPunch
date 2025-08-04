@@ -389,6 +389,10 @@ export class AnimationController {
     return this.currentAnimation.frames[this.currentFrame];
   }
 
+  getCurrentState(): AnimationState {
+    return this.currentAnimation ? this.currentAnimation.name : 'idle';
+  }
+
   isAttacking(): boolean {
     const attackAnimations: AnimationState[] = [
       'punch1', 'punch2', 'punch3', 'kick1', 'kick2', 'uppercut', 'roundhouse'

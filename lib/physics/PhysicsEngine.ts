@@ -20,6 +20,28 @@ export class PhysicsEngine {
     this.world = this.engine.world;
     this.runner = Matter.Runner.create();
 
+    // Create ground - positioned at bottom of typical screen
+    const ground = Matter.Bodies.rectangle(960, 540, 2000, 60, { 
+      isStatic: true,
+      label: 'ground',
+      render: {
+        fillStyle: '#2a2a2a'
+      }
+    });
+    
+    // Create walls to keep fighter in bounds
+    const leftWall = Matter.Bodies.rectangle(-30, 300, 60, 800, { 
+      isStatic: true,
+      label: 'leftWall'
+    });
+    
+    const rightWall = Matter.Bodies.rectangle(1950, 300, 60, 800, { 
+      isStatic: true,
+      label: 'rightWall'
+    });
+    
+    Matter.World.add(this.world, [ground, leftWall, rightWall]);
+
     if (canvas) {
       this.render = Matter.Render.create({
         canvas,
@@ -51,12 +73,13 @@ export class PhysicsEngine {
   }
 
   createFighter(x: number, y: number, scale: number = 1): Matter.Body {
-    // Create composite body for fighter with multiple parts
-    const torso = Matter.Bodies.rectangle(x, y, 40 * scale, 60 * scale, {
-      label: 'torso',
-      density: 0.002,
-      friction: 0.1,
-      restitution: 0.1
+    // Create simplified fighter body for better visibility
+    const torso = Matter.Bodies.rectangle(x, y, 60 * scale, 100 * scale, {
+      label: 'fighter-torso',
+      density: 0.003,
+      friction: 0.8,
+      restitution: 0.1,
+      inertia: Infinity // Prevent unwanted rotation
     });
 
     const head = Matter.Bodies.circle(x, y - 40 * scale, 20 * scale, {
@@ -187,25 +210,11 @@ export class PhysicsEngine {
       })
     ];
 
-    const fighterComposite = Matter.Composite.create({
-      bodies: [torso, head, leftUpperArm, leftLowerArm, rightUpperArm, rightLowerArm, 
-               leftUpperLeg, leftLowerLeg, rightUpperLeg, rightLowerLeg],
-      constraints
-    });
+    // Simplified approach - just add the torso for now
+    Matter.Composite.add(this.world, torso);
 
-    Matter.Composite.add(this.world, fighterComposite);
-
-    // Store all parts
-    this.bodies.set('fighter', { body: torso, type: 'fighter' });
-    this.bodies.set('fighter-head', { body: head, type: 'limb', parent: torso });
-    this.bodies.set('fighter-leftUpperArm', { body: leftUpperArm, type: 'limb', parent: torso });
-    this.bodies.set('fighter-leftLowerArm', { body: leftLowerArm, type: 'limb', parent: leftUpperArm });
-    this.bodies.set('fighter-rightUpperArm', { body: rightUpperArm, type: 'limb', parent: torso });
-    this.bodies.set('fighter-rightLowerArm', { body: rightLowerArm, type: 'limb', parent: rightUpperArm });
-    this.bodies.set('fighter-leftUpperLeg', { body: leftUpperLeg, type: 'limb', parent: torso });
-    this.bodies.set('fighter-leftLowerLeg', { body: leftLowerLeg, type: 'limb', parent: leftUpperLeg });
-    this.bodies.set('fighter-rightUpperLeg', { body: rightUpperLeg, type: 'limb', parent: torso });
-    this.bodies.set('fighter-rightLowerLeg', { body: rightLowerLeg, type: 'limb', parent: rightUpperLeg });
+    // Store the fighter body
+    this.bodies.set('fighter-torso', { body: torso, type: 'fighter' });
 
     return torso;
   }
@@ -283,23 +292,56 @@ export class PhysicsEngine {
   }
 
   applyPunch(fromBody: Matter.Body, direction: 'left' | 'right', power: number = 1) {
-    const forceX = direction === 'right' ? 0.05 : -0.05;
-    const forceY = -0.02;
-    
-    Matter.Body.applyForce(fromBody, fromBody.position, {
-      x: forceX * power,
-      y: forceY * power
-    });
+    // Apply force to punching bag if it's nearby
+    const bag = this.bodies.get('punchingBag');
+    if (bag && bag.body) {
+      const distance = Math.abs(fromBody.position.x - bag.body.position.x);
+      if (distance < 150) { // Within punching range
+        const forceX = direction === 'right' ? 0.08 : -0.08;
+        const forceY = -0.02;
+        
+        Matter.Body.applyForce(bag.body, bag.body.position, {
+          x: forceX * power,
+          y: forceY * power
+        });
+      }
+    }
   }
 
   applyKick(fromBody: Matter.Body, direction: 'left' | 'right', power: number = 1) {
-    const forceX = direction === 'right' ? 0.08 : -0.08;
-    const forceY = -0.05;
-    
-    Matter.Body.applyForce(fromBody, fromBody.position, {
-      x: forceX * power,
-      y: forceY * power
-    });
+    // Apply force to punching bag if it's nearby
+    const bag = this.bodies.get('punchingBag');
+    if (bag && bag.body) {
+      const distance = Math.abs(fromBody.position.x - bag.body.position.x);
+      if (distance < 180) { // Within kicking range
+        const forceX = direction === 'right' ? 0.12 : -0.12;
+        const forceY = -0.03;
+        
+        Matter.Body.applyForce(bag.body, bag.body.position, {
+          x: forceX * power,
+          y: forceY * power
+        });
+      }
+    }
+  }
+
+  moveFighter(direction: 'left' | 'right' | 'jump') {
+    const fighter = this.bodies.get('fighter-torso');
+    if (fighter && fighter.body) {
+      switch (direction) {
+        case 'left':
+          Matter.Body.setVelocity(fighter.body, { x: -5, y: fighter.body.velocity.y });
+          break;
+        case 'right':
+          Matter.Body.setVelocity(fighter.body, { x: 5, y: fighter.body.velocity.y });
+          break;
+        case 'jump':
+          if (Math.abs(fighter.body.velocity.y) < 0.1) { // Only jump if on ground
+            Matter.Body.setVelocity(fighter.body, { x: fighter.body.velocity.x, y: -10 });
+          }
+          break;
+      }
+    }
   }
 
   getBody(key: string): PhysicsBody | undefined {
