@@ -136,12 +136,6 @@ export default function Home() {
 
           // Reset combo timeout
 
-      if (!hit) {
-        soundManager.play('whoosh')
-      }
-    }
-  }, [combo, maxCombo, playerEnergy])
-
   const handleMove = useCallback((direction: 'left' | 'right') => {
     if (!physicsEngineRef.current) return
     const fighter = physicsEngineRef.current.getBody('fighter')
