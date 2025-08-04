@@ -124,15 +124,6 @@ export default function Home() {
         (x, y, damage) => {
           bagRef.current.createHitEffect(x, y, damage)
           soundManager.playImpact(damage)
-          
-          // Update score and combo
-          setScore(prev => prev + Math.floor(damage * 10))
-          setCombo(prev => {
-            const newCombo = prev + 1
-            if (newCombo > maxCombo) setMaxCombo(newCombo)
-            soundManager.playCombo(newCombo)
-            return newCombo
-          })
 
           // Reset combo timeout
 
