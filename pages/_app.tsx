@@ -30,7 +30,5 @@ import { base } from "wagmi/chains"
 
   return (
     <WagmiConfig config={config}>
-      <Component {...pageProps} />
-    </WagmiConfig>
   )
 }
