@@ -12,9 +12,6 @@ export default function App({ Component, pageProps }: AppProps) {
         const { sdk } = await import("@farcaster/miniapp-sdk")
         await sdk.actions.ready()
       } catch (e) {
-        console.error("Farcaster SDK ready error:", e)
-      }
-    })()
   }, [])
 
   const publicClient = createPublicClient({
