@@ -123,17 +123,7 @@ export const Fighter: React.FC<FighterProps> = ({ physicsEngine, animationContro
         width={window.innerWidth}
         height={window.innerHeight}
         className="absolute inset-0"
-        style={{ zIndex: 10 }}
-      />
-      
-      {/* Shadow effect */}
-      <motion.div
-        className="absolute bg-black/30 rounded-full blur-xl"
-        style={{
-          left: x - 40,
-          bottom: 50,
-          width: 80,
-          height: 20,
+    
         }}
         animate={{
           scaleX: [1, 1.2, 1],
