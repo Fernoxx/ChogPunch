@@ -21,7 +21,6 @@ import { base } from "wagmi/chains"
   const farcasterConnector = new InjectedConnector({
     chains: [base],
     options: {
-      name: "Farcaster",
 
   const config = createConfig({
     autoConnect: true,
