@@ -27,7 +27,6 @@ export default function App({ Component, pageProps }: AppProps) {
     options: {
       name: "Farcaster",
       getProvider: () =>
-        typeof window !== "undefined" ? (window as any).farcaster : null,
     },
   })
 
