@@ -72,13 +72,7 @@ export const Fighter: React.FC<FighterProps> = ({ physicsEngine, animationContro
     if (!canvas || !characterImage.current) return;
 
     const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-      // Enable image smoothing for better quality
-      ctx.imageSmoothingEnabled = true;
-      ctx.imageSmoothingQuality = 'high';
-
-      bodyParts.forEach(part => {
+    if (!ct
         ctx.save();
         
         // Translate to body part position
