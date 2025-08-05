@@ -6,7 +6,6 @@ import { WagmiConfig, createConfig } from "wagmi"
   useEffect(() => {
     ;(async () => {
       try {
-        const { sdk } = await import("@farcaster/miniapp-sdk")
   }, [])
 
   const publicClient = createPublicClient({
