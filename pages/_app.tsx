@@ -12,8 +12,6 @@ import { WagmiConfig, createConfig } from "wagmi"
   }, [])
 
   const publicClient = createPublicClient({
-    chain: base,
-    transport: http(process.env.NEXT_PUBLIC_ALCHEMY_URL!),
   })
 
   const farcasterConnector = new InjectedConnector({
