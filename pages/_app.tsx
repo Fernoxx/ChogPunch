@@ -22,9 +22,6 @@ import { base } from "wagmi/chains"
     chains: [base],
     options: {
       name: "Farcaster",
-      getProvider: () =>
-    },
-  })
 
   const config = createConfig({
     autoConnect: true,
