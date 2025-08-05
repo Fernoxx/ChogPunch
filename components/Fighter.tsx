@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { PhysicsEngine } from '@/lib/physics/PhysicsEngine';
 import { AnimationController, AnimationState } from '@/lib/animation/AnimationController';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
 
 interface FighterProps {
   physicsEngine: PhysicsEngine;
