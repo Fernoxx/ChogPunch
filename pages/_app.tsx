@@ -8,9 +8,6 @@ import { WagmiConfig, createConfig } from "wagmi"
       try {
   }, [])
 
-  const publicClient = createPublicClient({
-  })
-
   const farcasterConnector = new InjectedConnector({
     chains: [base],
     options: {
