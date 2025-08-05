@@ -206,11 +206,6 @@ export const Fighter: React.FC<FighterProps> = ({ physicsEngine, animationContro
           scaleX: [1, 1.2, 1],
           opacity: [0.3, 0.5, 0.3]
         }}
-        transition={{
-          duration: 2,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
       />
     </div>
   );
