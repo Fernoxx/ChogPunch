@@ -10,18 +10,6 @@ interface FighterProps {
   y: number;
 }
 
-interface BodyPart {
-  name: string;
-  x: number;
-  y: number;
-  rotation: number;
-  width: number;
-  height: number;
-    sx: number;
-    sh: number;
-  };
-}
-
 export const Fighter: React.FC<FighterProps> = ({ physicsEngine, animationController, x, y }) => {
   const [bodyParts, setBodyParts] = useState<BodyPart[]>([]);
   const canvasRef = useRef<HTMLCanvasElement>(null);
