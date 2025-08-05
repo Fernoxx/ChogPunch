@@ -40,9 +40,6 @@ export const Fighter: React.FC<FighterProps> = ({ physicsEngine, animationContro
       const bodies = physicsEngine.getAllBodies();
       const parts: BodyPart[] = [];
 
-        },
-        'fighter-head': { 
-          crop: { sx: 60, sy: 0, sw: 80, sh: 80 }, // Head
           zIndex: 6,
           scale: { w: 50, h: 50 }
         },
