@@ -43,10 +43,6 @@ export const Fighter: React.FC<FighterProps> = ({ physicsEngine, animationContro
     if (!canvas || !characterImage.current) return;
           }
         }
-
-        ctx.restore();
-      });
-    }
   return (
     <div className="absolute inset-0 pointer-events-none">
       <canvas
