@@ -15,12 +15,7 @@ export const Fighter: React.FC<FighterProps> = ({ physicsEngine, animationContro
   const canvasRef = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
     // Load character image
-    const img = new window.Image();
-    img.src = '/chog.png';
-    img.onload = () => {
-      characterImage.current = img;
-    };
-  }, []);
+    const img = new window.Image()
 
   useEffect(() => {
     const updateBodyParts = () => {
