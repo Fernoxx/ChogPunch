@@ -42,12 +42,6 @@ export const Fighter: React.FC<FighterProps> = ({ physicsEngine, animationContro
 
           zIndex: 6,
           scale: { w: 50, h: 50 }
-        },
-        'fighter-leftUpperArm': { 
-          crop: { sx: 20, sy: 90, sw: 30, sh: 60 }, // Left upper arm
-          zIndex: 4,
-          scale: { w: 20, h: 40 }
-        },
         'fighter-leftLowerArm': { 
           crop: { sx: 10, sy: 140, sw: 25, sh: 50 }, // Left lower arm
           zIndex: 3,
