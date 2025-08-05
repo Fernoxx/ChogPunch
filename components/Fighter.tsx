@@ -57,11 +57,7 @@ export const Fighter: React.FC<FighterProps> = ({ physicsEngine, animationContro
       });
 
       requestAnimationFrame(render);
-    };
-
-    render();
-  }, [bodyParts]);
-
+    }
   return (
     <div className="absolute inset-0 pointer-events-none">
       <canvas
