@@ -86,12 +86,6 @@ export const Fighter: React.FC<FighterProps> = ({ physicsEngine, animationContro
           zIndex: 2,
           scale: { w: 25, h: 50 }
         },
-        'fighter-rightLowerLeg': { 
-          crop: { sx: 130, sy: 240, sw: 30, sh: 60 }, // Right lower leg
-          zIndex: 1,
-          scale: { w: 20, h: 45 }
-        }
-      };
 
       bodies.forEach((physicsBody, key) => {
         const mapping = partMappings[key];
