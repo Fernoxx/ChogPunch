@@ -26,7 +26,6 @@ import { base } from "wagmi/chains"
   const config = createConfig({
     autoConnect: true,
     publicClient,
-    connectors: [farcasterConnector],
   })
 
   return (
