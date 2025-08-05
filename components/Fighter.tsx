@@ -6,7 +6,6 @@ interface FighterProps {
   physicsEngine: PhysicsEngine;
   animationController: AnimationController;
   x: number;
-  y: number;
 }
 
 export const Fighter: React.FC<FighterProps> = ({ physicsEngine, animationController, x, y }) => {
