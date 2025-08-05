@@ -18,8 +18,6 @@ interface BodyPart {
   rotation: number;
   width: number;
   height: number;
-  zIndex: number;
-  imageCrop?: {
     sx: number;
     sw: number;
     sh: number;
