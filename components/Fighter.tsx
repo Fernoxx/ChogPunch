@@ -39,10 +39,7 @@ export const Fighter: React.FC<FighterProps> = ({ physicsEngine, animationContro
     const updateBodyParts = () => {
       const bodies = physicsEngine.getAllBodies();
       const parts: BodyPart[] = [];
-
-          zIndex: 6,
-          scale: { w: 50, h: 50 }
-        'fighter-leftLowerArm': { 
+ 
           crop: { sx: 10, sy: 140, sw: 25, sh: 50 }, // Left lower arm
           zIndex: 3,
           scale: { w: 18, h: 35 }
