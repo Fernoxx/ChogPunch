@@ -74,18 +74,6 @@ export const Fighter: React.FC<FighterProps> = ({ physicsEngine, animationContro
     const ctx = canvas.getContext('2d');
     if (!ct
         ctx.save();
-        
-        if (part.imageCrop && characterImage.current) {
-          // Draw cropped section of character image
-          try {
-            ctx.drawImage(
-              characterImage.current,
-              part.imageCrop.sw,
-              part.imageCrop.sh,
-              -part.width / 2,
-              -part.height / 2,
-              part.width,
-              part.height
             );
           } catch (e) {
             // Fallback to colored rectangles if image cropping fails
