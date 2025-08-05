@@ -94,8 +94,6 @@ export const Fighter: React.FC<FighterProps> = ({ physicsEngine, animationContro
           try {
             ctx.drawImage(
               characterImage.current,
-              part.imageCrop.sx,
-              part.imageCrop.sy,
               part.imageCrop.sw,
               part.imageCrop.sh,
               -part.width / 2,
