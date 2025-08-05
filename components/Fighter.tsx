@@ -66,11 +66,6 @@ export const Fighter: React.FC<FighterProps> = ({ physicsEngine, animationContro
             x: body.position.x,
             y: body.position.y,
             rotation: body.angle,
-            width: mapping.scale?.w || 40,
-            height: mapping.scale?.h || 40,
-            zIndex: mapping.zIndex,
-            imageCrop: mapping.crop
-          });
         }
     const interval = setInterval(updateBodyParts, 16); // 60 FPS
     return () => clearInterval(interval);
