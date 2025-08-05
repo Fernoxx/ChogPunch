@@ -19,7 +19,6 @@ interface BodyPart {
   width: number;
   height: number;
     sx: number;
-    sw: number;
     sh: number;
   };
 }
