@@ -41,8 +41,6 @@ export const Fighter: React.FC<FighterProps> = ({ physicsEngine, animationContro
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas || !characterImage.current) return;
-
-    const ctx = canvas.getContext('2d');
           }
         }
 
