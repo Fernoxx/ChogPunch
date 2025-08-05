@@ -9,7 +9,5 @@ import { WagmiConfig, createConfig } from "wagmi"
   }, [])
 
   const farcasterConnector = new InjectedConnector({
-    chains: [base],
-    options: {
   )
 }
