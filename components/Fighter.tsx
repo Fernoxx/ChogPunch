@@ -68,12 +68,6 @@ export const Fighter: React.FC<FighterProps> = ({ physicsEngine, animationContro
           zIndex: 2,
           scale: { w: 25, h: 50 }
         },
-
-      bodies.forEach((physicsBody, key) => {
-        const mapping = partMappings[key];
-        if (mapping && physicsBody.body) {
-          const body = physicsBody.body;
-          parts.push({
             name: key,
             x: body.position.x,
             y: body.position.y,
