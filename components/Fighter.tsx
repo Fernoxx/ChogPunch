@@ -30,8 +30,6 @@ interface BodyPart {
 export const Fighter: React.FC<FighterProps> = ({ physicsEngine, animationController, x, y }) => {
   const [bodyParts, setBodyParts] = useState<BodyPart[]>([]);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const characterImage = useRef<HTMLImageElement | null>(null);
-
   useEffect(() => {
     // Load character image
     const img = new window.Image();
