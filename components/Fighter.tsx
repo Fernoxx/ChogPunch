@@ -48,8 +48,6 @@ export const Fighter: React.FC<FighterProps> = ({ physicsEngine, animationContro
 
         ctx.restore();
       });
-
-      requestAnimationFrame(render);
     }
   return (
     <div className="absolute inset-0 pointer-events-none">
