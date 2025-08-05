@@ -133,9 +133,6 @@ export const Fighter: React.FC<FighterProps> = ({ physicsEngine, animationContro
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const render = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
       // Enable image smoothing for better quality
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
