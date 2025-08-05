@@ -75,10 +75,6 @@ export const Fighter: React.FC<FighterProps> = ({ physicsEngine, animationContro
     if (!ct
         ctx.save();
         
-        // Translate to body part position
-        ctx.translate(part.x, part.y);
-        ctx.rotate(part.rotation);
-
         if (part.imageCrop && characterImage.current) {
           // Draw cropped section of character image
           try {
