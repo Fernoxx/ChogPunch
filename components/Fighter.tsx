@@ -115,13 +115,6 @@ export const Fighter: React.FC<FighterProps> = ({ physicsEngine, animationContro
             imageCrop: mapping.crop
           });
         }
-      });
-
-      // Sort by z-index
-      parts.sort((a, b) => a.zIndex - b.zIndex);
-      setBodyParts(parts);
-    };
-
     const interval = setInterval(updateBodyParts, 16); // 60 FPS
     return () => clearInterval(interval);
   }, [physicsEngine]);
