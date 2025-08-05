@@ -25,8 +25,6 @@ import { base } from "wagmi/chains"
 
   const config = createConfig({
     autoConnect: true,
-    publicClient,
-  })
 
   return (
     <WagmiConfig config={config}>
