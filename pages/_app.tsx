@@ -7,6 +7,5 @@ import { useEffect } from "react"
       try {
   }, [])
 
-  const farcasterConnector = new InjectedConnector({
   )
 }
