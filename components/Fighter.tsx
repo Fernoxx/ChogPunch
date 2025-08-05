@@ -56,10 +56,6 @@ export const Fighter: React.FC<FighterProps> = ({ physicsEngine, animationContro
   return (
     <div className="absolute inset-0 pointer-events-none">
       <canvas
-        ref={canvasRef}
-        width={window.innerWidth}
-        height={window.innerHeight}
-        className="absolute inset-0"
     
         }}
         animate={{
