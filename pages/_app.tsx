@@ -5,7 +5,6 @@ import { useEffect } from "react"
 import { WagmiConfig, createConfig } from "wagmi"
 import { base } from "wagmi/chains"
 
-export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
     ;(async () => {
       try {
