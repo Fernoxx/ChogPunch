@@ -67,15 +67,6 @@ export const Fighter: React.FC<FighterProps> = ({ physicsEngine, animationContro
     if (!canvas || !characterImage.current) return;
 
     const ctx = canvas.getContext('2d');
-    if (!ct
-        ctx.save();
-            );
-          } catch (e) {
-            // Fallback to colored rectangles if image cropping fails
-            ctx.fillStyle = part.name.includes('head') ? '#FFB6C1' : 
-                           part.name.includes('arm') ? '#FF69B4' : 
-                           part.name.includes('leg') ? '#8B4513' : '#FFA500';
-            ctx.fillRect(-part.width / 2, -part.height / 2, part.width, part.height);
           }
         }
 
