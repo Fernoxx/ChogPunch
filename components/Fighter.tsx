@@ -47,10 +47,6 @@ export const Fighter: React.FC<FighterProps> = ({ physicsEngine, animationContro
       const parts: BodyPart[] = [];
 
       // Define body part mappings with image crops
-      const partMappings: Record<string, { 
-        crop?: { sx: number; sy: number; sw: number; sh: number };
-        zIndex: number;
-        scale?: { w: number; h: number };
       }> = {
         'fighter': { 
           crop: { sx: 50, sy: 80, sw: 100, sh: 120 }, // Torso
