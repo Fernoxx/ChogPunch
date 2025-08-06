@@ -156,8 +156,6 @@ export class AnimationController {
             ['torso', { x: 0, y: 0, rotation: -0.5 }],
         rotation: -1.5 }],
             ['leftUpperLeg', { x: -15, y: -15, rotation: 2.0 }],
-            ['leftLowerLeg', { x: -25, y: -20, rotation: 2.5 }],
-            ['head', { x: -5, y: -8, rotation: -0.8 }],
           ]),
           duration: 150,
           hitboxActive: true,
