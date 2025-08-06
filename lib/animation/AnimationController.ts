@@ -121,9 +121,6 @@ export class AnimationController {
 
     // Uppercut
       name: 'uppercut',
-          limbPositions: new Map([
-        {
-          limbPositions: new Map([
 
       name: 'kick1',
             ['rightUpperLeg', { x: 5, y: -10, rotation: -0.8 }],
