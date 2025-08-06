@@ -112,21 +112,7 @@ export class PhysicsEngine {
     this.bodies.set('fighter-leftUpperLeg', { body: leftUpperLeg, type: 'limb', parent: torso });
     this.bodies.set('fighter-leftLowerLeg', { body: leftLowerLeg, type: 'limb', parent: leftUpperLeg });
     this.bodies.set('fighter-rightUpperLeg', { body: rightUpperLeg, type: 'limb', parent: torso });
-    this.bodies.set('fighter-rightLowerLeg', { body: rightLowerLeg, type: 'limb', parent: rightUpperLeg });
-
-    return torso;
-  }
-
-  createPunchingBag(x: number, y: number): Matter.Body {
-    // Create chain segments for realistic swinging
-    const segmentCount = 5;
-    const segmentHeight = 30;
-    const segments: Matter.Body[] = [];
-    const constraints: Matter.Constraint[] = [];
-
-    // Create chain segments
-    for (let i = 0; i < segmentCount; i++) {
-      const segment = Matter.Bodies.rectangle(x, y - 150 + i * segmentHeight, 10, segmentHeight, {
+  ngle(x, y - 150 + i * segmentHeight, 10, segmentHeight, {
         density: 0.001,
         friction: 0.1,
         restitution: 0.1,
