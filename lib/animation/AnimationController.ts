@@ -123,9 +123,6 @@ export class AnimationController {
             ['leftLowerArm', { x: -10, y: -5, rotation: 0.7 }],
             ['torso', { x: -2, y: 0, rotation: 0.1 }],
           ]),
-          duration: 100,
-        },
-        {
           limbPositions: new Map([
             ['leftUpperArm', { x: -20, y: -3, rotation: 1.2 }],
             ['leftLowerArm', { x: -35, y: -3, rotation: 1.5 }],
