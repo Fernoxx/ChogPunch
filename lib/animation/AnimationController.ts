@@ -127,7 +127,6 @@ export class AnimationController {
       name: 'uppercut',
           limbPositions: new Map([
             ['torso', { x: 0, y: 5, rotation: 0.2 }],
-            ['leftUpperLeg', { x: -5, y: 5, rotation: 0.3 }]
         {
           limbPositions: new Map([
             ['torso', { x: 0, y: -10, rotation: -0.3 }],
