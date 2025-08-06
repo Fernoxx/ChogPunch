@@ -127,7 +127,6 @@ export class AnimationController {
             ['leftUpperArm', { x: -20, y: -3, rotation: 1.2 }],
             ['leftLowerArm', { x: -35, y: -3, rotation: 1.5 }],
             ['torso', { x: -8, y: 0, rotation: 0.3 }],
-            ['rightUpperLeg', { x: 5, y: 0, rotation: -0.2 }],
           ]),
           duration: 120,
           hitboxActive: true,
