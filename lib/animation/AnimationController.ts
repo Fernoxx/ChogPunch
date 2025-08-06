@@ -401,6 +401,5 @@ export class AnimationController {
   }
 
   getComboProgress(): number {
-    return this.comboTimer > 0 ? this.comboTimer / this.comboWindow : 0;
   }
 }
