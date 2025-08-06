@@ -262,8 +262,7 @@ export class AnimationController {
       name: 'hit',
       frames: [
         {
-          limbPositions: new Map([
-            ['torso', { x: -5, y: 2, rotation: 0.3 }],
+          limbPositions: new Map(
             ['head', { x: -8, y: 0, rotation: 0.5 }],
           ]),
           duration: 100,
