@@ -54,11 +54,7 @@ ex.1,
       }),
       Matter.Constraint.create({
         bodyA: rightUpperLeg,
-        bodyB: rightLowerLeg,
-        pointA: { x: 0, y: 20 * scale },
-        pointB: { x: 0, y: -17.5 * scale },
-        stiffness: 0.7,
-        length: 0
+        bodyB: right
       })
     ];
 
