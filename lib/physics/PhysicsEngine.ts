@@ -13,18 +13,7 @@ export class PhysicsEngine {
         options: {
           width: canvas.width,
           height: canvas.height,
-          wireframes: false,
-          background: 'transparent',
-          showVelocity: false,
-          showAngleIndicator: false
-        }
-      });
-    }
-  }
-
-  start() {
-    }
-  }
+  
     }
   }
 
