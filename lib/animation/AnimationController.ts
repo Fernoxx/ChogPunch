@@ -122,11 +122,6 @@ export class AnimationController {
         },
         {
           limbPositions: new Map([
-            ['leftUpperArm', { x: -2, y: 0, rotation: 0.1 }],
-            ['leftLowerArm', { x: -4, y: 0, rotation: 0.1 }],
-            ['torso', { x: 0, y: 0, rotation: 0 }],
-          ]),
-          duration: 200,
         }
       ],
       loop: false,
