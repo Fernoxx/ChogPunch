@@ -171,8 +171,6 @@ export class AnimationController {
           duration: 100,
           hitboxActive: true,
           damage: 12,
-          knockback: { x: 5, y: -20 }
-        },
         {
           limbPositions: new Map([
             ['torso', { x: 0, y: 0, rotation: 0 }],
