@@ -6,15 +6,7 @@ export interface PhysicsBody {
   parent?: Matter.Body;
 }
 
-export class PhysicsEngine {
-  private engine: Matter.Engine;
-  private world: Matter.World;
-  priva
-        options: {
-          width: canvas.ter.Bodies.circle(x, y - 40 * scale, 20 * scale, {
-      label: 'head',
-      density: 0.001,
-      friction: 0.1,
+ex.1,
     });
 
     // Arms
