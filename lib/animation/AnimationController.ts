@@ -178,8 +178,6 @@ export class AnimationController {
     if (this.comboTimer > 0) {
     this.frameTimer += deltaTime;
 
-    const currentFrameData = this.currentAnimation.frames[this.currentFrame];
-    if (this.frameTimer >= currentFrameData.duration) {
       this.frameTimer = 0;
       this.currentFrame++;
 
