@@ -154,9 +154,6 @@ export class AnimationController {
           ]),
           duration: 100,
         },
-        {
-          limbPositions: new Map([
-            ['torso', { x: -2, y: 0, rotation: 0.1 }],
       canCancel: false
     });
   }
