@@ -48,10 +48,6 @@ ex.1,
         length: 0
       })
 
-    const fighterComposite = Matter.Composite.create({
-      bodies: [torso, head, leftUpperArm, leftLowerArm, rightUpperArm, rightLowerArm, 
-               le
-
   destroy() {
     this.stop();
     Matter.World.clear(this.world, false);
