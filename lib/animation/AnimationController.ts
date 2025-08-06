@@ -176,8 +176,6 @@ export class AnimationController {
             ['torso', { x: 0, y: 0, rotation: 0 }],
             ['rightUpperArm', { x: 2, y: 0, rotation: -0.1 }],
             ['rightLowerArm', { x: 4, y: 0, rotation: -0.1 }],
-          ]),
-          duration: 300,
         }
       ],
       loop: false,
