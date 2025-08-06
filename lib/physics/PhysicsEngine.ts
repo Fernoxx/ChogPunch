@@ -72,16 +72,7 @@ ex.1,
         });
         constraints.push(pin);
       } else {
-        // Connect to previous segment
-        const joint = Matter.Constraint.create({
-          bodyA: segments[i - 1],
-          bodyB: segment,
-          pointA: { x: 0, y: segmentHeight / 2 },
-          pointB: { x: 0, y: -segmentHeight / 2 
-    return this.bodies;
-  }
-
-  update(deltaTime: number) {
+        // Connect to
     Matter.Engine.update(this.engine, deltaTime);
   }
 
