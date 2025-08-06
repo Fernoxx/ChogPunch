@@ -128,14 +128,7 @@ export class PhysicsEngine {
           pointB: { x: 0, y: -segmentHeight / 2 },
           stiffness: 0.8,
           length: 0
-        });
-        constraints.push(joint);
-      }
-    }
-
-    // Create the bag
-    const bag = Matter.Bodies.rectangle(x, y, 80, 150, {
-      density: 0.003,
+        })
       friction: 0.3,
       restitution: 0.6,
       label: 'punchingBag'
