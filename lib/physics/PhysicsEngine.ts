@@ -9,17 +9,7 @@ export interface PhysicsBody {
 export class PhysicsEngine {
   private engine: Matter.Engine;
   private world: Matter.World;
-  private render: Matter.Render | null = null;
-
-  constructor(canvas?: HTMLCanvasElement) {
-    });
-    this.world = this.engine.world;
-    this.runner = Matter.Runner.create();
-
-    if (canvas) {
-      this.render = Matter.Render.create({
-        canvas,
-        engine: this.engine,
+  priva
         options: {
           width: canvas.width,
           height: canvas.height,
