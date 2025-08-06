@@ -176,8 +176,6 @@ export class AnimationController {
       canCancel: false
     });
   }
-
-  play(animationName: AnimationState, force: boolean = false) {
     if (!animation) return
 
     // Check for combo
