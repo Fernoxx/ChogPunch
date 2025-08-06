@@ -181,9 +181,7 @@ export class AnimationController {
           ]),
           duration: 100,
         }
-      ],
-      loop: true,
-      canCancel: true
+      ]
     });
 
     // Hit reaction
