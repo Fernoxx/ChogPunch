@@ -146,11 +146,7 @@ export class AnimationController {
             ['leftLowerArm', { x: -5, y: -15, rotation: 1.5 }],
         }
       ]
-    });
-
-    // Hit reaction
-    this.animations.set('hit', {
-      name: 'hit',
+    })
       frames: [
         {
           limbPositions: new Map(
