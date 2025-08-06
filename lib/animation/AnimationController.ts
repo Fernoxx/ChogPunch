@@ -114,9 +114,6 @@ export class AnimationController {
           limbPositions: new Map([
             ['leftUpperArm', { x: -5, y: -5, rotation: 0.5 }],
           ]),
-        {
-          limbPositions: new Map([
-        }
       ],
       loop: false,
       canCancel: true
