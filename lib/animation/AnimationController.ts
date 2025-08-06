@@ -196,10 +196,6 @@ export class AnimationController {
           ]),
           duration: 200,
         
-
-    // Roundhouse kick
-    this.animations.set('roundhouse', {
-      name: 'roundhouse',
       frames: [
         {
           limbPositions: new Map([
