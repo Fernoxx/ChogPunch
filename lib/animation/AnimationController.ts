@@ -250,7 +250,6 @@ export class AnimationController {
         const targetX = currentPos.x + position.x * 0.1;
         const targetY = currentPos.y + position.y * 0.1;
         
-        Matter.Body.setPosition(limbBody.body, {
           x: targetX,
           y: targetY
         });
