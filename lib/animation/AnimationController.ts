@@ -281,10 +281,6 @@ export class AnimationController {
 
     // Update combo timer
     if (this.comboTimer > 0) {
-      this.comboTimer -= deltaTime;
-    }
-
-    // Update frame timer
     this.frameTimer += deltaTime;
 
     const currentFrameData = this.currentAnimation.frames[this.currentFrame];
