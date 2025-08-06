@@ -250,12 +250,7 @@ export class AnimationController {
   }
 
   play(animationName: AnimationState, force: boolean = false) {
-    if (!animation) return;
-
-    // Check if we can cancel current animation
-    if (this.currentAnimation && !this.currentAnimation.canCancel && !force) {
-      return;
-    }
+    if (!animation) return
 
     // Check for combo
     if (this.currentAnimation?.nextCombo === animationName && this.comboTimer > 0) {
