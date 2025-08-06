@@ -139,14 +139,7 @@ export class PhysicsEngine {
       bodyA: segments[segments.length - 1],
       bodyB: bag,
       pointA: { x: 0, y: segmentHeight / 2 },
-      pointB: { x: 0, y: -75 },
-      stiffness: 0.8,
-      length: 0
-    });
-    constraints.push(bagConnection);
-
-    const bagComposite = Matter.Composite.create({
-      bodies: [...segments, bag],
+      pointB: { x: 
       constraints
     });
 
