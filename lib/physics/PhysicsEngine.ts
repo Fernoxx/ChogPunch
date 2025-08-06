@@ -14,8 +14,6 @@ export class PhysicsEngine {
   private runner: Matter.Runner;
 
   constructor(canvas?: HTMLCanvasElement) {
-    this.engine = Matter.Engine.create({
-      gravity: { x: 0, y: 1, scale: 0.001 }
     });
     this.world = this.engine.world;
     this.runner = Matter.Runner.create();
