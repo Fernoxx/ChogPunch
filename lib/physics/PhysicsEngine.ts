@@ -122,20 +122,7 @@ export class PhysicsEngine {
       friction: 0.3,
       restitution: 0.6,
       label: 'punchingBag'
-    });
-
-    // Connect bag to last chain segment
-    const bagConnection = Matter.Constraint.create({
-      bodyA: segments[segments.length - 1],
-      bodyB: bag,
-      pointA: { x: 0, y: segmentHeight / 2 },
-      pointB: { x: 
-      constraints
-    });
-
-    Matter.Composite.add(this.world, bagComposite);
-
-    this.bodies.set('punchingBag', { body: bag, type: 'punchingBag' });
+    });g, type: 'punchingBag' });
 
     return bag;
   }
