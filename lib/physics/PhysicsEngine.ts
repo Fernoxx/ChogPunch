@@ -35,9 +35,6 @@ export class PhysicsEngine {
   }
 
   start() {
-    Matter.Runner.run(this.runner, this.engine);
-    if (this.render) {
-      Matter.Render.run(this.render);
     }
   }
     }
