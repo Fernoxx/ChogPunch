@@ -43,8 +43,6 @@ export class PhysicsEngine {
     const torso = Matter.Bodies.rectangle(x, y, 40 * scale, 60 * scale, {
       label: 'torso',
       density: 0.002,
-      friction: 0.1,
-      restitution: 0.1
     });
 
     const head = Matter.Bodies.circle(x, y - 40 * scale, 20 * scale, {
