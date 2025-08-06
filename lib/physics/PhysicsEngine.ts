@@ -9,9 +9,4 @@ export interface PhysicsBody {
 ex.1,
     });
 
-    // Arms
-    const leftUpperArm = Matter.Bodies.rectangle(x - 25 * scale, y - 10 * scale, 30 * scale, 10 * scale, {
-      label: 
-    });
-
-    // Legs
+  
