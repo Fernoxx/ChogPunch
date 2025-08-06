@@ -162,8 +162,6 @@ export class AnimationController {
 
     this.currentAnimation = animation;
     this.currentFrame = 0;
-    this.frameTimer = 0;
-    this.comboTimer = this.comboWindow;
   }
 
       return;
