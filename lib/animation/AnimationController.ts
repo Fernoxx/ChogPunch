@@ -233,7 +233,5 @@ export class AnimationController {
   isBlocking(): boolean {
     return this.currentAnimation?.name === 'block';
   }
-
-  getComboProgress(): number {
   }
 }
