@@ -43,8 +43,6 @@ export class PhysicsEngine {
 
   stop() {
     Matter.Runner.stop(this.runner);
-    if (this.render) {
-      Matter.Render.stop(this.render);
     }
   }
 
