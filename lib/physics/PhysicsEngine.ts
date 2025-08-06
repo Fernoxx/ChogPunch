@@ -18,13 +18,5 @@ ex.1,
     const leftUpperLeg = Matter.Bodies.rectangle(x - 10 * scale, y + 40 * scale, 12 * scale, 40 * scale, {
       label: 'leftUpperLeg',
       density: 0.001
-    });
- (joints)
-    const constraints = [
-      // Head to torso
-      Matter.Constraint.create({
-        bo
-    Matter.Engine.clear(this.engine);
-    this.bodies.clear();
-  }
+  
 }
