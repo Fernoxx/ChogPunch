@@ -160,9 +160,6 @@ export class AnimationController {
           limbPositions: new Map([
             ['torso', { x: 0, y: 0, rotation: 0 }],
         }
-      ],
-      loop: false,
-      canCancel: false
     });
 
     // Kick 1 - Front kick
