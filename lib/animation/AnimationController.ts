@@ -181,8 +181,6 @@ export class AnimationController {
             ['rightUpperLeg', { x: 5, y: -10, rotation: -0.8 }],
             ['rightLowerLeg', { x: 8, y: -15, rotation: -1.0 }],
             ['torso', { x: -2, y: 0, rotation: 0.1 }],
-            ['leftUpperArm', { x: -5, y: -2, rotation: 0.3 }],
-            ['rightUpperArm', { x: 5, y: -2, rotation: -0.3 }],
         },
         {
           limbPositions: new Map([
