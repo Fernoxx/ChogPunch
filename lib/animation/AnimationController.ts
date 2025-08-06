@@ -78,8 +78,6 @@ export class AnimationController {
       canCancel: true
     });
 
-    // Punch 1 - Jab
-    this.animations.set('punch1', {
       name: 'punch1',
       frames: [
         {
