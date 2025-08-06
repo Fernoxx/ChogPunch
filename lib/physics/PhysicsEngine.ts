@@ -40,9 +40,6 @@ export class PhysicsEngine {
       Matter.Render.run(this.render);
     }
   }
-
-  stop() {
-    Matter.Runner.stop(this.runner);
     }
   }
 
