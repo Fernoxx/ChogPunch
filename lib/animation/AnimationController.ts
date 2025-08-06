@@ -214,10 +214,6 @@ export class AnimationController {
       }
     }
 
-    // Apply physics based on current frame
-    this.applyFramePhysics(currentFrameData);
-  }
-
   private applyFramePhysics(frame: AnimationFrame) {
     frame.limbPositions.forEach((position, limbName) => {
       const limbBody = this.physicsEngine.getBody(`fighter-${limbName}`);
