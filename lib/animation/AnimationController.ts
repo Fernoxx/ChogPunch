@@ -254,7 +254,6 @@ export class AnimationController {
   }
 
   play(animationName: AnimationState, force: boolean = false) {
-    const animation = this.animations.get(animationName);
     if (!animation) return;
 
     // Check if we can cancel current animation
