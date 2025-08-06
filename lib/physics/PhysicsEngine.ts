@@ -11,15 +11,7 @@ export class PhysicsEngine {
   private world: Matter.World;
   priva
         options: {
-          width: canvas.width,
-          height: canvas.height,: number = 1): Matter.Body {
-    // Create composite body for fighter with multiple parts
-    const torso = Matter.Bodies.rectangle(x, y, 40 * scale, 60 * scale, {
-      label: 'torso',
-      density: 0.002,
-    });
-
-    const head = Matter.Bodies.circle(x, y - 40 * scale, 20 * scale, {
+          width: canvas.ter.Bodies.circle(x, y - 40 * scale, 20 * scale, {
       label: 'head',
       density: 0.001,
       friction: 0.1,
