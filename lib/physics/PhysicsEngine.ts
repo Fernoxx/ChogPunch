@@ -114,15 +114,6 @@ export class PhysicsEngine {
           stiffness: 0.8,
           length: 0
         })
-      friction: 0.3,
-      restitution: 0.6,
-      label: 'p
-    });
-  }
-
-  applyKick(fromBody: Matter.Body, direction: 'left' | 'right', power: number = 1) {
-    const forceX = direction === 'right' ? 0.08 : -0.08;
-    const forceY = -0.05;
     
     Matter.Body.applyForce(fromBody, fromBody.position, {
       x: forceX * power,
