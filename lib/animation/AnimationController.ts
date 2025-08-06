@@ -138,14 +138,7 @@ export class AnimationController {
           limbPositions: new Map([
             ['torso', { x: 0, y: -10, rotation: -0.3 }],
             ['rightUpperArm', { x: 10, y: -20, rotation: -1.5 }],
-            ['rightLowerArm', { x: 15, y: -35, rotation: -1.8 }],
-            ['head', { x: 0, y: -15, rotation: -0.4 }],
-          ]),
-          duration: 100,
-          limbPositions: new Map([
-            ['torso', { x: 0, y: 0, rotation: 0 }],
-        }
-    });
+
 
     // Kick 1 - Front kick
     this.animations.set('kick1', {
