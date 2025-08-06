@@ -202,12 +202,7 @@ export class AnimationController {
           limbPositions: new Map([
           ]),
           duration: 200,
-        }
-      ],
-      loop: false,
-      canCancel: true,
-      nextCombo: 'roundhouse'
-    });
+        
 
     // Roundhouse kick
     this.animations.set('roundhouse', {
