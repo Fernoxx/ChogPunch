@@ -98,8 +98,6 @@ export class AnimationController {
           ]),
           duration: 100,
           hitboxActive: true,
-          damage: 5,
-          knockback: { x: 10, y: -2 }
         },
         {
           limbPositions: new Map([
