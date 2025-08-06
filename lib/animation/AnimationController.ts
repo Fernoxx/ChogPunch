@@ -348,11 +348,6 @@ export class AnimationController {
           x: targetX,
           y: targetY
         });
-        
-        Matter.Body.setAngle(limbBody.body, position.rotation);
-      }
-    });
-  }
 
   getCurrentFrame(): AnimationFrame | null {
     if (!this.currentAnimation) return null;
