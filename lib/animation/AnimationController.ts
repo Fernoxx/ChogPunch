@@ -120,8 +120,7 @@ export class AnimationController {
         }
       ],
       loop: false,
-      canCancel: true,
-      nextCombo: 'uppercut'
+      canCancel: true
     });
 
     // Uppercut
