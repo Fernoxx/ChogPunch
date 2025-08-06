@@ -87,18 +87,7 @@ export class PhysicsEngine {
         stiffness: 0.6,
         length: 0
       }),
-      }),
-      }),
-      Matter.Constraint.create({
-        bodyA: leftUpperLeg,
-        bodyB: leftLowerLeg,
-        pointA: { x: 0, y: 20 * scale },
-        pointB: { x: 0, y: -17.5 * scale },
-        stiffness: 0.7,
-        length: 0
-      }),
-      Matter.Constraint.create({
-        bodyA: torso,
+      
         bodyB: rightUpperLeg,
         pointA: { x: 10 * scale, y: 30 * scale },
         pointB: { x: 0, y: -20 * scale },
