@@ -39,18 +39,6 @@ ex.1,
       }),
       Matter.Constraint.create({
       h: 0
-      }),
-      
-        bodyB: rightUpperLeg,
-        pointA: { x: 10 * scale, y: 30 * scale },
-        pointB: { x: 0, y: -20 * scale },
-        stiffness: 0.7,
-        length: 0
-      })
-
-  destroy() {
-    this.stop();
-    Matter.World.clear(this.world, false);
     Matter.Engine.clear(this.engine);
     this.bodies.clear();
   }
