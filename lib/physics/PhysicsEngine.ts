@@ -64,24 +64,7 @@ ex.1,
 
     const fighterComposite = Matter.Composite.create({
       bodies: [torso, head, leftUpperArm, leftLowerArm, rightUpperArm, rightLowerArm, 
-               leftUpperLeg, leftLowerLeg, rightUpperLeg, rightLowerLeg],
-      constraints
-    });rArm', { body: rightLowerArm, type: 'limb', parent: rightUpperArm });
-    this.bodies.set('fighter-leftUpperLeg', { body: leftUpperLeg, type: 'limb', parent: torso });
-    this.bodies.set('fighter-leftLowerLeg', { body: leftLowerLeg, type: 'limb', parent: leftUpperLeg });
-    this.bodies.set('fighter-rightUpperLeg', { body: rightUpperLeg, type: 'limb', parent: torso });
-  ngle(x, y - 150 + i * segmentHeight, 10, segmentHeight, {
-        density: 0.001,
-        friction: 0.1,
-        restitution: 0.1,
-        label: `chain-${i}`
-      });
-      segments.push(segment);
-
-      if (i === 0) {
-        // Pin first segment to ceiling
-        const pin = Matter.Constraint.create({
-          pointA: { x, y: y - 180 },
+               leftUpperLeg, leftLowerLeg, right
           bodyB: segment,
           pointB: { x: 0, y: -segmentHeight / 2 },
           stiffness: 1,
