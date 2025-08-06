@@ -222,10 +222,6 @@ export class AnimationController {
         {
           limbPositions: new Map([
             ['torso', { x: 0, y: 0, rotation: -0.5 }],
-            ['leftUpperLeg', { x: -5, y: -5, rotation: 0.5 }],
-            ['leftLowerLeg', { x: -8, y: -8, rotation: 0.7 }],
-          ]),
-          duration: 200,
         rotation: -1.5 }],
             ['leftUpperLeg', { x: -15, y: -15, rotation: 2.0 }],
             ['leftLowerLeg', { x: -25, y: -20, rotation: 2.5 }],
