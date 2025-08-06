@@ -38,12 +38,7 @@ ex.1,
         pointB: { x: 15 * scale, y: 0 },
       }),
       Matter.Constraint.create({
-        bodyA: leftUpperArm,
-        bodyB: leftLowerArm,
-        pointA: { x: -15 * scale, y: 0 },
-        pointB: { x: 15 * scale, y: 0 },
-        stiffness: 0.6,
-        length: 0
+      h: 0
       }),
       
         bodyB: rightUpperLeg,
