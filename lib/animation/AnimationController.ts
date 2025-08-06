@@ -157,8 +157,6 @@ export class AnimationController {
         rotation: -1.5 }],
             ['leftUpperLeg', { x: -15, y: -15, rotation: 2.0 }],
           ]),
-          duration: 150,
-          hitboxActive: true,
           damage: 15,
         },
         {
