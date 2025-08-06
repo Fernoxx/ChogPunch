@@ -88,11 +88,6 @@ export class PhysicsEngine {
       density: 0.001
     });
 
-    const rightLowerLeg = Matter.Bodies.rectangle(x + 10 * scale, y + 70 * scale, 10 * scale, 35 * scale, {
-      label: 'rightLowerLeg',
-      density: 0.001
-    });
-
     // Create constraints (joints)
     const constraints = [
       // Head to torso
