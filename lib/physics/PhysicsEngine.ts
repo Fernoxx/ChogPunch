@@ -15,8 +15,3 @@ ex.1,
     });
 
     // Legs
-    const leftUpperLeg = Matter.Bodies.rectangle(x - 10 * scale, y + 40 * scale, 12 * scale, 40 * scale, {
-      label: 'leftUpperLeg',
-      density: 0.001
-  
-}
