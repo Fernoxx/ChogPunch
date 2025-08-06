@@ -121,19 +121,7 @@ export class PhysicsEngine {
         })
       friction: 0.3,
       restitution: 0.6,
-      label: 'punchingBag'
-    });g, type: 'punchingBag' });
-
-    return bag;
-  }
-
-  applyPunch(fromBody: Matter.Body, direction: 'left' | 'right', power: number = 1) {
-    const forceX = direction === 'right' ? 0.05 : -0.05;
-    const forceY = -0.02;
-    
-    Matter.Body.applyForce(fromBody, fromBody.position, {
-      x: forceX * power,
-      y: forceY * power
+      label: 'p
     });
   }
 
