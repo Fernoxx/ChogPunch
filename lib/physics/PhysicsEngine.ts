@@ -49,7 +49,6 @@ export class PhysicsEngine {
       label: 'head',
       density: 0.001,
       friction: 0.1,
-      restitution: 0.1
     });
 
     // Arms
