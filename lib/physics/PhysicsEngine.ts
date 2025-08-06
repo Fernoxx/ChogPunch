@@ -53,13 +53,7 @@ export class PhysicsEngine {
 
     // Arms
     const leftUpperArm = Matter.Bodies.rectangle(x - 25 * scale, y - 10 * scale, 30 * scale, 10 * scale, {
-      label: 'leftUpperArm',
-      density: 0.001
-    });
-
-    const rightUpperArm = Matter.Bodies.rectangle(x + 25 * scale, y - 10 * scale, 30 * scale, 10 * scale, {
-      label: 'rightUpperArm',
-      density: 0.001
+      label: 
     });
 
     // Legs
