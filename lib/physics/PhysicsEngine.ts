@@ -77,22 +77,7 @@ ex.1,
           bodyA: segments[i - 1],
           bodyB: segment,
           pointA: { x: 0, y: segmentHeight / 2 },
-          pointB: { x: 0, y: -segmentHeight / 2 },
-          stiffness: 0.8,
-          length: 0
-        })
-    
-    Matter.Body.applyForce(fromBody, fromBody.position, {
-      x: forceX * power,
-      y: forceY * power
-    });
-  }
-
-  getBody(key: string): PhysicsBody | undefined {
-    return this.bodies.get(key);
-  }
-
-  getAllBodies(): Map<string, PhysicsBody> {
+          pointB: { x: 0, y: -segmentHeight / 2 
     return this.bodies;
   }
 
