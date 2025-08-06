@@ -10,8 +10,6 @@ export class PhysicsEngine {
   private engine: Matter.Engine;
   private world: Matter.World;
   private render: Matter.Render | null = null;
-  private bodies: Map<string, PhysicsBody> = new Map();
-  private runner: Matter.Runner;
 
   constructor(canvas?: HTMLCanvasElement) {
     });
