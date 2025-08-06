@@ -350,8 +350,6 @@ export class AnimationController {
         });
 
   getCurrentFrame(): AnimationFrame | null {
-    if (!this.currentAnimation) return null;
-    return this.currentAnimation.frames[this.currentFrame];
   }
 
   isAttacking(): boolean {
