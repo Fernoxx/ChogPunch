@@ -150,8 +150,6 @@ export class AnimationController {
           damage: 10,
           knockback: { x: 20, y: -5 }
         },
-        {
-          limbPositions: new Map([
       frames: [
         {
           limbPositions: new Map([
