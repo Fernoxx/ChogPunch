@@ -165,9 +165,6 @@ export class AnimationController {
     // Kick 1 - Front kick
     this.animations.set('kick1', {
       name: 'kick1',
-      frames: [
-        {
-          limbPositions: new Map([
             ['rightUpperLeg', { x: 5, y: -10, rotation: -0.8 }],
             ['rightLowerLeg', { x: 8, y: -15, rotation: -1.0 }],
             ['torso', { x: -2, y: 0, rotation: 0.1 }],
