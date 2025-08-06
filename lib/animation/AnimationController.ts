@@ -233,9 +233,6 @@ export class AnimationController {
             ['torso', { x: 0, y: 0, rotation: 0 }],
             ['leftUpperLeg', { x: 0, y: 0, rotation: 0 }],
             ['leftLowerLeg', { x: 0, y: 0, rotation: 0 }],
-          ]),
-          duration: 300,
-        }
       ],
     // Block animation
     this.animations.set('block', {
