@@ -87,17 +87,7 @@ export class PhysicsEngine {
       bodies: [torso, head, leftUpperArm, leftLowerArm, rightUpperArm, rightLowerArm, 
                leftUpperLeg, leftLowerLeg, rightUpperLeg, rightLowerLeg],
       constraints
-    });
-
-    Matter.Composite.add(this.world, fighterComposite);
-
-    // Store all parts
-    this.bodies.set('fighter', { body: torso, type: 'fighter' });
-    this.bodies.set('fighter-head', { body: head, type: 'limb', parent: torso });
-    this.bodies.set('fighter-leftUpperArm', { body: leftUpperArm, type: 'limb', parent: torso });
-    this.bodies.set('fighter-leftLowerArm', { body: leftLowerArm, type: 'limb', parent: leftUpperArm });
-    this.bodies.set('fighter-rightUpperArm', { body: rightUpperArm, type: 'limb', parent: torso });
-    this.bodies.set('fighter-rightLowerArm', { body: rightLowerArm, type: 'limb', parent: rightUpperArm });
+    });rArm', { body: rightLowerArm, type: 'limb', parent: rightUpperArm });
     this.bodies.set('fighter-leftUpperLeg', { body: leftUpperLeg, type: 'limb', parent: torso });
     this.bodies.set('fighter-leftLowerLeg', { body: leftLowerLeg, type: 'limb', parent: leftUpperLeg });
     this.bodies.set('fighter-rightUpperLeg', { body: rightUpperLeg, type: 'limb', parent: torso });
