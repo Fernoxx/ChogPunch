@@ -221,8 +221,6 @@ export class AnimationController {
       ],
     // Block animation
     this.animations.set('block', {
-      name: 'block',
-      frames: [
         {
           limbPositions: new Map([
             ['leftUpperArm', { x: -3, y: -10, rotation: 1.2 }],
