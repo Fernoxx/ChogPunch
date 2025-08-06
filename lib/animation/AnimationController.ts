@@ -197,9 +197,6 @@ export class AnimationController {
     this.comboTimer = this.comboWindow;
   }
 
-  update(deltaTime: number) {
-    if (!this.currentAnimation) {
-      this.play('idle');
       return;
     }
 
