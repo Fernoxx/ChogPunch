@@ -72,11 +72,6 @@ export class AnimationController {
             ['rightUpperArm', { x: 2, y: -1, rotation: -0.05 }],
           ]),
           duration: 1000,
-        }
-      ],
-      loop: true,
-      canCancel: true
-    });
 
       name: 'punch1',
       frames: [
