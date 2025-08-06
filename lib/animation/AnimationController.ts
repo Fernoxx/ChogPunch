@@ -163,9 +163,6 @@ export class AnimationController {
         },
         {
           limbPositions: new Map([
-          ]),
-          duration: 200,
-        
       frames: [
         {
           limbPositions: new Map([
