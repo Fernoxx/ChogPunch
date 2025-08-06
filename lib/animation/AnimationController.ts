@@ -137,8 +137,6 @@ export class AnimationController {
           limbPositions: new Map([
             ['rightUpperLeg', { x: 20, y: -5, rotation: -1.5 }],
           hitboxActive: true,
-          damage: 10,
-          knockback: { x: 20, y: -5 }
         },
       frames: [
         {
