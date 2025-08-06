@@ -139,8 +139,6 @@ export class AnimationController {
         {
           limbPositions: new Map([
             ['torso', { x: 0, y: 0, rotation: -0.5 }],
-        rotation: -1.5 }],
-            ['leftUpperLeg', { x: -15, y: -15, rotation: 2.0 }],
           ]),
           damage: 15,
         },
