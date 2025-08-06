@@ -51,12 +51,7 @@ ex.1,
         pointB: { x: 0, y: -20 * scale },
         stiffness: 0.7,
         length: 0
-      }),
-      Matter.Constraint.create({
-        bodyA: rightUpperLeg,
-        bodyB: right
       })
-    ];
 
     const fighterComposite = Matter.Composite.create({
       bodies: [torso, head, leftUpperArm, leftLowerArm, rightUpperArm, rightLowerArm, 
