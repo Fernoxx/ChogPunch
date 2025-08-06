@@ -149,8 +149,6 @@ export class AnimationController {
         },
         {
           limbPositions: new Map([
-            ['torso', { x: 0, y: 0, rotation: 0 }],
-            ['leftUpperLeg', { x: 0, y: 0, rotation: 0 }],
       ],
     // Block animation
     this.animations.set('block', {
