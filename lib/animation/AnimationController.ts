@@ -128,9 +128,6 @@ export class AnimationController {
             ['torso', { x: 0, y: -10, rotation: -0.3 }],
             ['rightUpperArm', { x: 10, y: -20, rotation: -1.5 }],
 
-
-    // Kick 1 - Front kick
-    this.animations.set('kick1', {
       name: 'kick1',
             ['rightUpperLeg', { x: 5, y: -10, rotation: -0.8 }],
             ['rightLowerLeg', { x: 8, y: -15, rotation: -1.0 }],
