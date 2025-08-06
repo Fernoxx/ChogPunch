@@ -23,22 +23,7 @@ ex.1,
     const constraints = [
       // Head to torso
       Matter.Constraint.create({
-        bodyA: head,
-        bodyB: torso,
-        pointA: { x: 0, y: 20 * scale },
-        pointB: { x: 0, y: -30 * scale },
-        stiffness: 0.8,
-        length: 0
-      }),
-      // Arms
-      Matter.Constraint.create({
-        bodyA: torso,
-        bodyB: leftUpperArm,
-        pointA: { x: -20 * scale, y: -20 * scale },
-        pointB: { x: 15 * scale, y: 0 },
-      }),
-      Matter.Constraint.create({
-      h: 0
+        bo
     Matter.Engine.clear(this.engine);
     this.bodies.clear();
   }
