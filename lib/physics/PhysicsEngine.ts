@@ -64,17 +64,7 @@ ex.1,
 
     const fighterComposite = Matter.Composite.create({
       bodies: [torso, head, leftUpperArm, leftLowerArm, rightUpperArm, rightLowerArm, 
-               leftUpperLeg, leftLowerLeg, right
-          bodyB: segment,
-          pointB: { x: 0, y: -segmentHeight / 2 },
-          stiffness: 1,
-          length: 0
-        });
-        constraints.push(pin);
-      } else {
-        // Connect to
-    Matter.Engine.update(this.engine, deltaTime);
-  }
+               le
 
   destroy() {
     this.stop();
