@@ -120,7 +120,6 @@ export class AnimationController {
     });
 
     // Uppercut
-    this.animations.set('uppercut', {
       name: 'uppercut',
           limbPositions: new Map([
             ['torso', { x: 0, y: 5, rotation: 0.2 }],
