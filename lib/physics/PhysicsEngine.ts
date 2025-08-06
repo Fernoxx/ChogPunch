@@ -12,12 +12,7 @@ export class PhysicsEngine {
   priva
         options: {
           width: canvas.width,
-          height: canvas.height,
-  
-    }
-  }
-
-  createFighter(x: number, y: number, scale: number = 1): Matter.Body {
+          height: canvas.height,: number = 1): Matter.Body {
     // Create composite body for fighter with multiple parts
     const torso = Matter.Bodies.rectangle(x, y, 40 * scale, 60 * scale, {
       label: 'torso',
