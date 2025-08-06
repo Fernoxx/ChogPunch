@@ -329,10 +329,6 @@ export class AnimationController {
           x: targetX,
           y: targetY
         });
-
-  getCurrentFrame(): AnimationFrame | null {
-  }
-
   isAttacking(): boolean {
     const attackAnimations: AnimationState[] = [
       'punch1', 'punch2', 'punch3', 'kick1', 'kick2', 'uppercut', 'roundhouse'
