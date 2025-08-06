@@ -86,7 +86,6 @@ export class AnimationController {
           limbPositions: new Map([
             ['rightUpperArm', { x: 5, y: -5, rotation: -0.5 }],
             ['rightLowerArm', { x: 10, y: -5, rotation: -0.7 }],
-            ['torso', { x: 2, y: 0, rotation: -0.1 }],
           ]),
           duration: 100,
         },
