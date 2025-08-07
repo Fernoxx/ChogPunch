@@ -115,20 +115,7 @@ export default function Home() {
   // Energy regeneration
   useEffect(() => {
     const moves: string[] = []
-    if (playerEnergy >= 30) moves.push('uppercut')
-    if (playerEnergy >= 50) moves.push('roundhouse')
-    if (playerEnergy >= 80 && combo >= 5) moves.push('special')
-    setSpecialMovesReady(moves)
-  }, [playerEnergy, combo])
-
-  // Low health warning
-  useEffect(() => {
-    if (playerHealth < 30 && playerHealth > 0) {
-      soundManager.play('low_health')
-    } else {
-      soundManager.stop('low_health')
-    }
-  }, [playerHealth])
+    if (
 ntrollerRef.current.play(move as any)
 
     // Get damage and energy cost
