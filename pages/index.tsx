@@ -170,10 +170,7 @@ import { PunchingBag, checkBagHit } from "@/components/PunchingBag"
     }
   }, [playerEnergy])
 
-  const handleGameEnd = () => {
-    const victory = score >= 1000
-    setStage(victory ? "victory" : "defeat")
-    soundManager.play(victory ? 'victory' : 'defeat')
+  const handleGameEndefeat')
     
     if (victory) {
       confetti({
