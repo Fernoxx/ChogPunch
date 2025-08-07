@@ -156,15 +156,7 @@ import { PunchingBag, checkBagHit } from "@/components/PunchingBag"
     soundManager.play('block')
   }, [])
 
-  const handleMove = useCallback((direction: 'left' | 'right') => {
-    if (!physicsEngiicsEngineRef.current.getBody('fighter')
-    if (fighter) {
-      const force = direction === 'right' ? 0.005 : -0.005
-      Matter.Body.applyForce(fighter.body, fighter.body.position, { x: force, y: 0 })
-    }
-  }, [])
-
-  const handleJump = useCallback(() => {
+  const handleCallback(() => {
     if (!physicsEngine 20)
     }
   }, [playerEnergy])
