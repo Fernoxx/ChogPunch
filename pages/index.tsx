@@ -109,12 +109,7 @@ export default function Home() {
       const timer = setTimeout(() => {
         setTimeLeft(prev => {
           if (prev <= 1) {
-            handleGameEnd()
-            return 0
-          }
-          return prev - 1
-        })
-      }, 1000)
+            handleGa
       return () => clearTimeout(timer)
     }
   }, [stage, timeLeft])
