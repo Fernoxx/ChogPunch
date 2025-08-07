@@ -159,15 +159,7 @@ import { PunchingBag, checkBagHit } from "@/components/PunchingBag"
         abi: chogPunchABI,
         address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS!,
         functionName: "submitScore",
-        args: [score],
-      })
-      setClaimed(true)
-      
-      confetti({
-        particleCount: 50,
-        spread: 60,
-        origin: { y: 0.7 },
-        colors: ['#4ade80', '#22c55e', '#16a34a']
+        args: [scoc55e', '#16a34a']
       })
     } catch (e) {
       console.error("Claim tx failed:", e)
