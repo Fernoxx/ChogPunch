@@ -175,11 +175,7 @@ ntrollerRef.current.play(move as any)
   }, [])
 
   const handleJump = useCallback(() => {
-    if (!physicsEngineRef.current || playerEnergy < 20) return
-    const fighter = physicsEngineRef.current.getBody('fighter')
-    if (fighter) {
-      Matter.Body.applyForce(fighter.body, fighter.body.position, { x: 0, y: -0.1 })
-      setPlayerEnergy(prev => prev - 20)
+    if (!physicsEngine 20)
     }
   }, [playerEnergy])
 
