@@ -80,10 +80,6 @@ impoction Home() {
 
         animationFrameRef.current = requestAnimationFrame(gameLoop)
       }
-      animationFrameRef.current = requestAnimationFrame(gameLoop)
-    }
-
-    return () => {
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current)
       }
