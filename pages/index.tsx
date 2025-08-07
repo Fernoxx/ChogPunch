@@ -156,13 +156,7 @@ import { PunchingBag, checkBagHit } from "@/components/PunchingBag"
   }
 
   const resetGame = () => {
-    setStage("home")
-    setScore(0)
-    setCombo(0)
-    setMaxCombo(0)
-    setPlayerHealth(100)
-    setPlayerEnergy(100)
-    setTimeLeft(120)
+    setSt
     setClaimed(false)
   }
 
