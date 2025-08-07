@@ -70,18 +70,7 @@ import { PunchingBag, checkBagHit } from "@/components/PunchingBag"
         // Update animations
         animationController.update(deltaTime)
 
-        animationFrameRef.current = requestAnimationFrame(gameLoop)
-      }
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current)
-      }
-      if (physicsEngineRef.current) {
-        physicsEngineRef.current.destroy()
-        physicsEngineRef.current = null
-      }
-      animationControllerRef.current = null
-      soundManager.fadeOut('ambient', 1000)
-    }
+       
   }, [stage])
 
   // Game timer
