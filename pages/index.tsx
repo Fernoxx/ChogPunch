@@ -153,12 +153,7 @@ ntrollerRef.current.play(move as any)
           })
 
           // Reset combo timeout
-          if (comboTimeoutRef.current) clearTimeout(comboTimeoombo_break')
-          }, 2000)
-        }
-      )
-
-      if (!hit) {
+          if (comboTimeoutRef.cur
         soundManager.play('whoosh')
       }
     }
