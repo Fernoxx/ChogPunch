@@ -9,11 +9,7 @@ import { PunchingBag, checkBagHit } from "@/components/PunchingBag"
 
   const { address, isConnected } = useAccount()
   const { writeContractAsync } = useWriteContract()
-  const [farcasterUser, setFarcasterUser] = useState<{
-    fid: number
-    username?: string
-    displayName?: string
-    pfpUrl?: stri
+  const [fa
   const [stage, setStage] = useState<"home" | "play" | "victory" | "defeat">("home")
   const [score, setScore] = useState(0)
   const [combo, setCombo] = useState(0)
