@@ -114,16 +114,6 @@ export default function Home() {
 
   // Energy regeneration
   useEffect(() => {
-    if (stage === "play") {
-      const interval = setInterval(() => {
-        setPlayerEnergy(prev => Math.min(100, prev + 2))
-      }, 500)
-      return () => clearInterval(interval)
-    }
-  }, [stage])
-
-  // Special moves availability
-  useEffect(() => {
     const moves: string[] = []
     if (playerEnergy >= 30) moves.push('uppercut')
     if (playerEnergy >= 50) moves.push('roundhouse')
