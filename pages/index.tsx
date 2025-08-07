@@ -6,10 +6,24 @@ import { AnimationController } from "@/lib/animation/AnimationController"
 import { soundManager } from "@/lib/audio/SoundManager"
 import { Fighter } from "@/components/Fighter"
 import { PunchingBag, checkBagHit } from "@/components/PunchingBag"
+import { CombatController } from "@/components/CombatController"
+import { GameUI } from "@/components/GameUI"
+import chogPunchABI from "@/lib/chogPunchABI.json"
+import { motion, AnimatePresence } from "framer-motion"
+import Image from "next/image"
+import confetti from "canvas-confetti"
+import Matter from "matter-js"
 
+export default function Home() {
   const { address, isConnected } = useAccount()
   const { writeContractAsync } = useWriteContract()
-  const [fa
+  const [farcasterUser, setFarcasterUser] = useState<{
+    fid: number
+    username?: string
+    displayName?: string
+    pfpUrl?: string
+  } | null>(null)
+
   const [stage, setStage] = useState<"home" | "play" | "victory" | "defeat">("home")
   const [score, setScore] = useState(0)
   const [combo, setCombo] = useState(0)
@@ -41,7 +55,9 @@ import { PunchingBag, checkBagHit } from "@/components/PunchingBag"
     })()
   }, [])
 
-  // Initialize physics and animatio
+  // Initialize physics and animation
+  useEffect(() => {
+    if (stage === "play" && !physicsEngineRef.current) {
       // Create physics engine
       const physicsEngine = new PhysicsEngine()
       physicsEngineRef.current = physicsEngine
@@ -70,7 +86,22 @@ import { PunchingBag, checkBagHit } from "@/components/PunchingBag"
         // Update animations
         animationController.update(deltaTime)
 
-       
+        animationFrameRef.current = requestAnimationFrame(gameLoop)
+      }
+      animationFrameRef.current = requestAnimationFrame(gameLoop)
+    }
+
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current)
+      }
+      if (physicsEngineRef.current) {
+        physicsEngineRef.current.destroy()
+        physicsEngineRef.current = null
+      }
+      animationControllerRef.current = null
+      soundManager.fadeOut('ambient', 1000)
+    }
   }, [stage])
 
   // Game timer
@@ -79,14 +110,62 @@ import { PunchingBag, checkBagHit } from "@/components/PunchingBag"
       const timer = setTimeout(() => {
         setTimeLeft(prev => {
           if (prev <= 1) {
-            handleGa
+            handleGameEnd()
+            return 0
+          }
+          return prev - 1
+        })
+      }, 1000)
       return () => clearTimeout(timer)
     }
   }, [stage, timeLeft])
 
+  // Energy regeneration
+  useEffect(() => {
+    if (stage === "play") {
+      const interval = setInterval(() => {
+        setPlayerEnergy(prev => Math.min(100, prev + 2))
+      }, 500)
+      return () => clearInterval(interval)
+    }
+  }, [stage])
+
+  // Special moves availability
+  useEffect(() => {
+    const moves: string[] = []
+    if (playerEnergy >= 30) moves.push('uppercut')
+    if (playerEnergy >= 50) moves.push('roundhouse')
+    if (playerEnergy >= 80 && combo >= 5) moves.push('special')
+    setSpecialMovesReady(moves)
+  }, [playerEnergy, combo])
+
+  // Low health warning
+  useEffect(() => {
+    if (playerHealth < 30 && playerHealth > 0) {
+      soundManager.play('low_health')
+    } else {
+      soundManager.stop('low_health')
+    }
+  }, [playerHealth])
+
+  const handleAttack = useCallback((move: string) => {
+    if (!animationControllerRef.current || !physicsEngineRef.current) return
+
+    // Play animation
+    animationControllerRef.current.play(move as any)
+
+    // Get damage and energy cost
     const moveData: Record<string, { damage: number; energy: number; range: number }> = {
       punch1: { damage: 5, energy: 5, range: 100 },
-      punch2: { 
+      punch2: { damage: 8, energy: 8, range: 110 },
+      kick1: { damage: 10, energy: 10, range: 120 },
+      kick2: { damage: 12, energy: 12, range: 130 },
+      uppercut: { damage: 15, energy: 30, range: 100 },
+      roundhouse: { damage: 20, energy: 50, range: 150 }
+    }
+
+    const data = moveData[move] || { damage: 5, energy: 5, range: 100 }
+
     // Check energy
     if (playerEnergy < data.energy) {
       soundManager.play('whoosh')
@@ -129,7 +208,15 @@ import { PunchingBag, checkBagHit } from "@/components/PunchingBag"
           })
 
           // Reset combo timeout
-          if (comboTimeoutRef.cur
+          if (comboTimeoutRef.current) clearTimeout(comboTimeoutRef.current)
+          comboTimeoutRef.current = setTimeout(() => {
+            setCombo(0)
+            soundManager.play('combo_break')
+          }, 2000)
+        }
+      )
+
+      if (!hit) {
         soundManager.play('whoosh')
       }
     }
@@ -141,10 +228,31 @@ import { PunchingBag, checkBagHit } from "@/components/PunchingBag"
     soundManager.play('block')
   }, [])
 
-  const handleCallback(() => {
-    if (!physicsEngine 20)
+  const handleMove = useCallback((direction: 'left' | 'right') => {
+    if (!physicsEngineRef.current) return
+    const fighter = physicsEngineRef.current.getBody('fighter')
+    if (fighter) {
+      const force = direction === 'right' ? 0.005 : -0.005
+      Matter.Body.applyForce(fighter.body, fighter.body.position, { x: force, y: 0 })
+    }
+  }, [])
+
+  const handleJump = useCallback(() => {
+    if (!physicsEngineRef.current || playerEnergy < 20) return
+    const fighter = physicsEngineRef.current.getBody('fighter')
+    if (fighter) {
+      Matter.Body.applyForce(fighter.body, fighter.body.position, { x: 0, y: -0.1 })
+      setPlayerEnergy(prev => prev - 20)
     }
   }, [playerEnergy])
+
+  const handleGameEnd = () => {
+    const victory = score >= 1000
+    setStage(victory ? "victory" : "defeat")
+    soundManager.play(victory ? 'victory' : 'defeat')
+    
+    if (victory) {
+      confetti({
         particleCount: 100,
         spread: 70,
         origin: { y: 0.6 }
@@ -152,11 +260,36 @@ import { PunchingBag, checkBagHit } from "@/components/PunchingBag"
     }
   }
 
-  cons
+  const handleClaim = async () => {
+    if (!address || claimed) return
+    try {
+      await writeContractAsync({
+        abi: chogPunchABI,
+        address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS!,
+        functionName: "submitScore",
+        args: [score],
+      })
+      setClaimed(true)
+      
+      confetti({
+        particleCount: 50,
+        spread: 60,
+        origin: { y: 0.7 },
+        colors: ['#4ade80', '#22c55e', '#16a34a']
+      })
+    } catch (e) {
+      console.error("Claim tx failed:", e)
+    }
   }
 
   const resetGame = () => {
-    setSt
+    setStage("home")
+    setScore(0)
+    setCombo(0)
+    setMaxCombo(0)
+    setPlayerHealth(100)
+    setPlayerEnergy(100)
+    setTimeLeft(120)
     setClaimed(false)
   }
 
@@ -195,6 +328,26 @@ import { PunchingBag, checkBagHit } from "@/components/PunchingBag"
               >
                 CHOG FIGHTER
               </motion.h1>
+              
+              <motion.button
+                className="bg-gradient-to-r from-orange-500 to-red-500 text-white text-2xl font-bold px-12 py-6 rounded-lg shadow-2xl hover:scale-105 transition-transform"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setStage("play")}
+              >
+                START FIGHT
+              </motion.button>
+
+              <motion.div
+                className="mt-12 text-white/60"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+              >
+                <p className="text-sm">Use touch gestures or keyboard to fight</p>
+                <p className="text-xs mt-2">
+                  built by{" "}
+                  <a
                     href="https://farcaster.xyz/doteth"
                     target="_blank"
                     rel="noreferrer"
