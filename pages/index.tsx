@@ -101,13 +101,6 @@ impoction Home() {
     }
   }, [stage, timeLeft])
 
-  // Energy regeneration
-  useEffect(() => {
-    const moves: string[] = []
-    if (
-ntrollerRef.current.play(move as any)
-
-    // Get damage and energy cost
     const moveData: Record<string, { damage: number; energy: number; range: number }> = {
       punch1: { damage: 5, energy: 5, range: 100 },
       punch2: { 
