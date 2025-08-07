@@ -15,9 +15,7 @@ impoction Home() {
     fid: number
     username?: string
     displayName?: string
-    pfpUrl?: string
-  } | null>(null)
-
+    pfpUrl?: stri
   const [stage, setStage] = useState<"home" | "play" | "victory" | "defeat">("home")
   const [score, setScore] = useState(0)
   const [combo, setCombo] = useState(0)
