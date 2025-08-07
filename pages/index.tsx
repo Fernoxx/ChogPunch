@@ -168,11 +168,6 @@ import { PunchingBag, checkBagHit } from "@/components/PunchingBag"
     if (!physicsEngine 20)
     }
   }, [playerEnergy])
-
-  const handleGameEndefeat')
-    
-    if (victory) {
-      confetti({
         particleCount: 100,
         spread: 70,
         origin: { y: 0.6 }
