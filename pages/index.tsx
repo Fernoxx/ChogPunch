@@ -195,26 +195,6 @@ import { PunchingBag, checkBagHit } from "@/components/PunchingBag"
               >
                 CHOG FIGHTER
               </motion.h1>
-              
-              <motion.button
-                className="bg-gradient-to-r from-orange-500 to-red-500 text-white text-2xl font-bold px-12 py-6 rounded-lg shadow-2xl hover:scale-105 transition-transform"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setStage("play")}
-              >
-                START FIGHT
-              </motion.button>
-
-              <motion.div
-                className="mt-12 text-white/60"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
-              >
-                <p className="text-sm">Use touch gestures or keyboard to fight</p>
-                <p className="text-xs mt-2">
-                  built by{" "}
-                  <a
                     href="https://farcaster.xyz/doteth"
                     target="_blank"
                     rel="noreferrer"
