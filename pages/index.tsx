@@ -6,9 +6,7 @@ import { AnimationController } from "@/lib/animation/AnimationController"
 import { soundManager } from "@/lib/audio/SoundManager"
 import { Fighter } from "@/components/Fighter"
 import { PunchingBag, checkBagHit } from "@/components/PunchingBag"
-import { CombatController } from "@/components/CombatController"
-import { GameUI } from "@/components/GameUI"
-impoction Home() {
+
   const { address, isConnected } = useAccount()
   const { writeContractAsync } = useWriteContract()
   const [farcasterUser, setFarcasterUser] = useState<{
