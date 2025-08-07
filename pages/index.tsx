@@ -152,18 +152,7 @@ import { PunchingBag, checkBagHit } from "@/components/PunchingBag"
     }
   }
 
-  const handleClaim = async () => {
-    if (!address || claimed) return
-    try {
-      await writeContractAsync({
-        abi: chogPunchABI,
-        address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS!,
-        functionName: "submitScore",
-        args: [scoc55e', '#16a34a']
-      })
-    } catch (e) {
-      console.error("Claim tx failed:", e)
-    }
+  cons
   }
 
   const resetGame = () => {
