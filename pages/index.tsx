@@ -8,12 +8,7 @@ import { Fighter } from "@/components/Fighter"
 import { PunchingBag, checkBagHit } from "@/components/PunchingBag"
 import { CombatController } from "@/components/CombatController"
 import { GameUI } from "@/components/GameUI"
-import chogPunchABI from "@/lib/chogPunchABI.json"
-import { motion, AnimatePresence } from "framer-motion"
-import Image from "next/image"
-import confetti from "canvas-confetti"
-
-export default function Home() {
+impoction Home() {
   const { address, isConnected } = useAccount()
   const { writeContractAsync } = useWriteContract()
   const [farcasterUser, setFarcasterUser] = useState<{
