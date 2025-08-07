@@ -134,15 +134,7 @@ ntrollerRef.current.play(move as any)
     // Get damage and energy cost
     const moveData: Record<string, { damage: number; energy: number; range: number }> = {
       punch1: { damage: 5, energy: 5, range: 100 },
-      punch2: { damage: 8, energy: 8, range: 110 },
-      kick1: { damage: 10, energy: 10, range: 120 },
-      kick2: { damage: 12, energy: 12, range: 130 },
-      uppercut: { damage: 15, energy: 30, range: 100 },
-      roundhouse: { damage: 20, energy: 50, range: 150 }
-    }
-
-    const data = moveData[move] || { damage: 5, energy: 5, range: 100 }
-
+      punch2: { 
     // Check energy
     if (playerEnergy < data.energy) {
       soundManager.play('whoosh')
