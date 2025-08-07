@@ -155,10 +155,7 @@ ntrollerRef.current.play(move as any)
           })
 
           // Reset combo timeout
-          if (comboTimeoutRef.current) clearTimeout(comboTimeoutRef.current)
-          comboTimeoutRef.current = setTimeout(() => {
-            setCombo(0)
-            soundManager.play('combo_break')
+          if (comboTimeoutRef.current) clearTimeout(comboTimeoombo_break')
           }, 2000)
         }
       )
