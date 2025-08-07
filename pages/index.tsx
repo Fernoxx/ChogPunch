@@ -54,9 +54,7 @@ export default function Home() {
     })()
   }, [])
 
-  // Initialize physics and animation
-  useEffect(() => {
-    if (stage === "play" && !physicsEngineRef.current) {
+  // Initialize physics and animatio
       // Create physics engine
       const physicsEngine = new PhysicsEngine()
       physicsEngineRef.current = physicsEngine
