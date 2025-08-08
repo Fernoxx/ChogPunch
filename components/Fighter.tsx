@@ -11,203 +11,158 @@ interface FighterProps {
   y: number;
 }
 
-interface BodyPart {
-  name: string;
-  x: number;
-  y: number;
-  rotation: number;
-  width: number;
-  height: number;
-  zIndex: number;
-  imageCrop?: {
-    sx: number;
-    sy: number;
-    sw: number;
-    sh: number;
-  };
-}
-
 export const Fighter: React.FC<FighterProps> = ({ physicsEngine, animationController, x, y }) => {
-  const [bodyParts, setBodyParts] = useState<BodyPart[]>([]);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const characterImage = useRef<HTMLImageElement | null>(null);
-
+  const [position, setPosition] = useState({ x, y });
+  const [velocity, setVelocity] = useState({ x: 0, y: 0 });
+  const [isMoving, setIsMoving] = useState(false);
+  const [isJumping, setIsJumping] = useState(false);
+  const [facing, setFacing] = useState<1 | -1>(1);
+  
+  // Update position based on physics
   useEffect(() => {
-    // Load character image
-    const img = new window.Image();
-    img.src = '/chog.png';
-    img.onload = () => {
-      characterImage.current = img;
-    };
-  }, []);
-
-  useEffect(() => {
-    const updateBodyParts = () => {
-      const bodies = physicsEngine.getAllBodies();
-      const parts: BodyPart[] = [];
-
-      // Define body part mappings with image crops
-      const partMappings: Record<string, { 
-        crop?: { sx: number; sy: number; sw: number; sh: number };
-        zIndex: number;
-        scale?: { w: number; h: number };
-      }> = {
-        'fighter': { 
-          crop: { sx: 50, sy: 80, sw: 100, sh: 120 }, // Torso
-          zIndex: 5,
-          scale: { w: 60, h: 80 }
-        },
-        'fighter-head': { 
-          crop: { sx: 60, sy: 0, sw: 80, sh: 80 }, // Head
-          zIndex: 6,
-          scale: { w: 50, h: 50 }
-        },
-        'fighter-leftUpperArm': { 
-          crop: { sx: 20, sy: 90, sw: 30, sh: 60 }, // Left upper arm
-          zIndex: 4,
-          scale: { w: 20, h: 40 }
-        },
-        'fighter-leftLowerArm': { 
-          crop: { sx: 10, sy: 140, sw: 25, sh: 50 }, // Left lower arm
-          zIndex: 3,
-          scale: { w: 18, h: 35 }
-        },
-        'fighter-rightUpperArm': { 
-          crop: { sx: 150, sy: 90, sw: 30, sh: 60 }, // Right upper arm
-          zIndex: 7,
-          scale: { w: 20, h: 40 }
-        },
-        'fighter-rightLowerArm': { 
-          crop: { sx: 165, sy: 140, sw: 25, sh: 50 }, // Right lower arm
-          zIndex: 8,
-          scale: { w: 18, h: 35 }
-        },
-        'fighter-leftUpperLeg': { 
-          crop: { sx: 40, sy: 180, sw: 35, sh: 70 }, // Left upper leg
-          zIndex: 4,
-          scale: { w: 25, h: 50 }
-        },
-        'fighter-leftLowerLeg': { 
-          crop: { sx: 35, sy: 240, sw: 30, sh: 60 }, // Left lower leg
-          zIndex: 3,
-          scale: { w: 20, h: 45 }
-        },
-        'fighter-rightUpperLeg': { 
-          crop: { sx: 125, sy: 180, sw: 35, sh: 70 }, // Right upper leg
-          zIndex: 2,
-          scale: { w: 25, h: 50 }
-        },
-        'fighter-rightLowerLeg': { 
-          crop: { sx: 130, sy: 240, sw: 30, sh: 60 }, // Right lower leg
-          zIndex: 1,
-          scale: { w: 20, h: 45 }
-        }
-      };
-
-      bodies.forEach((physicsBody, key) => {
-        const mapping = partMappings[key];
-        if (mapping && physicsBody.body) {
-          const body = physicsBody.body;
-          parts.push({
-            name: key,
-            x: body.position.x,
-            y: body.position.y,
-            rotation: body.angle,
-            width: mapping.scale?.w || 40,
-            height: mapping.scale?.h || 40,
-            zIndex: mapping.zIndex,
-            imageCrop: mapping.crop
-          });
-        }
-      });
-
-      // Sort by z-index
-      parts.sort((a, b) => a.zIndex - b.zIndex);
-      setBodyParts(parts);
+    const updatePosition = () => {
+      const fighterBody = physicsEngine.getBody('fighter');
+      if (fighterBody?.body) {
+        const newX = fighterBody.body.position.x;
+        const newY = fighterBody.body.position.y;
+        const vx = fighterBody.body.velocity.x;
+        const vy = fighterBody.body.velocity.y;
+        
+        setPosition({ x: newX, y: newY });
+        setVelocity({ x: vx, y: vy });
+        
+        // Determine movement state
+        setIsMoving(Math.abs(vx) > 0.5);
+        setIsJumping(vy < -0.5 || !fighterBody.body.isStatic);
+        
+        // Update facing direction
+        if (vx > 0.5) setFacing(1);
+        else if (vx < -0.5) setFacing(-1);
+      }
     };
 
-    const interval = setInterval(updateBodyParts, 16); // 60 FPS
+    const interval = setInterval(updatePosition, 16); // 60 FPS
     return () => clearInterval(interval);
   }, [physicsEngine]);
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas || !characterImage.current) return;
+  // Determine animation state
+  const getAnimationClass = () => {
+    const currentState = animationController.getCurrentFrame();
+    if (currentState) {
+      if (animationController.isAttacking()) return 'attack';
+      if (animationController.isBlocking()) return 'block';
+    }
+    
+    if (isJumping) return 'jump';
+    if (isMoving) return 'run';
+    return 'idle';
+  };
 
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const render = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Enable image smoothing for better quality
-      ctx.imageSmoothingEnabled = true;
-      ctx.imageSmoothingQuality = 'high';
-
-      bodyParts.forEach(part => {
-        ctx.save();
-        
-        // Translate to body part position
-        ctx.translate(part.x, part.y);
-        ctx.rotate(part.rotation);
-
-        if (part.imageCrop && characterImage.current) {
-          // Draw cropped section of character image
-          try {
-            ctx.drawImage(
-              characterImage.current,
-              part.imageCrop.sx,
-              part.imageCrop.sy,
-              part.imageCrop.sw,
-              part.imageCrop.sh,
-              -part.width / 2,
-              -part.height / 2,
-              part.width,
-              part.height
-            );
-          } catch (e) {
-            // Fallback to colored rectangles if image cropping fails
-            ctx.fillStyle = part.name.includes('head') ? '#FFB6C1' : 
-                           part.name.includes('arm') ? '#FF69B4' : 
-                           part.name.includes('leg') ? '#8B4513' : '#FFA500';
-            ctx.fillRect(-part.width / 2, -part.height / 2, part.width, part.height);
-          }
-        }
-
-        ctx.restore();
-      });
-
-      requestAnimationFrame(render);
-    };
-
-    render();
-  }, [bodyParts]);
+  const animationClass = getAnimationClass();
 
   return (
     <div className="absolute inset-0 pointer-events-none">
-      <canvas
-        ref={canvasRef}
-        width={window.innerWidth}
-        height={window.innerHeight}
-        className="absolute inset-0"
-        style={{ zIndex: 10 }}
-      />
+      <motion.div
+        className={`fighter-sprite ${animationClass}`}
+        style={{
+          position: 'absolute',
+          left: position.x - 50,
+          top: position.y - 100,
+          width: 100,
+          height: 120,
+          transform: `scaleX(${facing})`,
+        }}
+        animate={{
+          x: [0, isMoving ? 2 : 0, 0],
+          y: [0, isMoving ? -3 : -1, 0],
+        }}
+        transition={{
+          duration: isMoving ? 0.3 : 2,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      >
+        <style jsx>{`
+          .fighter-sprite {
+            transform-origin: center;
+          }
+
+          /* Idle animation - breathing */
+          .fighter-sprite.idle {
+            animation: idle-breathe 3s ease-in-out infinite;
+          }
+
+          @keyframes idle-breathe {
+            0%, 100% { transform: scaleX(var(--facing, 1)) scaleY(1); }
+            50% { transform: scaleX(var(--facing, 1)) scaleY(0.98); }
+          }
+
+          /* Running animation */
+          .fighter-sprite.run {
+            animation: run-cycle 0.4s steps(4) infinite;
+          }
+
+          @keyframes run-cycle {
+            0% { transform: scaleX(var(--facing, 1)) translateY(0px) rotate(-1deg); }
+            25% { transform: scaleX(var(--facing, 1)) translateY(-3px) rotate(0deg); }
+            50% { transform: scaleX(var(--facing, 1)) translateY(0px) rotate(1deg); }
+            75% { transform: scaleX(var(--facing, 1)) translateY(-3px) rotate(0deg); }
+            100% { transform: scaleX(var(--facing, 1)) translateY(0px) rotate(-1deg); }
+          }
+
+          /* Jump animation */
+          .fighter-sprite.jump {
+            animation: jump-motion 0.5s ease-out;
+          }
+
+          @keyframes jump-motion {
+            0% { transform: scaleX(var(--facing, 1)) scaleY(0.9) scaleX(1.1); }
+            50% { transform: scaleX(var(--facing, 1)) scaleY(1.1) scaleX(0.9); }
+            100% { transform: scaleX(var(--facing, 1)) scaleY(1) scaleX(1); }
+          }
+
+          /* Attack animation */
+          .fighter-sprite.attack {
+            animation: attack-motion 0.3s ease-out;
+          }
+
+          @keyframes attack-motion {
+            0% { transform: scaleX(var(--facing, 1)) translateX(0px); }
+            50% { transform: scaleX(var(--facing, 1)) translateX(10px) rotate(-5deg); }
+            100% { transform: scaleX(var(--facing, 1)) translateX(0px); }
+          }
+        `}</style>
+        <Image
+          src="/chog.png"
+          alt="Fighter"
+          width={100}
+          height={120}
+          priority
+          style={{
+            imageRendering: 'crisp-edges',
+            width: '100%',
+            height: '100%',
+            objectFit: 'contain',
+            ['--facing' as any]: facing,
+          }}
+        />
+      </motion.div>
       
       {/* Shadow effect */}
       <motion.div
         className="absolute bg-black/30 rounded-full blur-xl"
         style={{
-          left: x - 40,
+          left: position.x - 40,
           bottom: 50,
           width: 80,
           height: 20,
         }}
         animate={{
-          scaleX: [1, 1.2, 1],
+          scaleX: [1, isMoving ? 1.3 : 1.1, 1],
           opacity: [0.3, 0.5, 0.3]
         }}
         transition={{
-          duration: 2,
+          duration: isMoving ? 0.3 : 2,
           repeat: Infinity,
           ease: "easeInOut"
         }}

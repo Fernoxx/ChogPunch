@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { SpriteAnimator } from '@/lib/sprites/SpriteAnimator';
 
 // Simple pixel-art platformer rendered to a low-res canvas and scaled up
 // No external assets required; draws a stylized pixel sprite inspired by the original character
@@ -20,16 +21,20 @@ interface PlayerState {
   facing: 1 | -1;
   walkFrame: number; // for simple 2-frame walk anim
   walkTimer: number;
+  animator?: SpriteAnimator;
 }
 
+// More realistic game constants - adjusted for Mario-like gameplay
 const VIRTUAL_WIDTH = 320;  // internal low-res buffer
 const VIRTUAL_HEIGHT = 180;
 
-const GRAVITY = 0.35;
-const JUMP_VELOCITY = -6.5;
-const MOVE_ACCEL = 0.5;
-const MAX_SPEED = 2.2;
+// Adjusted physics for more realistic movement
+const GRAVITY = 0.25;        // Reduced from 0.35 for more floaty jumps
+const JUMP_VELOCITY = -4.5;  // Reduced from -6.5 for more controlled jumps
+const MOVE_ACCEL = 0.3;      // Reduced from 0.5 for smoother acceleration
+const MAX_SPEED = 1.5;       // Reduced from 2.2 for more controlled movement
 const GROUND_Y = VIRTUAL_HEIGHT - 24; // top of ground tiles
+const FRICTION = 0.85;       // Ground friction for more realistic stops
 
 export const PlatformerGame: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -135,7 +140,7 @@ export const PlatformerGame: React.FC = () => {
     maybeShowControls();
     window.addEventListener('resize', maybeShowControls);
 
-    // Player init
+    // Player init with sprite animator
     const player: PlayerState = {
       x: 40,
       y: GROUND_Y - 16,
@@ -147,7 +152,13 @@ export const PlatformerGame: React.FC = () => {
       facing: 1,
       walkFrame: 0,
       walkTimer: 0,
+      animator: new SpriteAnimator(),
     };
+
+    // Load sprite sheet
+    player.animator?.loadSpriteSheet('/chog-sprites.png').catch(() => {
+      console.log('Sprite sheet not found, using fallback rendering');
+    });
 
     // Camera
     let cameraX = 0;
@@ -174,7 +185,7 @@ export const PlatformerGame: React.FC = () => {
     const update = (dtMs: number) => {
       const dt = Math.min(32, dtMs) / 16.6667; // normalize to ~60fps units
 
-      // Horizontal movement
+      // Horizontal movement with more realistic acceleration
       if (keys.left) {
         player.vx = Math.max(player.vx - MOVE_ACCEL * dt, -MAX_SPEED);
         player.facing = -1;
@@ -182,24 +193,41 @@ export const PlatformerGame: React.FC = () => {
         player.vx = Math.min(player.vx + MOVE_ACCEL * dt, MAX_SPEED);
         player.facing = 1;
       } else {
-        // friction when no input
-        player.vx *= player.onGround ? 0.8 : 0.98;
+        // Apply friction for more realistic stops
+        player.vx *= player.onGround ? FRICTION : 0.98;
         if (Math.abs(player.vx) < 0.02) player.vx = 0;
       }
 
-      // Jump
+      // Jump with better control
       if (keys.jump && player.onGround) {
         player.vy = JUMP_VELOCITY;
         player.onGround = false;
       }
 
-      // Gravity
-      player.vy += GRAVITY * dt;
-      if (player.vy > 8) player.vy = 8;
+      // Variable jump height - release jump key early for shorter jumps
+      if (!keys.jump && player.vy < -1) {
+        player.vy *= 0.7; // Cut jump short when releasing button
+      }
 
-      // Integrate
-      player.x += player.vx * 3; // scale speed for feel
-      player.y += player.vy * 3;
+      // Gravity with terminal velocity
+      player.vy += GRAVITY * dt;
+      if (player.vy > 6) player.vy = 6; // Terminal velocity
+
+      // Integrate position (reduced speed multiplier for more realistic movement)
+      player.x += player.vx * dt;
+      player.y += player.vy * dt;
+
+      // Update sprite animation
+      if (player.animator) {
+        if (!player.onGround) {
+          player.animator.setAnimation(player.vy < 0 ? 'jump' : 'fall');
+        } else if (Math.abs(player.vx) > 0.1) {
+          player.animator.setAnimation('run');
+        } else {
+          player.animator.setAnimation('idle');
+        }
+        player.animator.update(dtMs);
+      }
 
       // Collisions with platforms
       player.onGround = false;
@@ -390,9 +418,19 @@ export const PlatformerGame: React.FC = () => {
       drawSky(octx);
       drawGround(octx);
 
-      // Player
-      const frame = player.walkFrame === 0 ? FRAME_0 : FRAME_1;
-      drawSprite(octx, frame, Math.floor(player.x - cameraX) - 8, Math.floor(player.y), player.facing === -1);
+      // Player - use sprite animator if available, otherwise fallback to pixel art
+      if (player.animator && player.animator.getCurrentFrame()) {
+        player.animator.draw(
+          octx,
+          Math.floor(player.x - cameraX) - player.width / 2,
+          Math.floor(player.y) - player.height,
+          player.facing === 1
+        );
+      } else {
+        // Fallback to pixel art if sprite sheet not loaded
+        const frame = player.walkFrame === 0 ? FRAME_0 : FRAME_1;
+        drawSprite(octx, frame, Math.floor(player.x - cameraX) - 8, Math.floor(player.y), player.facing === -1);
+      }
 
       // HUD minimal
       octx.fillStyle = '#ffffff';
