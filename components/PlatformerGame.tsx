@@ -29,8 +29,8 @@ const VIRTUAL_WIDTH = 320;
 const VIRTUAL_HEIGHT = 180;
 const GROUND_Y = VIRTUAL_HEIGHT - 28;
 
-const GRAVITY = 0.35;
-const JUMP_VELOCITY = -6.8;
+const GRAVITY = 0.42;
+const JUMP_VELOCITY = -4.6;
 
 export const PlatformerGame: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -151,7 +151,7 @@ export const PlatformerGame: React.FC = () => {
     if (srcImg.complete) buildPixelated(); else srcImg.onload = buildPixelated;
 
     // World
-    let speed = 2.0; // world scroll speed (px/frame at 60fps basis)
+    let speed = 1.2; // world scroll speed (px/frame at 60fps basis)
     let score = 0;
     let highScore = 0;
     let spawnTimer = 0;
@@ -178,7 +178,7 @@ export const PlatformerGame: React.FC = () => {
       player.onGround = true;
       player.isDead = false;
       obstacles.length = 0;
-      speed = 2.0;
+      speed = 1.2;
       score = 0;
       spawnTimer = 0;
     };
@@ -194,8 +194,8 @@ export const PlatformerGame: React.FC = () => {
       const dt = Math.min(50, dtMs) / 16.6667; // normalize to 60fps units
       if (!player.isDead) {
         // world speed ramps up slightly
-        speed += 0.0008 * dtMs;
-        score += speed * 0.05 * dtMs;
+        speed += 0.00015 * dtMs;
+        score += speed * 0.03 * dtMs;
       }
 
       // Jumping
@@ -206,8 +206,8 @@ export const PlatformerGame: React.FC = () => {
 
       // Gravity
       player.vy += GRAVITY * dt;
-      if (player.vy > 8) player.vy = 8;
-      player.y += player.vy * 3;
+      if (player.vy > 6) player.vy = 6;
+      player.y += player.vy * 1.2;
 
       // Ground collision
       if (player.y + player.height >= GROUND_Y) {
@@ -222,14 +222,14 @@ export const PlatformerGame: React.FC = () => {
         if (spawnTimer <= 0) {
           spawnObstacle();
           const nextIn = 750 + Math.random() * 900; // ms
-          spawnTimer = nextIn / (1 + (speed - 2) * 0.15);
+          spawnTimer = nextIn / (1 + (speed - 1.2) * 0.12);
         }
       }
 
       // Move obstacles and cull
       for (let i = obstacles.length - 1; i >= 0; i--) {
         const o = obstacles[i];
-        o.x -= speed * 3; // scale world speed
+        o.x -= speed * 1.6; // scale world speed
         if (o.x + o.w < -20) obstacles.splice(i, 1);
       }
 
@@ -300,19 +300,52 @@ export const PlatformerGame: React.FC = () => {
 
     const drawPlayer = (g: CanvasRenderingContext2D, bobPhase: number) => {
       const px = Math.floor(player.x);
-      const py = Math.floor(player.y) + (player.onGround ? (Math.sin(bobPhase) > 0 ? 0 : 1) : 0);
+      const runPhase = bobPhase * 5; // faster cycle for legs
+      const bob = player.onGround ? Math.round(Math.sin(runPhase) * 1) : 0;
+      const py = Math.floor(player.y) + bob;
+
+      // soft shadow to ground for a sense of motion
+      if (player.onGround) {
+        g.fillStyle = '#00000033';
+        g.beginPath();
+        g.ellipse(px + player.width / 2, GROUND_Y + 6, 6, 2, 0, 0, Math.PI * 2);
+        g.fill();
+      }
+
+      const cx = px + player.width / 2;
+      const cy = py + player.height / 2;
+
+      // Apply a subtle lean and squash/stretch to simulate a run cycle
+      let scaleX = 1;
+      let scaleY = 1;
+      let angle = 0;
+      if (!player.isDead) {
+        const stride = Math.sin(runPhase);
+        if (player.onGround) {
+          scaleX = 1 + 0.06 * stride;
+          scaleY = 1 - 0.06 * stride;
+          angle = 0.04 + 0.08 * Math.cos(runPhase);
+        } else {
+          angle = 0.06; // small forward lean while airborne
+        }
+      }
+
+      g.save();
+      g.imageSmoothingEnabled = false;
+      g.translate(cx, cy);
+      g.rotate(angle);
+      g.scale(scaleX, scaleY);
+      g.translate(-player.width / 2, -player.height / 2);
 
       if (tinyCanvas) {
-        // Draw pixelated sprite
-        g.imageSmoothingEnabled = false;
-        g.drawImage(tinyCanvas, px, py, player.width, player.height);
+        g.drawImage(tinyCanvas, 0, 0, player.width, player.height);
       } else {
-        // Fallback: simple placeholder
         g.fillStyle = '#6b46c1';
-        g.fillRect(px, py, player.width, player.height);
+        g.fillRect(0, 0, player.width, player.height);
         g.fillStyle = '#fbe7c6';
-        g.fillRect(px + 3, py + 4, 8, 7);
+        g.fillRect(3, 4, 8, 7);
       }
+      g.restore();
 
       // small outline for readability
       g.strokeStyle = '#000000';
@@ -327,14 +360,14 @@ export const PlatformerGame: React.FC = () => {
       const dt = now - last;
       last = now;
       update(dt);
-      timeAccum += dt * (speed * 0.03);
+      timeAccum += dt * (0.04 + speed * 0.015);
 
       // Clear offscreen
       octx.imageSmoothingEnabled = false;
       octx.clearRect(0, 0, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
 
       drawSky(octx);
-      drawGround(octx, (now * speed * 0.06) % 10000);
+      drawGround(octx, (now * speed * 0.03) % 10000);
 
       // Obstacles
       for (const o of obstacles) drawObstacle(octx, o);
