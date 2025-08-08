@@ -6,7 +6,6 @@ import Image from "next/image"
 
 export default function Home() {
   const [stage, setStage] = useState<"home" | "play">("home")
-  const [farcasterUser, setFarcasterUser] = useState<{ fid: number; username?: string; displayName?: string; pfpUrl?: string } | null>(null)
 
   useEffect(() => {
     setFarcasterUser({ fid: 0, username: "Player", displayName: "Player" } as any)
