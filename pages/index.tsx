@@ -39,10 +39,7 @@ export default function Home() {
                 transition={{ type: "spring", stiffness: 100 }}
                 style={{ textShadow: '4px 4px 8px rgba(0,0,0,0.8)' }}
               >
-                CHOG PLATFORMER
-              </motion.h1>
-              <motion.button
-                className="bg-gradient-to-r from-orange-500 to-red-500 text-white text-2xl font-bold px-12 py-6 rounded-lg shadow-2xl hover:scale-105 transition-transform"
+             gradient-to-r from-orange-500 to-red-500 text-white text-2xl font-bold px-12 py-6 rounded-lg shadow-2xl hover:scale-105 transition-transform"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setStage("play")}
