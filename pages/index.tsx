@@ -1,22 +1,14 @@
 // pages/index.tsx
 import { useEffect, useState, useRef, useCallback } from "react"
-import { useAccount, useWriteContract } from "wagmi"
-import { PhysicsEngine } from "@/lib/physics/PhysicsEngine"
-import { AnimationController } from "@/lib/animation/AnimationController"
-import { soundManager } from "@/lib/audio/SoundManager"
-import { Fighter } from "@/components/Fighter"
-import { PunchingBag, checkBagHit } from "@/components/PunchingBag"
-import { CombatController } from "@/components/CombatController"
-import { GameUI } from "@/components/GameUI"
-import chogPunchABI from "@/lib/chogPunchABI.json"
+import { useAccount } from "wagmi"
+import { soundManager } from "../lib/audio/SoundManager"
+import { PlatformerGame } from "../components/PlatformerGame"
 import { motion, AnimatePresence } from "framer-motion"
 import Image from "next/image"
 import confetti from "canvas-confetti"
-import Matter from "matter-js"
 
 export default function Home() {
   const { address, isConnected } = useAccount()
-  const { writeContractAsync } = useWriteContract()
   const [farcasterUser, setFarcasterUser] = useState<{
     fid: number
     username?: string
@@ -35,72 +27,26 @@ export default function Home() {
   const [claimed, setClaimed] = useState(false)
 
   // Physics and animation refs
-  const physicsEngineRef = useRef<PhysicsEngine | null>(null)
-  const animationControllerRef = useRef<AnimationController | null>(null)
   const animationFrameRef = useRef<number>()
   const lastTimeRef = useRef<number>(0)
   const comboTimeoutRef = useRef<NodeJS.Timeout>()
-  const bagRef = useRef<any>(null)
 
-  // Load Farcaster user context
+  // Load Farcaster user context (optional, no SDK dependency here)
   useEffect(() => {
-    ;(async () => {
-      try {
-        const { sdk } = await import("@farcaster/miniapp-sdk")
-        const ctx = await sdk.context
-        if (ctx?.user) setFarcasterUser(ctx.user)
-      } catch (e) {
-        console.error("Farcaster context error:", e)
-      }
-    })()
+    // Fallback: anonymous user
+    setFarcasterUser({ fid: 0, username: 'Player', displayName: 'Player' } as any)
   }, [])
 
-  // Initialize physics and animation
+  // Initialize physics and animation (disabled in pixel platformer mode)
   useEffect(() => {
-    if (stage === "play" && !physicsEngineRef.current) {
-      // Create physics engine
-      const physicsEngine = new PhysicsEngine()
-      physicsEngineRef.current = physicsEngine
-
-      // Create fighter and punching bag
-      physicsEngine.createFighter(200, 400)
-      physicsEngine.createPunchingBag(window.innerWidth - 200, 300)
-      physicsEngine.start()
-
-      // Create animation controller
-      const animationController = new AnimationController(physicsEngine)
-      animationControllerRef.current = animationController
-
-      // Start ambient sound
-      soundManager.fadeIn('ambient', 2000)
-
-      // Start game loop
-      const gameLoop = (timestamp: number) => {
-        if (!lastTimeRef.current) lastTimeRef.current = timestamp
-        const deltaTime = timestamp - lastTimeRef.current
-        lastTimeRef.current = timestamp
-
-        // Update physics
-        physicsEngine.update(deltaTime)
-
-        // Update animations
-        animationController.update(deltaTime)
-
-        animationFrameRef.current = requestAnimationFrame(gameLoop)
-      }
-      animationFrameRef.current = requestAnimationFrame(gameLoop)
+    if (stage === "play") {
+      soundManager.fadeIn('ambient', 1000)
     }
-
     return () => {
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current)
       }
-      if (physicsEngineRef.current) {
-        physicsEngineRef.current.destroy()
-        physicsEngineRef.current = null
-      }
-      animationControllerRef.current = null
-      soundManager.fadeOut('ambient', 1000)
+      soundManager.fadeOut('ambient', 500)
     }
   }, [stage])
 
@@ -261,25 +207,15 @@ export default function Home() {
   }
 
   const handleClaim = async () => {
-    if (!address || claimed) return
-    try {
-      await writeContractAsync({
-        abi: chogPunchABI,
-        address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS!,
-        functionName: "submitScore",
-        args: [score],
-      })
-      setClaimed(true)
-      
-      confetti({
-        particleCount: 50,
-        spread: 60,
-        origin: { y: 0.7 },
-        colors: ['#4ade80', '#22c55e', '#16a34a']
-      })
-    } catch (e) {
-      console.error("Claim tx failed:", e)
-    }
+    // Placeholder claim effect
+    if (claimed) return
+    setClaimed(true)
+    confetti({
+      particleCount: 50,
+      spread: 60,
+      origin: { y: 0.7 },
+      colors: ['#4ade80', '#22c55e', '#16a34a']
+    })
   }
 
   const resetGame = () => {
@@ -363,44 +299,10 @@ export default function Home() {
       </AnimatePresence>
 
       {/* Game Screen */}
-      {stage === "play" && physicsEngineRef.current && animationControllerRef.current && (
+      {stage === "play" && (
         <>
-          <Fighter
-            physicsEngine={physicsEngineRef.current}
-            animationController={animationControllerRef.current}
-            x={200}
-            y={400}
-          />
-          
-          <PunchingBag
-            ref={bagRef}
-            physicsEngine={physicsEngineRef.current}
-            onHit={(damage) => {
-              // Additional hit logic if needed
-            }}
-          />
-
-          <CombatController
-            onAttack={handleAttack}
-            onBlock={handleBlock}
-            onMove={handleMove}
-            onJump={handleJump}
-            comboProgress={animationControllerRef.current.getComboProgress()}
-          />
-
-          <GameUI
-            playerHealth={playerHealth}
-            playerMaxHealth={100}
-            playerEnergy={playerEnergy}
-            playerMaxEnergy={100}
-            score={score}
-            combo={combo}
-            maxCombo={maxCombo}
-            timeLeft={timeLeft}
-            playerName={farcasterUser?.username || "Fighter"}
-            playerAvatar={farcasterUser?.pfpUrl}
-            specialMovesReady={specialMovesReady}
-          />
+          {/* Switch to pixel platformer view */}
+          <PlatformerGame />
         </>
       )}
 
