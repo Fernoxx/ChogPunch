@@ -1,233 +1,16 @@
 // pages/index.tsx
-import { useEffect, useState, useRef, useCallback } from "react"
-import { useAccount } from "wagmi"
-import { soundManager } from "../lib/audio/SoundManager"
+import { useEffect, useState } from "react"
 import { PlatformerGame } from "../components/PlatformerGame"
 import { motion, AnimatePresence } from "framer-motion"
 import Image from "next/image"
-import confetti from "canvas-confetti"
 
 export default function Home() {
-  const { address, isConnected } = useAccount()
-  const [farcasterUser, setFarcasterUser] = useState<{
-    fid: number
-    username?: string
-    displayName?: string
-    pfpUrl?: string
-  } | null>(null)
+  const [stage, setStage] = useState<"home" | "play">("home")
+  const [farcasterUser, setFarcasterUser] = useState<{ fid: number; username?: string; displayName?: string; pfpUrl?: string } | null>(null)
 
-  const [stage, setStage] = useState<"home" | "play" | "victory" | "defeat">("home")
-  const [score, setScore] = useState(0)
-  const [combo, setCombo] = useState(0)
-  const [maxCombo, setMaxCombo] = useState(0)
-  const [playerHealth, setPlayerHealth] = useState(100)
-  const [playerEnergy, setPlayerEnergy] = useState(100)
-  const [timeLeft, setTimeLeft] = useState(120) // 2 minutes
-  const [specialMovesReady, setSpecialMovesReady] = useState<string[]>([])
-  const [claimed, setClaimed] = useState(false)
-
-  // Physics and animation refs
-  const animationFrameRef = useRef<number>()
-  const lastTimeRef = useRef<number>(0)
-  const comboTimeoutRef = useRef<NodeJS.Timeout>()
-
-  // Load Farcaster user context (optional, no SDK dependency here)
   useEffect(() => {
-    // Fallback: anonymous user
-    setFarcasterUser({ fid: 0, username: 'Player', displayName: 'Player' } as any)
+    setFarcasterUser({ fid: 0, username: "Player", displayName: "Player" } as any)
   }, [])
-
-  // Initialize physics and animation (disabled in pixel platformer mode)
-  useEffect(() => {
-    if (stage === "play") {
-      soundManager.fadeIn('ambient', 1000)
-    }
-    return () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current)
-      }
-      soundManager.fadeOut('ambient', 500)
-    }
-  }, [stage])
-
-  // Game timer
-  useEffect(() => {
-    if (stage === "play" && timeLeft > 0) {
-      const timer = setTimeout(() => {
-        setTimeLeft(prev => {
-          if (prev <= 1) {
-            handleGameEnd()
-            return 0
-          }
-          return prev - 1
-        })
-      }, 1000)
-      return () => clearTimeout(timer)
-    }
-  }, [stage, timeLeft])
-
-  // Energy regeneration
-  useEffect(() => {
-    if (stage === "play") {
-      const interval = setInterval(() => {
-        setPlayerEnergy(prev => Math.min(100, prev + 2))
-      }, 500)
-      return () => clearInterval(interval)
-    }
-  }, [stage])
-
-  // Special moves availability
-  useEffect(() => {
-    const moves: string[] = []
-    if (playerEnergy >= 30) moves.push('uppercut')
-    if (playerEnergy >= 50) moves.push('roundhouse')
-    if (playerEnergy >= 80 && combo >= 5) moves.push('special')
-    setSpecialMovesReady(moves)
-  }, [playerEnergy, combo])
-
-  // Low health warning
-  useEffect(() => {
-    if (playerHealth < 30 && playerHealth > 0) {
-      soundManager.play('low_health')
-    } else {
-      soundManager.stop('low_health')
-    }
-  }, [playerHealth])
-
-  const handleAttack = useCallback((move: string) => {
-    if (!animationControllerRef.current || !physicsEngineRef.current) return
-
-    // Play animation
-    animationControllerRef.current.play(move as any)
-
-    // Get damage and energy cost
-    const moveData: Record<string, { damage: number; energy: number; range: number }> = {
-      punch1: { damage: 5, energy: 5, range: 100 },
-      punch2: { damage: 8, energy: 8, range: 110 },
-      kick1: { damage: 10, energy: 10, range: 120 },
-      kick2: { damage: 12, energy: 12, range: 130 },
-      uppercut: { damage: 15, energy: 30, range: 100 },
-      roundhouse: { damage: 20, energy: 50, range: 150 }
-    }
-
-    const data = moveData[move] || { damage: 5, energy: 5, range: 100 }
-
-    // Check energy
-    if (playerEnergy < data.energy) {
-      soundManager.play('whoosh')
-      return
-    }
-
-    // Consume energy
-    setPlayerEnergy(prev => Math.max(0, prev - data.energy))
-
-    // Play sound
-    if (move.includes('punch')) {
-      soundManager.playRandomPitch(move === 'punch1' ? 'punch_light' : 'punch_heavy')
-    } else if (move.includes('kick')) {
-      soundManager.playRandomPitch(move === 'kick1' ? 'kick_light' : 'kick_heavy')
-    } else if (move === 'uppercut') {
-      soundManager.play('uppercut')
-    } else if (move === 'roundhouse') {
-      soundManager.play('roundhouse')
-    }
-
-    // Check hit
-    const fighter = physicsEngineRef.current.getBody('fighter')
-    if (fighter && bagRef.current) {
-      const hit = checkBagHit(
-        physicsEngineRef.current,
-        fighter.body.position,
-        data.range,
-        data.damage * (1 + combo * 0.1), // Combo multiplier
-        (x, y, damage) => {
-          bagRef.current.createHitEffect(x, y, damage)
-          soundManager.playImpact(damage)
-          
-          // Update score and combo
-          setScore(prev => prev + Math.floor(damage * 10))
-          setCombo(prev => {
-            const newCombo = prev + 1
-            if (newCombo > maxCombo) setMaxCombo(newCombo)
-            soundManager.playCombo(newCombo)
-            return newCombo
-          })
-
-          // Reset combo timeout
-          if (comboTimeoutRef.current) clearTimeout(comboTimeoutRef.current)
-          comboTimeoutRef.current = setTimeout(() => {
-            setCombo(0)
-            soundManager.play('combo_break')
-          }, 2000)
-        }
-      )
-
-      if (!hit) {
-        soundManager.play('whoosh')
-      }
-    }
-  }, [combo, maxCombo, playerEnergy])
-
-  const handleBlock = useCallback(() => {
-    if (!animationControllerRef.current) return
-    animationControllerRef.current.play('block')
-    soundManager.play('block')
-  }, [])
-
-  const handleMove = useCallback((direction: 'left' | 'right') => {
-    if (!physicsEngineRef.current) return
-    const fighter = physicsEngineRef.current.getBody('fighter')
-    if (fighter) {
-      const force = direction === 'right' ? 0.005 : -0.005
-      Matter.Body.applyForce(fighter.body, fighter.body.position, { x: force, y: 0 })
-    }
-  }, [])
-
-  const handleJump = useCallback(() => {
-    if (!physicsEngineRef.current || playerEnergy < 20) return
-    const fighter = physicsEngineRef.current.getBody('fighter')
-    if (fighter) {
-      Matter.Body.applyForce(fighter.body, fighter.body.position, { x: 0, y: -0.1 })
-      setPlayerEnergy(prev => prev - 20)
-    }
-  }, [playerEnergy])
-
-  const handleGameEnd = () => {
-    const victory = score >= 1000
-    setStage(victory ? "victory" : "defeat")
-    soundManager.play(victory ? 'victory' : 'defeat')
-    
-    if (victory) {
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 }
-      })
-    }
-  }
-
-  const handleClaim = async () => {
-    // Placeholder claim effect
-    if (claimed) return
-    setClaimed(true)
-    confetti({
-      particleCount: 50,
-      spread: 60,
-      origin: { y: 0.7 },
-      colors: ['#4ade80', '#22c55e', '#16a34a']
-    })
-  }
-
-  const resetGame = () => {
-    setStage("home")
-    setScore(0)
-    setCombo(0)
-    setMaxCombo(0)
-    setPlayerHealth(100)
-    setPlayerEnergy(100)
-    setTimeLeft(120)
-    setClaimed(false)
-  }
 
   if (farcasterUser === null) return null
 
@@ -235,14 +18,8 @@ export default function Home() {
     <div className="min-h-screen relative overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0">
-        <Image
-          src="/gym-bg.png"
-          alt="Gym Background"
-          fill
-          className="object-cover"
-          priority
-        />
-        <div className="absolute inset-0 bg-black/30" />
+        <Image src="/gym-bg.png" alt="Background" fill className="object-cover" priority />
+        <div className="absolute inset-0 bg-black/40" />
       </div>
 
       {/* Home Screen */}
@@ -262,37 +39,17 @@ export default function Home() {
                 transition={{ type: "spring", stiffness: 100 }}
                 style={{ textShadow: '4px 4px 8px rgba(0,0,0,0.8)' }}
               >
-                CHOG FIGHTER
+                CHOG PLATFORMER
               </motion.h1>
-              
               <motion.button
                 className="bg-gradient-to-r from-orange-500 to-red-500 text-white text-2xl font-bold px-12 py-6 rounded-lg shadow-2xl hover:scale-105 transition-transform"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setStage("play")}
               >
-                START FIGHT
+                START GAME
               </motion.button>
-
-              <motion.div
-                className="mt-12 text-white/60"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
-              >
-                <p className="text-sm">Use touch gestures or keyboard to fight</p>
-                <p className="text-xs mt-2">
-                  built by{" "}
-                  <a
-                    href="https://farcaster.xyz/doteth"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-yellow-400 underline"
-                  >
-                    @doteth
-                  </a>
-                </p>
-              </motion.div>
+              <div className="mt-6 text-white/70 text-sm">A smooth pixel-art side scroller. A/D or ◀▶ to move, W/Space or ⤴ to jump.</div>
             </div>
           </motion.div>
         )}
@@ -300,60 +57,8 @@ export default function Home() {
 
       {/* Game Screen */}
       {stage === "play" && (
-        <>
-          {/* Switch to pixel platformer view */}
-          <PlatformerGame />
-        </>
+        <PlatformerGame />
       )}
-
-      {/* Victory/Defeat Screen */}
-      <AnimatePresence>
-        {(stage === "victory" || stage === "defeat") && (
-          <motion.div
-            className="absolute inset-0 flex items-center justify-center z-50 bg-black/80"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <div className="text-center">
-              <motion.h1
-                className={`text-6xl md:text-8xl font-bold mb-8 ${
-                  stage === "victory" ? "text-yellow-400" : "text-red-500"
-                }`}
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ type: "spring", stiffness: 100 }}
-              >
-                {stage === "victory" ? "VICTORY!" : "DEFEAT!"}
-              </motion.h1>
-
-              <div className="bg-black/60 rounded-lg p-8 mb-8">
-                <p className="text-2xl text-white mb-4">Final Score: {score.toLocaleString()}</p>
-                <p className="text-xl text-gray-300 mb-2">Max Combo: x{maxCombo}</p>
-                {stage === "victory" && score >= 1000 && !claimed && isConnected && (
-                  <motion.button
-                    className="mt-6 bg-gradient-to-r from-green-500 to-emerald-500 text-white font-bold px-8 py-4 rounded-lg"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={handleClaim}
-                  >
-                    Claim 1 MON Reward
-                  </motion.button>
-                )}
-              </div>
-
-              <motion.button
-                className="bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold px-8 py-4 rounded-lg"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={resetGame}
-              >
-                Play Again
-              </motion.button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   )
 }
