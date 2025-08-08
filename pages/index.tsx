@@ -27,9 +27,7 @@ export default function Home() {
           <motion.div
             className="absolute inset-0 flex items-center justify-center z-50"
             initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
+            animate={{ opacity: 1 }      >
               <motion.h1
                 initial={{ y: -50 }}
                 animate={{ y: 0 }}
