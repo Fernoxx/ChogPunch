@@ -56,8 +56,6 @@ export default function Home() {
       </AnimatePresence>
 
       {/* Game Screen */}
-      {stage === "play" && (
-        <PlatformerGame />
       )}
     </div>
   )
