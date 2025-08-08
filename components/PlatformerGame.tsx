@@ -4,7 +4,8 @@ import React, { useEffect, useRef } from 'react';
 // Uses a pixelated version of /public/chog.png rendered to a low-res buffer and scaled up
 
 interface KeysState {
-  jump: boolean;
+  jumpDown: boolean; // current held state
+  jumpPressed: boolean; // edge-triggered press
 }
 
 interface PlayerState {
@@ -22,7 +23,7 @@ interface Obstacle {
   y: number;
   w: number;
   h: number;
-  type: 'cactus' | 'block';
+  type: 'gap' | 'thorn';
 }
 
 const VIRTUAL_WIDTH = 320;
@@ -59,14 +60,19 @@ export const PlatformerGame: React.FC = () => {
     const octx = off.getContext('2d')!;
 
     // Inputs (only jump)
-    const keys: KeysState = { jump: false };
+    const keys: KeysState = { jumpDown: false, jumpPressed: false };
     const onKeyDown = (e: KeyboardEvent) => {
       const k = e.key.toLowerCase();
-      if (k === ' ' || k === 'w' || k === 'arrowup') keys.jump = true;
+      if (k === ' ' || k === 'w' || k === 'arrowup') {
+        if (!keys.jumpDown) keys.jumpPressed = true; // edge trigger
+        keys.jumpDown = true;
+      }
     };
     const onKeyUp = (e: KeyboardEvent) => {
       const k = e.key.toLowerCase();
-      if (k === ' ' || k === 'w' || k === 'arrowup') keys.jump = false;
+      if (k === ' ' || k === 'w' || k === 'arrowup') {
+        keys.jumpDown = false;
+      }
     };
     window.addEventListener('keydown', onKeyDown);
     window.addEventListener('keyup', onKeyUp);
@@ -102,7 +108,7 @@ export const PlatformerGame: React.FC = () => {
       el.addEventListener('touchend', (e) => { e.preventDefault(); offFn(); }, { passive: false });
       el.addEventListener('touchcancel', (e) => { e.preventDefault(); offFn(); }, { passive: false });
     };
-    bindTouch(jumpBtn, () => (keys.jump = true), () => (keys.jump = false));
+    bindTouch(jumpBtn, () => { if (!keys.jumpDown) keys.jumpPressed = true; keys.jumpDown = true; }, () => { keys.jumpDown = false; });
 
     const maybeShowControls = () => {
       if (window.innerWidth < 640) {
@@ -117,10 +123,10 @@ export const PlatformerGame: React.FC = () => {
     // Player
     const player: PlayerState = {
       x: 56,
-      y: GROUND_Y - 18,
+      y: GROUND_Y - 24,
       vy: 0,
-      width: 18,
-      height: 18,
+      width: 24,
+      height: 24,
       onGround: true,
       isDead: false,
     };
@@ -132,7 +138,7 @@ export const PlatformerGame: React.FC = () => {
 
     const buildPixelated = () => {
       if (!srcImg.complete) return;
-      const size = 18; // target low-res size
+      const size = 24; // target low-res size for bigger sprite
       const tc = document.createElement('canvas');
       tc.width = size;
       tc.height = size;
@@ -175,17 +181,28 @@ export const PlatformerGame: React.FC = () => {
 
     // Utilities
     const spawnObstacle = () => {
-      // Random cactus-like obstacles of various sizes
-      const baseH = 16 + Math.floor(Math.random() * 16);
-      const width = 10 + Math.floor(Math.random() * 8);
-      const type: Obstacle['type'] = Math.random() < 0.8 ? 'cactus' : 'block';
-      obstacles.push({
-        x: VIRTUAL_WIDTH + 8,
-        y: GROUND_Y - baseH,
-        w: width,
-        h: baseH,
-        type,
-      });
+      // Generate either a gap in the bridge or a thorn bush on the bridge
+      const isGap = Math.random() < 0.5;
+      if (isGap) {
+        const gapWidth = 18 + Math.floor(Math.random() * 24);
+        obstacles.push({
+          x: VIRTUAL_WIDTH + 8,
+          y: GROUND_Y + 2, // below walking surface
+          w: gapWidth,
+          h: 20,
+          type: 'gap',
+        });
+      } else {
+        const thornH = 12 + Math.floor(Math.random() * 10);
+        const thornW = 12 + Math.floor(Math.random() * 8);
+        obstacles.push({
+          x: VIRTUAL_WIDTH + 8,
+          y: GROUND_Y - thornH,
+          w: thornW,
+          h: thornH,
+          type: 'thorn',
+        });
+      }
     };
 
     const reset = () => {
@@ -209,16 +226,17 @@ export const PlatformerGame: React.FC = () => {
     const update = (dtMs: number) => {
       const dt = Math.min(50, dtMs) / 16.6667; // normalize to 60fps units
       if (!player.isDead) {
-        // world speed ramps up slightly
-        speed += 0.00008 * dtMs;
-        score += speed * 0.03 * dtMs;
+        // speed increases only at score thresholds
+        if (score > 700) speed += 0.00004 * dtMs; else if (score > 400) speed += 0.00002 * dtMs;
+        score += speed * 0.02 * dtMs;
       }
 
-      // Jumping
-      if (keys.jump && player.onGround && !player.isDead) {
+      // Jumping (edge-triggered)
+      if (keys.jumpPressed && player.onGround && !player.isDead) {
         player.vy = JUMP_VELOCITY;
         player.onGround = false;
       }
+      keys.jumpPressed = false;
 
       // Gravity
       player.vy += GRAVITY * dt;
@@ -249,77 +267,116 @@ export const PlatformerGame: React.FC = () => {
         if (o.x + o.w < -20) obstacles.splice(i, 1);
       }
 
-      // Collisions
+      // Collisions + hazards
       const px1 = player.x;
       const py1 = player.y;
       const px2 = player.x + player.width;
       const py2 = player.y + player.height;
+
       for (const o of obstacles) {
-        const ox1 = o.x;
-        const oy1 = o.y;
-        const ox2 = o.x + o.w;
-        const oy2 = o.y + o.h;
-        if (px2 > ox1 && px1 < ox2 && py2 > oy1 && py1 < oy2) {
-          player.isDead = true;
-          highScore = Math.max(highScore, Math.floor(score));
-          break;
+        if (o.type === 'gap') {
+          // If player is at gap horizontal range and feet are below bridge line, fall
+          const overlapX = px2 > o.x && px1 < o.x + o.w;
+          if (overlapX && player.onGround) {
+            // start falling
+            player.onGround = false;
+            player.vy = Math.max(player.vy, 1.5);
+          }
+          // death if goes significantly below screen
+          if (player.y > VIRTUAL_HEIGHT) {
+            player.isDead = true;
+            highScore = Math.max(highScore, Math.floor(score));
+            break;
+          }
+        } else {
+          // thorn collision (AABB)
+          const ox1 = o.x;
+          const oy1 = o.y;
+          const ox2 = o.x + o.w;
+          const oy2 = o.y + o.h;
+          if (px2 > ox1 && px1 < ox2 && py2 > oy1 && py1 < oy2) {
+            player.isDead = true;
+            highScore = Math.max(highScore, Math.floor(score));
+            break;
+          }
         }
       }
     };
 
     const drawSky = (g: CanvasRenderingContext2D) => {
-      const grd = g.createLinearGradient(0, 0, 0, VIRTUAL_HEIGHT);
-      grd.addColorStop(0, '#1b1745');
-      grd.addColorStop(1, '#2b356b');
-      g.fillStyle = grd;
+      // Purple sea + clouds background
+      const sky = g.createLinearGradient(0, 0, 0, VIRTUAL_HEIGHT);
+      sky.addColorStop(0, '#3f2b96');
+      sky.addColorStop(1, '#8e44ad');
+      g.fillStyle = sky;
       g.fillRect(0, 0, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
 
-      // distant stars
-      g.fillStyle = '#c7d2ff22';
-      for (let i = 0; i < 40; i++) {
-        const x = (i * 77) % VIRTUAL_WIDTH;
-        const y = ((i * 53) % (GROUND_Y - 40));
-        g.fillRect((x + i * 7) % VIRTUAL_WIDTH, y, 1, 1);
+      // sea
+      const seaHorizon = GROUND_Y + 12;
+      const sea = g.createLinearGradient(0, seaHorizon, 0, VIRTUAL_HEIGHT);
+      sea.addColorStop(0, '#5e3bb4');
+      sea.addColorStop(1, '#402e7a');
+      g.fillStyle = sea;
+      g.fillRect(0, seaHorizon, VIRTUAL_WIDTH, VIRTUAL_HEIGHT - seaHorizon);
+
+      // clouds
+      g.fillStyle = '#d5b3ff88';
+      const t = performance.now() * 0.02;
+      for (let i = 0; i < 6; i++) {
+        const cx = (i * 60 + (t + i * 30)) % (VIRTUAL_WIDTH + 50) - 50;
+        const cy = 20 + (i % 3) * 15;
+        g.beginPath();
+        g.ellipse(cx, cy, 20, 10, 0, 0, Math.PI * 2);
+        g.ellipse(cx + 12, cy + 2, 14, 8, 0, 0, Math.PI * 2);
+        g.ellipse(cx - 12, cy + 3, 14, 8, 0, 0, Math.PI * 2);
+        g.fill();
       }
     };
 
     const drawGround = (g: CanvasRenderingContext2D, t: number) => {
-      // Scrolling ground tiles
-      for (let i = -2; i < Math.ceil(VIRTUAL_WIDTH / 16) + 2; i++) {
-        const x = (Math.floor(t / 16) + i) * 16 - (t % 16);
-        // ground top line
-        g.fillStyle = '#5a3b1f';
-        g.fillRect(x, GROUND_Y, 16, 2);
-        // dirt body
-        g.fillStyle = '#7b4a27';
-        g.fillRect(x, GROUND_Y + 2, 16, 16);
-        // highlight strip
-        g.fillStyle = '#9b6031';
-        g.fillRect(x + 1, GROUND_Y + 3, 14, 3);
+      // Purple sea and cloud background handled elsewhere; here we draw a bridge surface.
+      const tileW = 16;
+      for (let i = -2; i < Math.ceil(VIRTUAL_WIDTH / tileW) + 2; i++) {
+        const x = (Math.floor(t / tileW) + i) * tileW - (t % tileW);
+        // Bridge planks
+        g.fillStyle = '#6d5ba8';
+        g.fillRect(x, GROUND_Y, tileW, 3);
+        g.fillStyle = '#8a78c9';
+        g.fillRect(x + 1, GROUND_Y + 3, tileW - 2, 3);
+        g.fillStyle = '#4f3f86';
+        g.fillRect(x, GROUND_Y + 6, tileW, 4);
       }
     };
 
     const drawObstacle = (g: CanvasRenderingContext2D, o: Obstacle) => {
-      if (o.type === 'cactus') {
-        g.fillStyle = '#2f6f3a';
-        g.fillRect(o.x, o.y, o.w, o.h);
-        g.fillStyle = '#3f8f4a';
-        g.fillRect(o.x + 1, o.y + 1, o.w - 2, 2);
-        g.fillStyle = '#1f4c26';
-        g.fillRect(o.x + 1, o.y + 3, o.w - 2, o.h - 4);
+      if (o.type === 'gap') {
+        // Gaps are just empty space under the bridge; draw water shimmer hint
+        g.fillStyle = '#ffffff15';
+        g.fillRect(o.x, GROUND_Y + 1, o.w, 2);
       } else {
-        g.fillStyle = '#6d6d6d';
-        g.fillRect(o.x, o.y, o.w, o.h);
-        g.fillStyle = '#8b8b8b';
-        g.fillRect(o.x + 1, o.y + 1, o.w - 2, 2);
-        g.fillStyle = '#4a4a4a';
-        g.fillRect(o.x + 1, o.y + 3, o.w - 2, o.h - 4);
+        // thorn bush
+        g.fillStyle = '#6b1d6b';
+        g.beginPath();
+        const spikes = Math.max(3, Math.floor(o.w / 3));
+        for (let i = 0; i <= spikes; i++) {
+          const sx = o.x + (i / spikes) * o.w;
+          const sy = o.y + o.h;
+          const peakX = sx + (o.w / spikes) / 2;
+          const peakY = o.y;
+          g.moveTo(sx, sy);
+          g.lineTo(peakX, peakY);
+        }
+        g.lineWidth = 2;
+        g.strokeStyle = '#a23aa2';
+        g.stroke();
+        g.fillStyle = '#4d0f4d';
+        g.fillRect(o.x, o.y + o.h - 2, o.w, 2);
       }
     };
 
     const drawPlayer = (g: CanvasRenderingContext2D, bobPhase: number) => {
       const px = Math.floor(player.x);
-      const runPhase = bobPhase * 5; // faster cycle for legs
+      const runPhase = bobPhase * 4; // slightly slower cycle for legs
       const bob = player.onGround ? Math.round(Math.sin(runPhase) * 1) : 0;
       const py = Math.floor(player.y) + bob;
 
@@ -386,7 +443,7 @@ export const PlatformerGame: React.FC = () => {
       octx.clearRect(0, 0, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
 
       drawSky(octx);
-      drawGround(octx, (now * Math.max(0.02, speed * 0.02)) % 10000);
+      drawGround(octx, (now * Math.max(0.015, speed * 0.015)) % 10000);
 
       // Obstacles
       for (const o of obstacles) drawObstacle(octx, o);
@@ -407,7 +464,7 @@ export const PlatformerGame: React.FC = () => {
       } else if (score < 15) {
         octx.fillStyle = '#ffffff';
         octx.font = '9px monospace';
-        octx.fillText('Tap or press Space to jump', 70, 70);
+        octx.fillText('Tap or press Space to jump (press not hold)', 40, 70);
       }
 
       // Blit to screen with pixelated scaling
