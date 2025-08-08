@@ -5,11 +5,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import Image from "next/image"
 
 export default function Home() {
-  const [stage, setStage] = useState<"home" | "play">("home")
-
-  useEffect(() => {
-    setFarcasterUser({ fid: 0, username: "Player", displayName: "Player" } as any)
-  }, [])
+  const [stage, setStage] = useState<"home" | "play">("home"
 
   return (
     <div className="min-h-screen relative overflow-hidden">
