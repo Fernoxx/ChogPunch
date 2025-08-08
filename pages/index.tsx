@@ -16,8 +16,6 @@ export default function Home() {
       {/* Background */}
       <div className="absolute inset-0">
         <Image src="/gym-bg.png" alt="Background" fill className="object-cover" priority />
-        <div className="absolute inset-0 bg-black/40" />
-      </div>
 
       {/* Home Screen */}
       <AnimatePresence>
