@@ -25,10 +25,10 @@ interface PlayerState {
 const VIRTUAL_WIDTH = 320;  // internal low-res buffer
 const VIRTUAL_HEIGHT = 180;
 
-const GRAVITY = 0.35;
-const JUMP_VELOCITY = -6.5;
-const MOVE_ACCEL = 0.5;
-const MAX_SPEED = 2.2;
+const GRAVITY = 0.3; // gravity tuned for Mario-like arcs
+const JUMP_VELOCITY = -4.0; // realistic initial jump velocity
+const MOVE_ACCEL = 0.18; // gentler acceleration
+const MAX_SPEED = 1.1; // slower top run speed similar to classic platformers
 const GROUND_Y = VIRTUAL_HEIGHT - 24; // top of ground tiles
 
 export const PlatformerGame: React.FC = () => {
@@ -183,7 +183,7 @@ export const PlatformerGame: React.FC = () => {
         player.facing = 1;
       } else {
         // friction when no input
-        player.vx *= player.onGround ? 0.8 : 0.98;
+        player.vx *= player.onGround ? 0.7 : 0.98; // quicker slowdown on ground
         if (Math.abs(player.vx) < 0.02) player.vx = 0;
       }
 
@@ -192,14 +192,18 @@ export const PlatformerGame: React.FC = () => {
         player.vy = JUMP_VELOCITY;
         player.onGround = false;
       }
+      // Variable jump height (hold to go a bit higher)
+      if (!keys.jump && player.vy < 0) {
+        player.vy += 0.25 * dt; // cut jump when released
+      }
 
       // Gravity
       player.vy += GRAVITY * dt;
-      if (player.vy > 8) player.vy = 8;
+      if (player.vy > 6) player.vy = 6; // lower terminal velocity for softer falls
 
       // Integrate
-      player.x += player.vx * 3; // scale speed for feel
-      player.y += player.vy * 3;
+      player.x += player.vx * 1.5; // scale speed for feel (reduced for realism)
+      player.y += player.vy * 2.2;
 
       // Collisions with platforms
       player.onGround = false;
@@ -249,7 +253,7 @@ export const PlatformerGame: React.FC = () => {
       // Walk animation
       if (Math.abs(player.vx) > 0.05 && player.onGround) {
         player.walkTimer += dtMs;
-        if (player.walkTimer > 120) {
+        if (player.walkTimer > 160) { // slightly slower cadence
           player.walkTimer = 0;
           player.walkFrame = (player.walkFrame + 1) % 2;
         }
