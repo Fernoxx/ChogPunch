@@ -1,35 +1,36 @@
 import React, { useEffect, useRef } from 'react';
 
-// Simple pixel-art platformer rendered to a low-res canvas and scaled up
-// No external assets required; draws a stylized pixel sprite inspired by the original character
+// Endless runner with Dino-style obstacles
+// Uses a pixelated version of /public/chog.png rendered to a low-res buffer and scaled up
 
 interface KeysState {
-  left: boolean;
-  right: boolean;
   jump: boolean;
 }
 
 interface PlayerState {
   x: number;
   y: number;
-  vx: number;
   vy: number;
   width: number;
   height: number;
   onGround: boolean;
-  facing: 1 | -1;
-  walkFrame: number; // for simple 2-frame walk anim
-  walkTimer: number;
+  isDead: boolean;
 }
 
-const VIRTUAL_WIDTH = 320;  // internal low-res buffer
+interface Obstacle {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  type: 'cactus' | 'block';
+}
+
+const VIRTUAL_WIDTH = 320;
 const VIRTUAL_HEIGHT = 180;
+const GROUND_Y = VIRTUAL_HEIGHT - 28;
 
 const GRAVITY = 0.35;
-const JUMP_VELOCITY = -6.5;
-const MOVE_ACCEL = 0.5;
-const MAX_SPEED = 2.2;
-const GROUND_Y = VIRTUAL_HEIGHT - 24; // top of ground tiles
+const JUMP_VELOCITY = -6.8;
 
 export const PlatformerGame: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -39,7 +40,7 @@ export const PlatformerGame: React.FC = () => {
     const canvas = canvasRef.current!;
     const ctx = canvas.getContext('2d')!;
 
-    // Fit canvas to window
+    // Resize to fit while keeping integer scaling
     const resize = () => {
       const scaleX = Math.floor(window.innerWidth / VIRTUAL_WIDTH) || 1;
       const scaleY = Math.floor(window.innerHeight / VIRTUAL_HEIGHT) || 1;
@@ -50,81 +51,59 @@ export const PlatformerGame: React.FC = () => {
     resize();
     window.addEventListener('resize', resize);
 
-    // Create offscreen buffer
+    // Offscreen low-res buffer
     const off = document.createElement('canvas');
     off.width = VIRTUAL_WIDTH;
     off.height = VIRTUAL_HEIGHT;
     offscreenRef.current = off;
     const octx = off.getContext('2d')!;
 
-    // Input handling
-    const keys: KeysState = { left: false, right: false, jump: false };
+    // Inputs (only jump)
+    const keys: KeysState = { jump: false };
     const onKeyDown = (e: KeyboardEvent) => {
       const k = e.key.toLowerCase();
-      if (k === 'arrowleft' || k === 'a') keys.left = true;
-      if (k === 'arrowright' || k === 'd') keys.right = true;
-      if (k === 'arrowup' || k === 'w' || k === ' ') keys.jump = true;
+      if (k === ' ' || k === 'w' || k === 'arrowup') keys.jump = true;
     };
     const onKeyUp = (e: KeyboardEvent) => {
       const k = e.key.toLowerCase();
-      if (k === 'arrowleft' || k === 'a') keys.left = false;
-      if (k === 'arrowright' || k === 'd') keys.right = false;
-      if (k === 'arrowup' || k === 'w' || k === ' ') keys.jump = false;
+      if (k === ' ' || k === 'w' || k === 'arrowup') keys.jump = false;
     };
     window.addEventListener('keydown', onKeyDown);
     window.addEventListener('keyup', onKeyUp);
 
-    // Simple mobile controls (left, right, jump)
+    // Touch jump button
     const mobileControls = document.createElement('div');
     mobileControls.style.position = 'absolute';
     mobileControls.style.left = '0';
     mobileControls.style.right = '0';
     mobileControls.style.bottom = '16px';
     mobileControls.style.display = 'flex';
-    mobileControls.style.justifyContent = 'space-between';
-    mobileControls.style.padding = '0 16px';
+    mobileControls.style.justifyContent = 'center';
     mobileControls.style.pointerEvents = 'auto';
-
-    const mkBtn = (label: string) => {
-      const b = document.createElement('div');
-      b.textContent = label;
-      b.style.width = '72px';
-      b.style.height = '72px';
-      b.style.borderRadius = '12px';
-      b.style.display = 'flex';
-      b.style.alignItems = 'center';
-      b.style.justifyContent = 'center';
-      b.style.background = 'rgba(0,0,0,0.35)';
-      b.style.color = '#ffd54a';
-      b.style.fontWeight = 'bold';
-      b.style.userSelect = 'none';
-      b.style.backdropFilter = 'blur(6px)';
-      b.style.touchAction = 'none';
-      return b;
-    };
-
-    const leftBtn = mkBtn('◀');
-    const rightBtn = mkBtn('▶');
-    const jumpBtn = mkBtn('⤴');
+    const jumpBtn = document.createElement('div');
+    jumpBtn.textContent = '⤴';
+    jumpBtn.style.width = '84px';
+    jumpBtn.style.height = '84px';
+    jumpBtn.style.borderRadius = '14px';
+    jumpBtn.style.display = 'flex';
+    jumpBtn.style.alignItems = 'center';
+    jumpBtn.style.justifyContent = 'center';
+    jumpBtn.style.background = 'rgba(0,0,0,0.35)';
+    jumpBtn.style.color = '#ffd54a';
+    jumpBtn.style.fontWeight = 'bold';
+    jumpBtn.style.fontSize = '28px';
+    jumpBtn.style.backdropFilter = 'blur(6px)';
+    jumpBtn.style.userSelect = 'none';
+    jumpBtn.style.touchAction = 'none';
+    mobileControls.appendChild(jumpBtn);
 
     const bindTouch = (el: HTMLElement, on: () => void, offFn: () => void) => {
       el.addEventListener('touchstart', (e) => { e.preventDefault(); on(); }, { passive: false });
       el.addEventListener('touchend', (e) => { e.preventDefault(); offFn(); }, { passive: false });
       el.addEventListener('touchcancel', (e) => { e.preventDefault(); offFn(); }, { passive: false });
     };
-
-    bindTouch(leftBtn, () => (keys.left = true), () => (keys.left = false));
-    bindTouch(rightBtn, () => (keys.right = true), () => (keys.right = false));
     bindTouch(jumpBtn, () => (keys.jump = true), () => (keys.jump = false));
 
-    mobileControls.appendChild(leftBtn);
-    const midSpacer = document.createElement('div');
-    midSpacer.style.flex = '1';
-    mobileControls.appendChild(midSpacer);
-    mobileControls.appendChild(rightBtn);
-    mobileControls.appendChild(jumpBtn);
-
-    // Only show on small screens
     const maybeShowControls = () => {
       if (window.innerWidth < 640) {
         if (!document.body.contains(mobileControls)) document.body.appendChild(mobileControls);
@@ -135,60 +114,92 @@ export const PlatformerGame: React.FC = () => {
     maybeShowControls();
     window.addEventListener('resize', maybeShowControls);
 
-    // Player init
+    // Player
     const player: PlayerState = {
-      x: 40,
-      y: GROUND_Y - 16,
-      vx: 0,
+      x: 56,
+      y: GROUND_Y - 18,
       vy: 0,
-      width: 12,
-      height: 16,
+      width: 18,
+      height: 18,
       onGround: true,
-      facing: 1,
-      walkFrame: 0,
-      walkTimer: 0,
+      isDead: false,
     };
 
-    // Camera
-    let cameraX = 0;
+    // Pixelated character image cache
+    const srcImg = new Image();
+    srcImg.src = '/chog.png';
+    let tinyCanvas: HTMLCanvasElement | null = null;
 
-    // Platforms (simple ground tiles, plus a few floating platforms)
-    const platforms: Array<{ x: number; y: number; w: number; h: number }> = [];
-    // Ground segments across a long world
-    for (let i = 0; i < 200; i++) {
-      platforms.push({ x: i * 16, y: GROUND_Y, w: 16, h: VIRTUAL_HEIGHT - GROUND_Y });
-    }
-    // Some floating platforms
-    const addPlatform = (x: number, y: number, tiles: number) => {
-      platforms.push({ x, y, w: tiles * 16, h: 6 });
+    const buildPixelated = () => {
+      if (!srcImg.complete) return;
+      const size = 18; // target low-res size
+      const tc = document.createElement('canvas');
+      tc.width = size;
+      tc.height = size;
+      const tctx = tc.getContext('2d')!;
+      tctx.imageSmoothingEnabled = false;
+
+      // Draw the center-square crop of the source image into tiny canvas
+      const minSide = Math.min(srcImg.width, srcImg.height);
+      const sx = (srcImg.width - minSide) / 2;
+      const sy = (srcImg.height - minSide) / 2;
+      tctx.clearRect(0, 0, size, size);
+      tctx.drawImage(srcImg, sx, sy, minSide, minSide, 0, 0, size, size);
+      tinyCanvas = tc;
     };
-    addPlatform(140, GROUND_Y - 40, 5);
-    addPlatform(240, GROUND_Y - 60, 4);
-    addPlatform(360, GROUND_Y - 30, 6);
-    addPlatform(520, GROUND_Y - 50, 5);
 
-    // Physics + render loop
+    if (srcImg.complete) buildPixelated(); else srcImg.onload = buildPixelated;
+
+    // World
+    let speed = 2.0; // world scroll speed (px/frame at 60fps basis)
+    let score = 0;
+    let highScore = 0;
+    let spawnTimer = 0;
+    const obstacles: Obstacle[] = [];
+
+    // Utilities
+    const spawnObstacle = () => {
+      // Random cactus-like obstacles of various sizes
+      const baseH = 16 + Math.floor(Math.random() * 16);
+      const width = 10 + Math.floor(Math.random() * 8);
+      const type: Obstacle['type'] = Math.random() < 0.8 ? 'cactus' : 'block';
+      obstacles.push({
+        x: VIRTUAL_WIDTH + 8,
+        y: GROUND_Y - baseH,
+        w: width,
+        h: baseH,
+        type,
+      });
+    };
+
+    const reset = () => {
+      player.y = GROUND_Y - player.height;
+      player.vy = 0;
+      player.onGround = true;
+      player.isDead = false;
+      obstacles.length = 0;
+      speed = 2.0;
+      score = 0;
+      spawnTimer = 0;
+    };
+
+    // Initial reset
+    reset();
+
+    // Game loop
     let raf = 0;
     let last = performance.now();
 
     const update = (dtMs: number) => {
-      const dt = Math.min(32, dtMs) / 16.6667; // normalize to ~60fps units
-
-      // Horizontal movement
-      if (keys.left) {
-        player.vx = Math.max(player.vx - MOVE_ACCEL * dt, -MAX_SPEED);
-        player.facing = -1;
-      } else if (keys.right) {
-        player.vx = Math.min(player.vx + MOVE_ACCEL * dt, MAX_SPEED);
-        player.facing = 1;
-      } else {
-        // friction when no input
-        player.vx *= player.onGround ? 0.8 : 0.98;
-        if (Math.abs(player.vx) < 0.02) player.vx = 0;
+      const dt = Math.min(50, dtMs) / 16.6667; // normalize to 60fps units
+      if (!player.isDead) {
+        // world speed ramps up slightly
+        speed += 0.0008 * dtMs;
+        score += speed * 0.05 * dtMs;
       }
 
-      // Jump
-      if (keys.jump && player.onGround) {
+      // Jumping
+      if (keys.jump && player.onGround && !player.isDead) {
         player.vy = JUMP_VELOCITY;
         player.onGround = false;
       }
@@ -196,209 +207,158 @@ export const PlatformerGame: React.FC = () => {
       // Gravity
       player.vy += GRAVITY * dt;
       if (player.vy > 8) player.vy = 8;
-
-      // Integrate
-      player.x += player.vx * 3; // scale speed for feel
       player.y += player.vy * 3;
 
-      // Collisions with platforms
-      player.onGround = false;
-      for (const p of platforms) {
-        // AABB collision resolution (simple)
-        const px1 = player.x - player.width / 2;
-        const py1 = player.y - player.height;
-        const px2 = player.x + player.width / 2;
-        const py2 = player.y;
-        const p2x1 = p.x;
-        const p2y1 = p.y;
-        const p2x2 = p.x + p.w;
-        const p2y2 = p.y + p.h;
+      // Ground collision
+      if (player.y + player.height >= GROUND_Y) {
+        player.y = GROUND_Y - player.height;
+        player.vy = 0;
+        player.onGround = true;
+      }
 
-        if (px2 > p2x1 && px1 < p2x2 && py2 > p2y1 && py1 < p2y2) {
-          // Determine minimal axis of penetration
-          const overlapX = Math.min(px2 - p2x1, p2x2 - px1);
-          const overlapY = Math.min(py2 - p2y1, p2y2 - py1);
-
-          if (overlapX < overlapY) {
-            // Resolve X
-            if (player.x < p2x1) player.x -= overlapX; else player.x += overlapX;
-            player.vx = 0;
-          } else {
-            // Resolve Y
-            if (player.y < p2y1 + 8) {
-              // hitting from below
-              player.y -= overlapY;
-              player.vy = 0.1;
-            } else {
-              // landing on top
-              player.y += overlapY;
-              player.vy = 0;
-              player.onGround = true;
-            }
-          }
+      // Spawn obstacles
+      if (!player.isDead) {
+        spawnTimer -= dtMs;
+        if (spawnTimer <= 0) {
+          spawnObstacle();
+          const nextIn = 750 + Math.random() * 900; // ms
+          spawnTimer = nextIn / (1 + (speed - 2) * 0.15);
         }
       }
 
-      // Clamp world bounds (left)
-      if (player.x < player.width / 2) player.x = player.width / 2;
+      // Move obstacles and cull
+      for (let i = obstacles.length - 1; i >= 0; i--) {
+        const o = obstacles[i];
+        o.x -= speed * 3; // scale world speed
+        if (o.x + o.w < -20) obstacles.splice(i, 1);
+      }
 
-      // Camera follow
-      const targetCameraX = Math.max(0, player.x - VIRTUAL_WIDTH / 2);
-      cameraX += (targetCameraX - cameraX) * 0.08; // smooth follow
-
-      // Walk animation
-      if (Math.abs(player.vx) > 0.05 && player.onGround) {
-        player.walkTimer += dtMs;
-        if (player.walkTimer > 120) {
-          player.walkTimer = 0;
-          player.walkFrame = (player.walkFrame + 1) % 2;
+      // Collisions
+      const px1 = player.x;
+      const py1 = player.y;
+      const px2 = player.x + player.width;
+      const py2 = player.y + player.height;
+      for (const o of obstacles) {
+        const ox1 = o.x;
+        const oy1 = o.y;
+        const ox2 = o.x + o.w;
+        const oy2 = o.y + o.h;
+        if (px2 > ox1 && px1 < ox2 && py2 > oy1 && py1 < oy2) {
+          player.isDead = true;
+          highScore = Math.max(highScore, Math.floor(score));
+          break;
         }
-      } else {
-        player.walkFrame = 0;
-        player.walkTimer = 0;
       }
     };
 
     const drawSky = (g: CanvasRenderingContext2D) => {
       const grd = g.createLinearGradient(0, 0, 0, VIRTUAL_HEIGHT);
-      grd.addColorStop(0, '#0b1023');
-      grd.addColorStop(1, '#1a2a4a');
+      grd.addColorStop(0, '#1b1745');
+      grd.addColorStop(1, '#2b356b');
       g.fillStyle = grd;
       g.fillRect(0, 0, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
 
-      // Parallax hills
-      g.fillStyle = '#1e2f57';
-      for (let i = -1; i < 10; i++) {
-        const hx = i * 80 - (cameraX * 0.3) % 80;
-        g.fillRect(hx, VIRTUAL_HEIGHT - 50, 60, 40);
-      }
-      g.fillStyle = '#27416d';
-      for (let i = -1; i < 10; i++) {
-        const hx = i * 120 - (cameraX * 0.6) % 120;
-        g.fillRect(hx, VIRTUAL_HEIGHT - 70, 100, 60);
+      // distant stars
+      g.fillStyle = '#c7d2ff22';
+      for (let i = 0; i < 40; i++) {
+        const x = (i * 77) % VIRTUAL_WIDTH;
+        const y = ((i * 53) % (GROUND_Y - 40));
+        g.fillRect((x + i * 7) % VIRTUAL_WIDTH, y, 1, 1);
       }
     };
 
-    const drawGround = (g: CanvasRenderingContext2D) => {
-      // Ground tiles
-      for (let i = -2; i < Math.ceil(VIRTUAL_WIDTH / 16) + 4; i++) {
-        const wx = Math.floor((cameraX / 16)) + i;
-        const x = (wx * 16) - Math.floor(cameraX);
-        // top dirt
+    const drawGround = (g: CanvasRenderingContext2D, t: number) => {
+      // Scrolling ground tiles
+      for (let i = -2; i < Math.ceil(VIRTUAL_WIDTH / 16) + 2; i++) {
+        const x = (Math.floor(t / 16) + i) * 16 - (t % 16);
         g.fillStyle = '#6b3f22';
         g.fillRect(x, GROUND_Y, 16, 8);
-        // side highlight and dark
         g.fillStyle = '#84512b';
         g.fillRect(x + 1, GROUND_Y + 1, 14, 3);
         g.fillStyle = '#3f2414';
         g.fillRect(x + 1, GROUND_Y + 4, 14, 10);
       }
+    };
 
-      // Floating platforms
-      g.fillStyle = '#734a28';
-      for (const p of platforms) {
-        if (p.y === GROUND_Y) continue;
-        const sx = Math.floor(p.x - cameraX);
-        if (sx + p.w < -16 || sx > VIRTUAL_WIDTH + 16) continue;
-        g.fillRect(sx, p.y, p.w, p.h);
-        g.fillStyle = '#8a5a31';
-        g.fillRect(sx + 1, p.y + 1, p.w - 2, 2);
-        g.fillStyle = '#5a3a1f';
-        g.fillRect(sx + 1, p.y + 3, p.w - 2, p.h - 4);
-        g.fillStyle = '#734a28';
+    const drawObstacle = (g: CanvasRenderingContext2D, o: Obstacle) => {
+      if (o.type === 'cactus') {
+        g.fillStyle = '#2f6f3a';
+        g.fillRect(o.x, o.y, o.w, o.h);
+        g.fillStyle = '#3f8f4a';
+        g.fillRect(o.x + 1, o.y + 1, o.w - 2, 2);
+        g.fillStyle = '#1f4c26';
+        g.fillRect(o.x + 1, o.y + 3, o.w - 2, o.h - 4);
+      } else {
+        g.fillStyle = '#6d6d6d';
+        g.fillRect(o.x, o.y, o.w, o.h);
+        g.fillStyle = '#8b8b8b';
+        g.fillRect(o.x + 1, o.y + 1, o.w - 2, 2);
+        g.fillStyle = '#4a4a4a';
+        g.fillRect(o.x + 1, o.y + 3, o.w - 2, o.h - 4);
       }
     };
 
-    // Minimal 16x16 pixel sprite definition (2 walking frames)
-    // 0 transparent, 1 purple hair, 2 skin, 3 orange shirt, 4 black shorts, 5 red gloves, 6 boots red-dark, 7 outline
-    const FRAME_0: number[][] = [
-      [0,0,1,1,1,0,0,0,0,1,1,1,0,0,0,0],
-      [0,1,1,1,1,1,0,0,1,1,1,1,1,0,0,0],
-      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
-      [1,1,1,2,2,1,1,1,1,2,2,1,1,1,0,0],
-      [1,1,2,2,2,2,1,1,1,2,2,2,2,1,0,0],
-      [0,7,2,3,3,2,7,0,0,7,2,3,3,2,7,0],
-      [0,7,3,3,3,3,7,0,0,7,3,3,3,3,7,0],
-      [0,0,4,4,4,4,0,0,0,0,4,4,4,4,0,0],
-      [0,5,5,0,0,0,0,0,0,0,0,0,5,5,0,0],
-      [0,5,5,0,0,0,0,0,0,0,0,0,5,5,0,0],
-      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      [0,0,0,6,0,0,0,0,0,0,0,6,0,0,0,0],
-      [0,0,6,6,0,0,0,0,0,0,0,6,6,0,0,0],
-      [0,0,6,0,0,0,0,0,0,0,0,0,6,0,0,0],
-      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    ];
-    const FRAME_1: number[][] = [
-      [0,0,1,1,1,0,0,0,0,1,1,1,0,0,0,0],
-      [0,1,1,1,1,1,0,0,1,1,1,1,1,0,0,0],
-      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
-      [1,1,1,2,2,1,1,1,1,2,2,1,1,1,0,0],
-      [1,1,2,2,2,2,1,1,1,2,2,2,2,1,0,0],
-      [0,7,2,3,3,2,7,0,0,7,2,3,3,2,7,0],
-      [0,7,3,3,3,3,7,0,0,7,3,3,3,3,7,0],
-      [0,0,4,4,4,4,0,0,0,0,4,4,4,4,0,0],
-      [0,5,5,0,0,0,0,0,0,0,5,5,0,0,0,0],
-      [0,5,5,0,0,0,0,0,0,0,5,5,0,0,0,0],
-      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      [0,0,0,6,0,0,0,0,0,0,6,0,0,0,0,0],
-      [0,0,6,6,0,0,0,0,0,6,6,0,0,0,0,0],
-      [0,0,0,6,0,0,0,0,0,0,6,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    ];
+    const drawPlayer = (g: CanvasRenderingContext2D, bobPhase: number) => {
+      const px = Math.floor(player.x);
+      const py = Math.floor(player.y) + (player.onGround ? (Math.sin(bobPhase) > 0 ? 0 : 1) : 0);
 
-    const palette: Record<number, string> = {
-      1: '#4b1b8a', // hair purple
-      2: '#f1d2b6', // skin
-      3: '#ff9e00', // shirt
-      4: '#222222', // shorts
-      5: '#d83b3b', // gloves
-      6: '#a32727', // boots dark
-      7: '#000000', // outline
-    };
-
-    const drawSprite = (
-      g: CanvasRenderingContext2D,
-      frame: number[][],
-      x: number,
-      y: number,
-      flip: boolean
-    ) => {
-      for (let j = 0; j < 16; j++) {
-        for (let i = 0; i < 16; i++) {
-          const v = frame[j][i];
-          if (!v) continue;
-          g.fillStyle = palette[v];
-          const drawX = flip ? x + (15 - i) : x + i;
-          g.fillRect(drawX, y + j - 16, 1, 1);
-        }
+      if (tinyCanvas) {
+        // Draw pixelated sprite
+        g.imageSmoothingEnabled = false;
+        g.drawImage(tinyCanvas, px, py, player.width, player.height);
+      } else {
+        // Fallback: simple placeholder
+        g.fillStyle = '#6b46c1';
+        g.fillRect(px, py, player.width, player.height);
+        g.fillStyle = '#fbe7c6';
+        g.fillRect(px + 3, py + 4, 8, 7);
       }
+
+      // small outline for readability
+      g.strokeStyle = '#000000';
+      g.lineWidth = 1;
+      g.strokeRect(px - 0.5, py - 0.5, player.width + 1, player.height + 1);
     };
+
+    let timeAccum = 0;
 
     const render = () => {
-      // Update step
       const now = performance.now();
       const dt = now - last;
       last = now;
       update(dt);
+      timeAccum += dt * (speed * 0.03);
 
-      // Draw to offscreen buffer
+      // Clear offscreen
       octx.imageSmoothingEnabled = false;
       octx.clearRect(0, 0, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
 
       drawSky(octx);
-      drawGround(octx);
+      drawGround(octx, (now * speed * 0.06) % 10000);
+
+      // Obstacles
+      for (const o of obstacles) drawObstacle(octx, o);
 
       // Player
-      const frame = player.walkFrame === 0 ? FRAME_0 : FRAME_1;
-      drawSprite(octx, frame, Math.floor(player.x - cameraX) - 8, Math.floor(player.y), player.facing === -1);
+      drawPlayer(octx, timeAccum * 0.2);
 
-      // HUD minimal
+      // HUD
       octx.fillStyle = '#ffffff';
-      octx.fillText('Pixel Platformer', 6, 10);
+      octx.font = '8px monospace';
+      octx.fillText(`Score: ${Math.floor(score)}`, 6, 10);
+      if (highScore > 0) octx.fillText(`Best: ${highScore}`, 6, 20);
 
-      // Blit with nearest-neighbor scaling
+      if (player.isDead) {
+        octx.fillStyle = '#ffffff';
+        octx.font = '10px monospace';
+        octx.fillText('Game Over - Press Space/Up or Tap to retry', 30, 70);
+      } else if (score < 15) {
+        octx.fillStyle = '#ffffff';
+        octx.font = '9px monospace';
+        octx.fillText('Tap or press Space to jump', 70, 70);
+      }
+
+      // Blit to screen with pixelated scaling
       ctx.imageSmoothingEnabled = false;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(off, 0, 0, canvas.width, canvas.height);
@@ -406,14 +366,22 @@ export const PlatformerGame: React.FC = () => {
       raf = requestAnimationFrame(render);
     };
 
+    // Restart on input if dead
+    const onStartIfDead = () => {
+      if (player.isDead) reset();
+    };
+    window.addEventListener('keydown', onStartIfDead);
+    jumpBtn.addEventListener('touchstart', onStartIfDead, { passive: true });
+
     raf = requestAnimationFrame(render);
 
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener('resize', resize);
+      window.removeEventListener('resize', maybeShowControls);
       window.removeEventListener('keydown', onKeyDown);
       window.removeEventListener('keyup', onKeyUp);
-      window.removeEventListener('resize', maybeShowControls);
+      window.removeEventListener('keydown', onStartIfDead);
       if (document.body.contains(mobileControls)) document.body.removeChild(mobileControls);
     };
   }, []);
