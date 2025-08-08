@@ -14,15 +14,7 @@ export default function Home() {
   return (
     <div className="min-h-screen relative overflow-hidden">
       {/* Background */}
-      <div className="absolute inset-0">
-        <Image src="/gym-bg.png" alt="Background" fill className="object-cover" priority />
-
-      {/* Home Screen */}
-      <AnimatePresence>
-                initial={{ y: -50 }}
-                animate={{ y: 0 }}
-              >
-             gradient-to-r from-orange-500 to-red-500 text-white text-2xl font-bold px-12 py-6 rounded-lg shadow-2xl hover:scale-105 transition-transform"
+      <ditext-2xl font-bold px-12 py-6 rounded-lg shadow-2xl hover:scale-105 transition-transform"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setStage("play")}
