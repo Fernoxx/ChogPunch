@@ -30,7 +30,6 @@ export default function Home() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="text-center">
               <motion.h1
                 initial={{ y: -50 }}
                 animate={{ y: 0 }}
