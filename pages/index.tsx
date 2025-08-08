@@ -21,8 +21,6 @@ export default function Home() {
 
       {/* Home Screen */}
       <AnimatePresence>
-        {stage === "home" && (
-              <motion.h1
                 initial={{ y: -50 }}
                 animate={{ y: 0 }}
               >
