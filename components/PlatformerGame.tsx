@@ -27,7 +27,7 @@ interface Obstacle {
 
 const VIRTUAL_WIDTH = 320;
 const VIRTUAL_HEIGHT = 180;
-const GROUND_Y = VIRTUAL_HEIGHT - 28;
+const GROUND_Y = VIRTUAL_HEIGHT - 32;
 
 const GRAVITY = 0.42;
 const JUMP_VELOCITY = -4.6;
@@ -145,13 +145,29 @@ export const PlatformerGame: React.FC = () => {
       const sy = (srcImg.height - minSide) / 2;
       tctx.clearRect(0, 0, size, size);
       tctx.drawImage(srcImg, sx, sy, minSide, minSide, 0, 0, size, size);
+
+      // Recolor bright red glove pixels to skin tone for a clean running look
+      const img = tctx.getImageData(0, 0, size, size);
+      const data = img.data;
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i], g = data[i + 1], b = data[i + 2], a = data[i + 3];
+        if (a > 0 && r > 150 && g < 90 && b < 90) {
+          // Replace strong reds with a light skin tone
+          data[i] = 251;   // r
+          data[i + 1] = 231; // g
+          data[i + 2] = 198; // b
+          // keep alpha
+        }
+      }
+      tctx.putImageData(img, 0, 0);
+
       tinyCanvas = tc;
     };
 
     if (srcImg.complete) buildPixelated(); else srcImg.onload = buildPixelated;
 
     // World
-    let speed = 1.2; // world scroll speed (px/frame at 60fps basis)
+    let speed = 0.8; // slower world scroll speed
     let score = 0;
     let highScore = 0;
     let spawnTimer = 0;
@@ -178,7 +194,7 @@ export const PlatformerGame: React.FC = () => {
       player.onGround = true;
       player.isDead = false;
       obstacles.length = 0;
-      speed = 1.2;
+      speed = 0.8;
       score = 0;
       spawnTimer = 0;
     };
@@ -194,7 +210,7 @@ export const PlatformerGame: React.FC = () => {
       const dt = Math.min(50, dtMs) / 16.6667; // normalize to 60fps units
       if (!player.isDead) {
         // world speed ramps up slightly
-        speed += 0.00015 * dtMs;
+        speed += 0.00008 * dtMs;
         score += speed * 0.03 * dtMs;
       }
 
@@ -229,7 +245,7 @@ export const PlatformerGame: React.FC = () => {
       // Move obstacles and cull
       for (let i = obstacles.length - 1; i >= 0; i--) {
         const o = obstacles[i];
-        o.x -= speed * 1.6; // scale world speed
+        o.x -= speed * 1.1; // scale world speed
         if (o.x + o.w < -20) obstacles.splice(i, 1);
       }
 
@@ -271,12 +287,15 @@ export const PlatformerGame: React.FC = () => {
       // Scrolling ground tiles
       for (let i = -2; i < Math.ceil(VIRTUAL_WIDTH / 16) + 2; i++) {
         const x = (Math.floor(t / 16) + i) * 16 - (t % 16);
-        g.fillStyle = '#6b3f22';
-        g.fillRect(x, GROUND_Y, 16, 8);
-        g.fillStyle = '#84512b';
-        g.fillRect(x + 1, GROUND_Y + 1, 14, 3);
-        g.fillStyle = '#3f2414';
-        g.fillRect(x + 1, GROUND_Y + 4, 14, 10);
+        // ground top line
+        g.fillStyle = '#5a3b1f';
+        g.fillRect(x, GROUND_Y, 16, 2);
+        // dirt body
+        g.fillStyle = '#7b4a27';
+        g.fillRect(x, GROUND_Y + 2, 16, 16);
+        // highlight strip
+        g.fillStyle = '#9b6031';
+        g.fillRect(x + 1, GROUND_Y + 3, 14, 3);
       }
     };
 
@@ -347,10 +366,10 @@ export const PlatformerGame: React.FC = () => {
       }
       g.restore();
 
-      // small outline for readability
-      g.strokeStyle = '#000000';
-      g.lineWidth = 1;
-      g.strokeRect(px - 0.5, py - 0.5, player.width + 1, player.height + 1);
+      // optional outline removed for cleaner sprite
+      // g.strokeStyle = '#000000';
+      // g.lineWidth = 1;
+      // g.strokeRect(px - 0.5, py - 0.5, player.width + 1, player.height + 1);
     };
 
     let timeAccum = 0;
@@ -367,7 +386,7 @@ export const PlatformerGame: React.FC = () => {
       octx.clearRect(0, 0, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
 
       drawSky(octx);
-      drawGround(octx, (now * speed * 0.03) % 10000);
+      drawGround(octx, (now * Math.max(0.02, speed * 0.02)) % 10000);
 
       // Obstacles
       for (const o of obstacles) drawObstacle(octx, o);
