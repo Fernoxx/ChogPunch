@@ -30,8 +30,8 @@ const VIRTUAL_WIDTH = 320;
 const VIRTUAL_HEIGHT = 180;
 const GROUND_Y = VIRTUAL_HEIGHT - 32;
 
-const GRAVITY = 0.42;
-const JUMP_VELOCITY = -4.6;
+const GRAVITY = 0.44;
+const JUMP_VELOCITY = -4.4;
 
 export const PlatformerGame: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -182,19 +182,19 @@ export const PlatformerGame: React.FC = () => {
     // Utilities
     const spawnObstacle = () => {
       // Generate either a gap in the bridge or a thorn bush on the bridge
-      const isGap = Math.random() < 0.5;
+      const isGap = Math.random() < 0.6; // slightly more gaps to highlight visuals
       if (isGap) {
-        const gapWidth = 18 + Math.floor(Math.random() * 24);
+        const gapWidth = 26 + Math.floor(Math.random() * 30); // bigger gaps
         obstacles.push({
           x: VIRTUAL_WIDTH + 8,
-          y: GROUND_Y + 2, // below walking surface
+          y: GROUND_Y + 2,
           w: gapWidth,
           h: 20,
           type: 'gap',
         });
       } else {
-        const thornH = 12 + Math.floor(Math.random() * 10);
-        const thornW = 12 + Math.floor(Math.random() * 8);
+        const thornH = 14 + Math.floor(Math.random() * 12);
+        const thornW = 14 + Math.floor(Math.random() * 10);
         obstacles.push({
           x: VIRTUAL_WIDTH + 8,
           y: GROUND_Y - thornH,
@@ -263,7 +263,7 @@ export const PlatformerGame: React.FC = () => {
       // Move obstacles and cull
       for (let i = obstacles.length - 1; i >= 0; i--) {
         const o = obstacles[i];
-        o.x -= speed * 1.1; // scale world speed
+        o.x -= speed * 1.0; // scale world speed
         if (o.x + o.w < -20) obstacles.splice(i, 1);
       }
 
@@ -334,25 +334,47 @@ export const PlatformerGame: React.FC = () => {
     };
 
     const drawGround = (g: CanvasRenderingContext2D, t: number) => {
-      // Purple sea and cloud background handled elsewhere; here we draw a bridge surface.
+      // Bridge deck rendered as a continuous strip; gaps are carved out later
+      g.fillStyle = '#5b4aa3';
+      g.fillRect(0, GROUND_Y, VIRTUAL_WIDTH, 12);
+      // plank lines for depth
+      g.fillStyle = '#7d6ad1';
       const tileW = 16;
-      for (let i = -2; i < Math.ceil(VIRTUAL_WIDTH / tileW) + 2; i++) {
+      for (let i = -1; i < Math.ceil(VIRTUAL_WIDTH / tileW) + 1; i++) {
         const x = (Math.floor(t / tileW) + i) * tileW - (t % tileW);
-        // Bridge planks
-        g.fillStyle = '#6d5ba8';
-        g.fillRect(x, GROUND_Y, tileW, 3);
-        g.fillStyle = '#8a78c9';
-        g.fillRect(x + 1, GROUND_Y + 3, tileW - 2, 3);
-        g.fillStyle = '#4f3f86';
-        g.fillRect(x, GROUND_Y + 6, tileW, 4);
+        g.fillRect(x + 1, GROUND_Y + 4, tileW - 2, 2);
+      }
+    };
+
+    const carveGaps = (g: CanvasRenderingContext2D) => {
+      // Cut out rectangles from the bridge where gaps exist
+      g.save();
+      g.globalCompositeOperation = 'destination-out';
+      for (const o of obstacles) {
+        if (o.type === 'gap') {
+          g.fillRect(Math.floor(o.x), GROUND_Y, Math.ceil(o.w), 12);
+        }
+      }
+      g.restore();
+    };
+
+    const drawBridgeDetails = (g: CanvasRenderingContext2D, t: number) => {
+      // Edge lines and supports under the bridge for readability
+      g.fillStyle = '#443786';
+      g.fillRect(0, GROUND_Y - 1, VIRTUAL_WIDTH, 1);
+      const tileW = 32;
+      for (let i = -1; i < Math.ceil(VIRTUAL_WIDTH / tileW) + 1; i++) {
+        const x = (Math.floor(t / tileW) + i) * tileW - (t % tileW) + 8;
+        g.fillStyle = '#3a2f72';
+        g.fillRect(x, GROUND_Y + 12, 4, 8);
       }
     };
 
     const drawObstacle = (g: CanvasRenderingContext2D, o: Obstacle) => {
       if (o.type === 'gap') {
-        // Gaps are just empty space under the bridge; draw water shimmer hint
-        g.fillStyle = '#ffffff15';
-        g.fillRect(o.x, GROUND_Y + 1, o.w, 2);
+        // gap shimmer hint on water
+        g.fillStyle = '#ffffff22';
+        g.fillRect(o.x, GROUND_Y + 10, o.w, 1);
       } else {
         // thorn bush
         g.fillStyle = '#6b1d6b';
@@ -376,8 +398,8 @@ export const PlatformerGame: React.FC = () => {
 
     const drawPlayer = (g: CanvasRenderingContext2D, bobPhase: number) => {
       const px = Math.floor(player.x);
-      const runPhase = bobPhase * 4; // slightly slower cycle for legs
-      const bob = player.onGround ? Math.round(Math.sin(runPhase) * 1) : 0;
+      const runPhase = bobPhase * 3.6;
+      const bob = player.onGround ? Math.round(Math.sin(runPhase) * 1.2) : 0;
       const py = Math.floor(player.y) + bob;
 
       // soft shadow to ground for a sense of motion
@@ -398,9 +420,9 @@ export const PlatformerGame: React.FC = () => {
       if (!player.isDead) {
         const stride = Math.sin(runPhase);
         if (player.onGround) {
-          scaleX = 1 + 0.06 * stride;
-          scaleY = 1 - 0.06 * stride;
-          angle = 0.04 + 0.08 * Math.cos(runPhase);
+          scaleX = 1 + 0.05 * stride;
+          scaleY = 1 - 0.05 * stride;
+          angle = 0.05 + 0.06 * Math.cos(runPhase);
         } else {
           angle = 0.06; // small forward lean while airborne
         }
@@ -413,14 +435,8 @@ export const PlatformerGame: React.FC = () => {
       g.scale(scaleX, scaleY);
       g.translate(-player.width / 2, -player.height / 2);
 
-      if (tinyCanvas) {
-        g.drawImage(tinyCanvas, 0, 0, player.width, player.height);
-      } else {
-        g.fillStyle = '#6b46c1';
-        g.fillRect(0, 0, player.width, player.height);
-        g.fillStyle = '#fbe7c6';
-        g.fillRect(3, 4, 8, 7);
-      }
+      if (!tinyCanvas) { g.restore(); return; }
+      g.drawImage(tinyCanvas, 0, 0, player.width, player.height);
       g.restore();
 
       // optional outline removed for cleaner sprite
@@ -443,7 +459,10 @@ export const PlatformerGame: React.FC = () => {
       octx.clearRect(0, 0, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
 
       drawSky(octx);
-      drawGround(octx, (now * Math.max(0.015, speed * 0.015)) % 10000);
+      const tScroll = (now * Math.max(0.015, speed * 0.015)) % 10000;
+      drawGround(octx, tScroll);
+      carveGaps(octx);
+      drawBridgeDetails(octx, tScroll);
 
       // Obstacles
       for (const o of obstacles) drawObstacle(octx, o);
