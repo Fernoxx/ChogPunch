@@ -15,6 +15,8 @@ interface PlayerState {
   height: number;
   onGround: boolean;
   isDead: boolean;
+  animFrame: number;  // Current animation frame
+  animTime: number;   // Animation timer
 }
 
 interface Obstacle {
@@ -29,8 +31,9 @@ const VIRTUAL_WIDTH = 320;
 const VIRTUAL_HEIGHT = 180;
 const GROUND_Y = VIRTUAL_HEIGHT - 28;
 
-const GRAVITY = 0.35;
-const JUMP_VELOCITY = -6.8;
+const GRAVITY = 0.5;  // Increased from 0.35 for more realistic fall
+const JUMP_VELOCITY = -8.5;  // Adjusted for better jump arc
+const MAX_FALL_SPEED = 12;  // Cap fall speed for better control
 
 export const PlatformerGame: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -123,6 +126,8 @@ export const PlatformerGame: React.FC = () => {
       height: 18,
       onGround: true,
       isDead: false,
+      animFrame: 0,
+      animTime: 0,
     };
 
     // Pixelated character image cache
@@ -151,7 +156,7 @@ export const PlatformerGame: React.FC = () => {
     if (srcImg.complete) buildPixelated(); else srcImg.onload = buildPixelated;
 
     // World
-    let speed = 2.0; // world scroll speed (px/frame at 60fps basis)
+    let speed = 3.0; // world scroll speed - increased base speed slightly
     let score = 0;
     let highScore = 0;
     let spawnTimer = 0;
@@ -177,10 +182,13 @@ export const PlatformerGame: React.FC = () => {
       player.vy = 0;
       player.onGround = true;
       player.isDead = false;
+      player.animFrame = 0;
+      player.animTime = 0;
       obstacles.length = 0;
-      speed = 2.0;
+      speed = 3.0;  // Reset to base speed
       score = 0;
       spawnTimer = 0;
+      worldDistance = 0;  // Reset world scroll
     };
 
     // Initial reset
@@ -194,8 +202,25 @@ export const PlatformerGame: React.FC = () => {
       const dt = Math.min(50, dtMs) / 16.6667; // normalize to 60fps units
       if (!player.isDead) {
         // world speed ramps up slightly
-        speed += 0.0008 * dtMs;
-        score += speed * 0.05 * dtMs;
+        speed += 0.0003 * dt;  // Reduced from 0.0008 * dtMs
+        score += speed * 0.01 * dt;  // Adjusted score accumulation
+        
+        // Update running animation
+        if (player.onGround) {
+          player.animTime += dtMs;
+          const FRAME_TIME = 100; // milliseconds per frame
+          if (player.animTime >= FRAME_TIME) {
+            player.animTime -= FRAME_TIME;
+            player.animFrame = (player.animFrame + 1) % 4; // 4 frame run cycle
+          }
+        } else {
+          // In air - use jump frame
+          player.animFrame = 1;
+          player.animTime = 0;
+        }
+      } else {
+        // Dead - freeze animation
+        player.animFrame = 0;
       }
 
       // Jumping
@@ -206,8 +231,8 @@ export const PlatformerGame: React.FC = () => {
 
       // Gravity
       player.vy += GRAVITY * dt;
-      if (player.vy > 8) player.vy = 8;
-      player.y += player.vy * 3;
+      if (player.vy > MAX_FALL_SPEED) player.vy = MAX_FALL_SPEED;
+      player.y += player.vy * dt;  // Removed * 3 multiplier
 
       // Ground collision
       if (player.y + player.height >= GROUND_Y) {
@@ -229,7 +254,7 @@ export const PlatformerGame: React.FC = () => {
       // Move obstacles and cull
       for (let i = obstacles.length - 1; i >= 0; i--) {
         const o = obstacles[i];
-        o.x -= speed * 3; // scale world speed
+        o.x -= speed * dt;  // Removed * 3 multiplier
         if (o.x + o.w < -20) obstacles.splice(i, 1);
       }
 
@@ -300,8 +325,9 @@ export const PlatformerGame: React.FC = () => {
 
     const drawPlayer = (g: CanvasRenderingContext2D, bobPhase: number) => {
       const px = Math.floor(player.x);
-      const py = Math.floor(player.y) + (player.onGround ? (Math.sin(bobPhase) > 0 ? 0 : 1) : 0);
-
+      const py = Math.floor(player.y);  // Removed bob effect for cleaner animation
+      
+      // Draw base character
       if (tinyCanvas) {
         // Draw pixelated sprite
         g.imageSmoothingEnabled = false;
@@ -313,14 +339,44 @@ export const PlatformerGame: React.FC = () => {
         g.fillStyle = '#fbe7c6';
         g.fillRect(px + 3, py + 4, 8, 7);
       }
+      
+      // Draw running animation (legs)
+      if (player.onGround && !player.isDead) {
+        g.fillStyle = '#2a1f5e'; // Dark color for legs
+        
+        // Different leg positions for each frame
+        switch (player.animFrame) {
+          case 0: // Left leg forward, right leg back
+            g.fillRect(px + 4, py + 14, 3, 4);  // Left leg
+            g.fillRect(px + 10, py + 15, 3, 3); // Right leg
+            break;
+          case 1: // Both legs together (mid-stride)
+            g.fillRect(px + 6, py + 14, 3, 4);  // Left leg
+            g.fillRect(px + 8, py + 14, 3, 4);  // Right leg
+            break;
+          case 2: // Right leg forward, left leg back
+            g.fillRect(px + 10, py + 14, 3, 4); // Right leg
+            g.fillRect(px + 4, py + 15, 3, 3);  // Left leg
+            break;
+          case 3: // Both legs together (other mid-stride)
+            g.fillRect(px + 7, py + 14, 3, 4);  // Center legs
+            break;
+        }
+      } else if (!player.onGround) {
+        // Jump pose - legs spread
+        g.fillStyle = '#2a1f5e';
+        g.fillRect(px + 3, py + 13, 3, 5);  // Left leg
+        g.fillRect(px + 11, py + 13, 3, 5); // Right leg
+      }
 
       // small outline for readability
-      g.strokeStyle = '#000000';
+      g.strokeStyle = '#00000066';  // Semi-transparent outline
       g.lineWidth = 1;
       g.strokeRect(px - 0.5, py - 0.5, player.width + 1, player.height + 1);
     };
 
     let timeAccum = 0;
+    let worldDistance = 0;  // Track total distance scrolled
 
     const render = () => {
       const now = performance.now();
@@ -328,13 +384,17 @@ export const PlatformerGame: React.FC = () => {
       last = now;
       update(dt);
       timeAccum += dt * (speed * 0.03);
+      
+      if (!player.isDead) {
+        worldDistance += speed * (dt / 16.6667);  // Accumulate distance based on speed
+      }
 
       // Clear offscreen
       octx.imageSmoothingEnabled = false;
       octx.clearRect(0, 0, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
 
       drawSky(octx);
-      drawGround(octx, (now * speed * 0.06) % 10000);
+      drawGround(octx, worldDistance);  // Use accumulated distance
 
       // Obstacles
       for (const o of obstacles) drawObstacle(octx, o);
