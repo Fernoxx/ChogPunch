@@ -2,4 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-/* no extra overrides needed – animations live in tailwind.config.js */
+/* Pixel-art crisp rendering */
+html, body, canvas, img {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
