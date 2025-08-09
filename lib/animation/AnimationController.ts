@@ -261,13 +261,6 @@ export class AnimationController {
       // Combo successful!
       this.lastAttack = animationName;
     }
-
-    this.currentAnimation = animation;
-    this.currentFrame = 0;
-    this.frameTimer = 0;
-    this.comboTimer = this.comboWindow;
-  }
-
   update(deltaTime: number) {
     if (!this.currentAnimation) {
       this.play('idle');
