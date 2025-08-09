@@ -1,6 +1,5 @@
 // pages/index.tsx
 import { useEffect, useState } from "react"
-impo
 
 export default function Home() {
   const [" | "play">("home")
