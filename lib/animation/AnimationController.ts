@@ -6,8 +6,6 @@ export type AnimationState =
   | 'walk' 
   | 'run' 
   | 'jump' 
-  | 'punch1' 
-  | 'punch2' 
 
 export interface AnimationFrame {
   limbPositions: Map<string, { x: number; y: number; rotation: number }>;
