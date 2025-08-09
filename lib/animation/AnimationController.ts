@@ -29,11 +29,6 @@ export class AnimationController {
   private comboWindow: number = 300; // ms
   private lastAttack: AnimationState | null = null;
   private physicsEngine: PhysicsEngine;
-  
-  constructor(physicsEngine: PhysicsEngine) {
-    this.physicsEngine = physicsEngine;
-    this.initializeAnimations();
-  }
 
   private initializeAnimations() {
     // Idle animation - subtle breathing movement
