@@ -11,9 +11,6 @@ export default function Home() {
   useEffect(() => {
     setFarcasterUser({ fid: 0, username: "Player", displayName: "Player" } as any)
   }, [])
-
-  if (farcasterUser === null) return null
-
   return (
     <div className="min-h-screen relative overflow-hidden">
       {/* Background */}
