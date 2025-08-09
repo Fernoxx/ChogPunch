@@ -6,8 +6,6 @@ export default function Home() {
   const [farcasterUser, setFarcasterUser] = useState<{ fid: number; username?: string; displayName?: string; pfpUrl?: string } | null>(null)
 
   useEffec
-      {stage === "play" && (
-        <PlatformerGame />
-      )}
+      {stage === "play" && 
   )
 }
