@@ -9,8 +9,6 @@ export default function Home() {
   const [farcasterUser, setFarcasterUser] = useState<{ fid: number; username?: string; displayName?: string; pfpUrl?: string } | null>(null)
 
   useEffec
-
-      {/* Home Screen */}
       <AnimatePresence>
       e="absolute inset-0 flex items-center justify-center z-50"
           
