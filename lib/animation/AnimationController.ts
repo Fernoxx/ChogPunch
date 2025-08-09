@@ -10,8 +10,6 @@ export type AnimationState =
   | 'punch2' 
   | 'punch3'
   | 'kick1' 
-  | 'kick2' 
-  | 'uppercut'
 
 export interface AnimationFrame {
   limbPositions: Map<string, { x: number; y: number; rotation: number }>;
