@@ -59,6 +59,5 @@ export default function Home() {
       {stage === "play" && (
         <PlatformerGame />
       )}
-    </div>
   )
 }
