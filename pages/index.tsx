@@ -33,9 +33,7 @@ export default function Home() {
           >
             <div className="text-center">
               <motion.h1
-                className="text-6xl md:text-8xl font-bold text-white mb-8"
-                initial={{ y: -50 }}
-                animate={{ y: 0 }}
+             
               
               </motion.h1>
               <motion.button
