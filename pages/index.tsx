@@ -36,10 +36,7 @@ export default function Home() {
                 className="text-6xl md:text-8xl font-bold text-white mb-8"
                 initial={{ y: -50 }}
                 animate={{ y: 0 }}
-                transition={{ type: "spring", stiffness: 100 }}
-                style={{ textShadow: '4px 4px 8px rgba(0,0,0,0.8)' }}
-              >
-                CHOG PLATFORMER
+              
               </motion.h1>
               <motion.button
                 className="bg-gradient-to-r from-orange-500 to-red-500 text-white text-2xl font-bold px-12 py-6 rounded-lg shadow-2xl hover:scale-105 transition-transform"
