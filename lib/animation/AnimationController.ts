@@ -184,9 +184,7 @@ export class AnimationController {
           duration: 200,
         },
         {
-          limbPositions: new Map([
-            ['torso', { x: 0, y: -5, rotation: -1.5 }],
-            ['head', { x: -5, y: -8, rotation: -0.8 }],
+          limbPositions: new Map(
           ]),
           duration: 150,
           hitboxActive: true,
