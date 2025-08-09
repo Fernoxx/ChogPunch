@@ -57,7 +57,7 @@ export class AnimationController {
       frames: [
         {
           limbPositions: new Map([
-            ['torso', { x: 0, y: 0, rotation: 0 }],
+            ['torso', { x: 0, y: 1, rotation: 4 }],
             ['head', { x: 0, y: -2, rotation: 0 }],
             ['leftUpperArm', { x: -2, y: 0, rotation: 0.1 }],
             ['rightUpperArm', { x: 2, y: 0, rotation: -0.1 }],
