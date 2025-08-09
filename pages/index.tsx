@@ -8,16 +8,7 @@ export default function Home() {
   const [" | "play">("home")
   const [farcasterUser, setFarcasterUser] = useState<{ fid: number; username?: string; displayName?: string; pfpUrl?: string } | null>(null)
 
-  useEffect(() => {
-    setFarcasterUser({ fid: 0, username: "Player", displayName: "Player" } as any)
-  }, [])
-  return (
-    <div className="min-h-screen relative overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0">
-        <Image src="/gym-bg.png" alt="Background" fill className="object-cover" priority />
-        <div className="absolute inset-0 bg-black/40" />
-      </div>
+  useEffec
 
       {/* Home Screen */}
       <AnimatePresence>
