@@ -89,8 +89,6 @@ export class AnimationController {
       nextCombo: 'punch2'
     });
 
-    // Punch 2 - Cross
-    this.animations.set('punch2', {
       name: 'punch2',
       frames: [
         {
