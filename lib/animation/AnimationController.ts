@@ -209,10 +209,6 @@ export class AnimationController {
             ['leftUpperLeg', { x: 0, y: 0, rotation: 0 }],
             ['leftLowerLeg', { x: 0, y: 0, rotation: 0 }],
           ]),
-          duration: 300,
-        }
-      ],
-      loop: false,
       canCancel: false
     });
 
