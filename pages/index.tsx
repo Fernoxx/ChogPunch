@@ -9,11 +9,6 @@ export default function Home() {
       <AnimatePresence>
       e="absolute inset-0 flex items-center justify-center z-50"
               >
-                START GAME
-              </motion.button>
-  -6 text-white/70 text-sm">A smooth pixel-art side scroller. A/D or ◀▶ to move, W/Space or ⤴ to jump.</di
-
-      {/* Game Screen */}
       {stage === "play" && (
         <PlatformerGame />
       )}
