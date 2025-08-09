@@ -68,8 +68,6 @@ export class AnimationController {
             ['rightLowerArm', { x: 10, y: -5, rotation: -0.7 }],
             ['torso', { x: 2, y: 0, rotation: -0.1 }],
      
-            ['rightUpperArm', { x: 15, y: -3, rotation: -1.2 }],
-            ['rightLowerArm', { x: 30, y: -3, rotation: -1.5 }],
             ['torso', { x: 5, y: 0, rotation: -0.2 }],
           ]),
           duration: 100,
