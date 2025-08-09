@@ -288,8 +288,6 @@ export class AnimationController {
       const limbBody = this.physicsEngine.getBody(`fighter-${limbName}`);
       if (limbBody) {
         // Apply smooth interpolation for realistic movement
-        const currentPos = limbBody.body.position;
-        const targetX = currentPos.x + position.x * 0.1;
         const targetY = currentPos.y + position.y * 0.1;
         
         Matter.Body.setPosition(limbBody.body, {
