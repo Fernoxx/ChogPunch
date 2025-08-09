@@ -12,8 +12,6 @@ export type AnimationState =
   | 'kick1' 
   | 'kick2' 
   | 'uppercut'
-  | 'roundhouse'
-  | 'block'
 
 export interface AnimationFrame {
   limbPositions: Map<string, { x: number; y: number; rotation: number }>;
