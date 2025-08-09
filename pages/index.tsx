@@ -31,11 +31,7 @@ export default function Home() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="text-center">
-              <motion.h1
-             
-              
-              </motion.h1>
+            <
               <motion.button
                 className="bg-gradient-to-r from-orange-500 to-red-500 text-white text-2xl font-bold px-12 py-6 rounded-lg shadow-2xl hover:scale-105 transition-transform"
                 whileHover={{ scale: 1.05 }}
