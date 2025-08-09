@@ -24,10 +24,7 @@ export default function Home() {
         {stage === "home" && (
           <motion.div
             className="absolute inset-0 flex items-center justify-center z-50"
-            e={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <
+          
               <motion.button
                 className="bg-gradient-to-r from-orange-500 to-red-500 text-white text-2xl font-bold px-12 py-6 rounded-lg shadow-2xl hover:scale-105 transition-transform"
                 whileHover={{ scale: 1.05 }}
