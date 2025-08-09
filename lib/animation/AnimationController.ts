@@ -87,9 +87,7 @@ export class AnimationController {
           knockback: { x: 10, y: -2 }
         },
         {
-          limbPositions: new Map([
-            ['rightUpperArm', { x: 2, y: 0, rotation: -0.1 }],
-            ['rightLowerArm', { x: 4, y: 0, rotation: -0.1 }],
+    
             ['torso', { x: 0, y: 0, rotation: 0 }],
           ]),
           duration: 150,
