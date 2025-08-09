@@ -57,7 +57,7 @@ export class AnimationController {
       frames: [
         {
           limbPositions: new Map([
-            ['torso', { x: 0, y: 1, rotation: 4 }],
+            ['torso', { x: 0, y: 0, rotation: 0 }],
             ['head', { x: 0, y: -2, rotation: 0 }],
             ['leftUpperArm', { x: -2, y: 0, rotation: 0.1 }],
             ['rightUpperArm', { x: 2, y: 0, rotation: -0.1 }],
@@ -66,8 +66,8 @@ export class AnimationController {
         },
         {
           limbPositions: new Map([
-            ['torso', { x: 0, y: -2, rotation: 3 }],
-            ['head', { x: 0, y: -4, rotation: 5 }],
+            ['torso', { x: 0, y: -2, rotation: 0 }],
+            ['head', { x: 0, y: -4, rotation: 0 }],
             ['leftUpperArm', { x: -2, y: -1, rotation: 0.05 }],
             ['rightUpperArm', { x: 2, y: -1, rotation: -0.05 }],
           ]),
@@ -103,8 +103,8 @@ export class AnimationController {
         },
         {
           limbPositions: new Map([
-            ['rightUpperArm', { x: 2, y: 1, rotation: -0.1 }],
-            ['rightLowerArm', { x: 4, y: 2, rotation: -0.1 }],
+            ['rightUpperArm', { x: 2, y: 0, rotation: -0.1 }],
+            ['rightLowerArm', { x: 4, y: 0, rotation: -0.1 }],
             ['torso', { x: 0, y: 0, rotation: 0 }],
           ]),
           duration: 150,
@@ -162,8 +162,8 @@ export class AnimationController {
             ['torso', { x: 0, y: 5, rotation: 0.2 }],
             ['rightUpperArm', { x: 5, y: 10, rotation: 0.8 }],
             ['rightLowerArm', { x: 5, y: 15, rotation: 1.2 }],
-            ['leftUpperLeg', { x: -5, y: 10, rotation: 0.3 }],
-            ['rightUpperLeg', { x: 5, y: 10, rotation: -0.3 }],
+            ['leftUpperLeg', { x: -5, y: 5, rotation: 0.3 }],
+            ['rightUpperLeg', { x: 5, y: 5, rotation: -0.3 }],
           ]),
           duration: 150,
         },
