@@ -136,9 +136,7 @@ export class AnimationController {
           ]),
           duration: 300,
         }
-      ],
-      loop: false,
-      canCancel: false
+      ]
     });
 
     // Kick 1 - Front kick
