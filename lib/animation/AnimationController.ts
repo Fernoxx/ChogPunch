@@ -396,10 +396,6 @@ export class AnimationController {
     return this.currentAnimation ? attackAnimations.includes(this.currentAnimation.name) : false;
   }
 
-  isBlocking(): boolean {
-    return this.currentAnimation?.name === 'block';
-  }
-
   getComboProgress(): number {
     return this.comboTimer > 0 ? this.comboTimer / this.comboWindow : 0;
   }
