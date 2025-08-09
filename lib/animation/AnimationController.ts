@@ -227,12 +227,7 @@ export class AnimationController {
           limbPositions: new Map([
           ]),
           duration: 100,
-        },
-        {
-          limbPositions: new Map([
-            ['torso', { x: -2, y: 0, rotation: 0.1 }],
-            ['head', { x: -3, y: 0, rotation: 0.2 }],
-          ]),
+        }
           duration: 150,
         }
       ],
