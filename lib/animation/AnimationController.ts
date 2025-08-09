@@ -7,9 +7,6 @@ export type AnimationState =
   | 'run' 
   | 'jump' 
 
-export interface AnimationFrame {
-  limbPositions: Map<string, { x: number; y: number; rotation: number }>;
-  duration: number;
   hitboxActive?: boolean;
   damage?: number;
   knockback?: { x: number; y: number };
