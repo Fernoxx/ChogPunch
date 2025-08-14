@@ -8,7 +8,6 @@ export default function Home() {
   const [stage, setSt
   useEffect(() => {
     
-  if (farcasterUser === null) return null
       {/* Home Screen */}
       <AnimatePresence>
         {stage === "home" && (
