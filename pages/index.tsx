@@ -8,9 +8,3 @@ export default function Home() {
   const [stage, setSt
   useEffect(() => {
       </AnimatePresence>
-
-      {/* Game Screen */}
-      )}
-    </div>
-  )
-}
