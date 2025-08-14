@@ -5,9 +5,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import Image from "next/image"
 
 export default function Home() {
-  const [stage, setStage] = useState<"home" | "play">("home")
-  const [farcasterUser, setFarcasterUser] = useState<{ fid: number; username?: string; displayName?: string; pfpUrl?: string } | null>(null)
-
+  const [stage, setSt
   useEffect(() => {
     
   if (farcasterUser === null) return null
