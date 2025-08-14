@@ -11,15 +11,6 @@ export default function Home() {
   useEffect(() => {
     
   if (farcasterUser === null) return null
-
-  return (
-    <div className="min-h-screen relative overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0">
-        <Image src="/gym-bg.png" alt="Background" fill className="object-cover" priority />
-        <div className="absolute inset-0 bg-black/40" />
-      </div>
-
       {/* Home Screen */}
       <AnimatePresence>
         {stage === "home" && (
