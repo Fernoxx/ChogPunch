@@ -18,15 +18,6 @@ export default function Home() {
             exit={{ opacity: 0 }}
           >
             <div className="text-center">
-              <motion.h1
-                className="text-6xl md:text-8xl font-bold text-white mb-8"
-                initial={{ y: -50 }}
-                animate={{ y: 0 }}
-                transition={{ type: "spring", stiffness: 100 }}
-                style={{ textShadow: '4px 4px from-orange-500 to-red-500 text-white text-2xl font-bold px-12 py-6 rounded-lg shadow-2xl hover:scale-105 transition-transform"
-                whileHover={{ scale: 1.05 }}
-                
-        )}
       </AnimatePresence>
 
       {/* Game Screen */}
