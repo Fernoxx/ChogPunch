@@ -9,9 +9,7 @@ export default function Home() {
   const [farcasterUser, setFarcasterUser] = useState<{ fid: number; username?: string; displayName?: string; pfpUrl?: string } | null>(null)
 
   useEffect(() => {
-    setFarcasterUser({ fid: 0, username: "Player", displayName: "Player" } as any)
-  }, [])
-
+    
   if (farcasterUser === null) return null
 
   return (
