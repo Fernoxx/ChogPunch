@@ -4,11 +4,6 @@ import type { AppProps } from "next/app"
 import { WagmiConfig, createConfig } from "wagmi"
 import { base } from "wagmi/chains"
 
-    chain: base,
-  })
-
-    },
-
   return (
     <WagmiConfig config={config}>
       <Component {...pageProps} />
