@@ -8,7 +8,6 @@ import { base } from "wagmi/chains"
   })
 
     chains: [base],
-    options: {
     },
 
   return (
