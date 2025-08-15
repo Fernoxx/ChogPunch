@@ -14,10 +14,6 @@ export default function App({ Component, pageProps }: AppProps) {
     },
   })
 
-  const config = createConfig({
-    autoConnect: true,
-  })
-
   return (
     <WagmiConfig config={config}>
       <Component {...pageProps} />
