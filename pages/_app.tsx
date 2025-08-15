@@ -3,7 +3,6 @@ import "../styles/globals.css"
 import type { AppProps } from "next/app"
 import { WagmiConfig, createConfig } from "wagmi"
 import { base } from "wagmi/chains"
-import { InjectedConnector } from "wagmi/connectors/injected"
 
 export default function App({ Component, pageProps }: AppProps) {
   const publicClient = createPublicClient({
