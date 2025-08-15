@@ -4,7 +4,6 @@ import type { AppProps } from "next/app"
 import { WagmiConfig, createConfig } from "wagmi"
 import { base } from "wagmi/chains"
 
-export default function App({ Component, pageProps }: AppProps) {
     chain: base,
   })
 
