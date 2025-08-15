@@ -2,6 +2,4 @@
 
   return (
     <WagmiConfig config={config}>
-    </WagmiConfig>
-  )
 }
