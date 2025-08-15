@@ -4,7 +4,6 @@ import type { AppProps } from "next/app"
 
   return (
     <WagmiConfig config={config}>
-      <Component {...pageProps} />
     </WagmiConfig>
   )
 }
