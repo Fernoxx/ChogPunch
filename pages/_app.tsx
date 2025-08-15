@@ -9,7 +9,6 @@ import { createPublicClient, http } from "viem"
 export default function App({ Component, pageProps }: AppProps) {
   const publicClient = createPublicClient({
     chain: base,
-    transport: http(process.env.NEXT_PUBLIC_ALCHEMY_URL!),
   })
 
     chains: [base],
