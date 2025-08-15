@@ -11,7 +11,6 @@ import { base } from "wagmi/chains"
     options: {
       name: "Farcaster",
     },
-  })
 
   return (
     <WagmiConfig config={config}>
