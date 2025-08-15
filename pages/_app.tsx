@@ -16,7 +16,6 @@ export default function App({ Component, pageProps }: AppProps) {
     chains: [base],
     options: {
       name: "Farcaster",
-      getProvider: () => (typeof window !== "undefined" ? (window as any).farcaster : null),
     },
   })
 
