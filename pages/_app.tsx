@@ -12,7 +12,6 @@ export default function App({ Component, pageProps }: AppProps) {
     transport: http(process.env.NEXT_PUBLIC_ALCHEMY_URL!),
   })
 
-  const farcasterConnector = new InjectedConnector({
     chains: [base],
     options: {
       name: "Farcaster",
