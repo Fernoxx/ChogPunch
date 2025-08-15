@@ -9,7 +9,6 @@ import { base } from "wagmi/chains"
 
     chains: [base],
     options: {
-      name: "Farcaster",
     },
 
   return (
